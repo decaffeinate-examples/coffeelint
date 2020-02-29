@@ -1,3 +1,16 @@
+/* eslint-disable
+    class-methods-use-this,
+    max-classes-per-file,
+    no-multi-assign,
+    no-param-reassign,
+    no-plusplus,
+    no-restricted-syntax,
+    no-shadow,
+    no-unused-vars,
+    no-useless-escape,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -10,9 +23,9 @@
 let LineLinter;
 class LineApi {
     static initClass() {
-    
         this.prototype.lineNumber = 0;
     }
+
     constructor(source, config, tokensByLine, literate) {
         this.config = config;
         this.tokensByLine = tokensByLine;
@@ -30,8 +43,8 @@ class LineApi {
             class: {
                 inClass: false,
                 lastUnemptyLineInClass: null,
-                classIndents: null
-            }
+                classIndents: null,
+            },
         };
     }
 
@@ -77,14 +90,13 @@ class LineApi {
         lineNumber = lineNumber != null ? lineNumber : this.lineNumber;
         if (tokenType == null) {
             return (this.tokensByLine[lineNumber] != null);
-        } else {
-            const tokens = this.tokensByLine[lineNumber];
-            if (tokens == null) { return null; }
-            for (let token of Array.from(tokens)) {
-                if (token[0] === tokenType) { return true; }
-            }
-            return false;
         }
+        const tokens = this.tokensByLine[lineNumber];
+        if (tokens == null) { return null; }
+        for (const token of Array.from(tokens)) {
+            if (token[0] === tokenType) { return true; }
+        }
+        return false;
     }
 
     // Return tokens for the given line number.
@@ -95,22 +107,21 @@ class LineApi {
 LineApi.initClass();
 
 
-const BaseLinter = require('./base_linter.coffee');
+const BaseLinter = require('./base_linter');
 
 // Some repeatedly used regular expressions.
 const configStatement = /coffeelint:\s*((disable|enable)(-line)?)(?:=([\w\s,]*))?/;
 const configShortcuts = [
     // TODO: make this user (and / or api) configurable
-    [/\#.*noqa/, 'coffeelint: disable-line']
+    [/\#.*noqa/, 'coffeelint: disable-line'],
 ];
 
 //
 // A class that performs regex checks on each line of the source.
 //
 module.exports = (LineLinter = class LineLinter extends BaseLinter {
-
     static getDirective(line) {
-        for (let [shortcut, replacement] of Array.from(configShortcuts)) {
+        for (const [shortcut, replacement] of Array.from(configShortcuts)) {
             if (line.match(shortcut)) {
                 return configStatement.exec(replacement);
             }
@@ -129,7 +140,7 @@ module.exports = (LineLinter = class LineLinter extends BaseLinter {
             enable: {},
             disable: {},
             'enable-line': {},
-            'disable-line': {}
+            'disable-line': {},
         };
     }
 
@@ -146,19 +157,18 @@ module.exports = (LineLinter = class LineLinter extends BaseLinter {
             this.lineApi.maintainClassContext(line);
             this.collectInlineConfig(line);
 
-            for (let error of Array.from(this.lintLine(line))) { errors.push(error); }
+            for (const error of Array.from(this.lintLine(line))) { errors.push(error); }
         }
         return errors;
     }
 
     // Return an error if the line contained failed a rule, null otherwise.
     lintLine(line) {
-
         // Multiple rules might run against the same line to build context.
         // Every every rule should run even if something has already produced an
         // error for the same token.
         const errors = [];
-        for (let rule of Array.from(this.rules)) {
+        for (const rule of Array.from(this.rules)) {
             const v = this.normalizeResult(rule, rule.lintLine(line, this.lineApi));
             if (v != null) { errors.push(v); }
         }
@@ -172,7 +182,7 @@ module.exports = (LineLinter = class LineLinter extends BaseLinter {
             const cmd = result[1];
             const rules = [];
             if (result[4] != null) {
-                for (let r of Array.from(result[4].split(','))) {
+                for (const r of Array.from(result[4].split(','))) {
                     rules.push(r.replace(/^\s+|\s+$/g, ''));
                 }
             }

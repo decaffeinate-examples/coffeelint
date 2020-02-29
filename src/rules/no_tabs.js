@@ -1,3 +1,11 @@
+/* eslint-disable
+    class-methods-use-this,
+    func-names,
+    no-multi-assign,
+    no-shadow,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -8,10 +16,9 @@
 let NoTabs;
 const indentationRegex = /\S/;
 
-module.exports = (NoTabs = (function() {
+module.exports = (NoTabs = (function () {
     NoTabs = class NoTabs {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'no_tabs',
                 level: 'error',
@@ -19,7 +26,7 @@ module.exports = (NoTabs = (function() {
                 description: `\
 This rule forbids tabs in indentation. Enough said. It is enabled by
 default.\
-`
+`,
             };
         }
 
@@ -31,11 +38,10 @@ default.\
             const indentation = line.split(indentationRegex)[0];
             if (lineApi.lineHasToken() && Array.from(indentation).includes('\t')) {
                 return true;
-            } else {
-                return null;
             }
+            return null;
         }
     };
     NoTabs.initClass();
     return NoTabs;
-})());
+}()));

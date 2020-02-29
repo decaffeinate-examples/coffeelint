@@ -1,13 +1,20 @@
+/* eslint-disable
+    class-methods-use-this,
+    func-names,
+    no-multi-assign,
+    no-shadow,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS206: Consider reworking classes to avoid initClass
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let NoEmptyParamList;
-module.exports = (NoEmptyParamList = (function() {
+module.exports = (NoEmptyParamList = (function () {
     NoEmptyParamList = class NoEmptyParamList {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'no_empty_param_list',
                 level: 'ignore',
@@ -23,9 +30,9 @@ myFunction = -&gt;
 </code>
 </pre>
 Empty parameter lists are permitted by default.\
-`
+`,
             };
-    
+
             this.prototype.tokens = ['PARAM_START'];
         }
 
@@ -36,4 +43,4 @@ Empty parameter lists are permitted by default.\
     };
     NoEmptyParamList.initClass();
     return NoEmptyParamList;
-})());
+}()));

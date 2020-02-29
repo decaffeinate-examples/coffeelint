@@ -1,3 +1,12 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-multi-str,
+    no-unused-vars,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,13 +15,14 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const RULE = 'cyclomatic_complexity';
 
 // Return the cyclomatic complexity of a code snippet with one function.
-const getComplexity = function(source) {
-    const config = {cyclomatic_complexity: { level: 'error', value: 0 }};
+const getComplexity = function (source) {
+    const config = { cyclomatic_complexity: { level: 'error', value: 0 } };
     const errors = coffeelint.lint(source, config);
     assert.isNotEmpty(errors);
     assert.lengthOf(errors, 1);
@@ -33,14 +43,14 @@ x = ->
   10 and 11\
 `,
 
-        'defaults to ignore'(source) {
+        'defaults to ignore': function (source) {
             const errors = coffeelint.lint(source);
             assert.isArray(errors);
             return assert.isEmpty(errors);
         },
 
-        'can be enabled'(source) {
-            const config = {cyclomatic_complexity: { level: 'error' }};
+        'can be enabled': function (source) {
+            const config = { cyclomatic_complexity: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             assert.lengthOf(errors, 1);
@@ -51,49 +61,49 @@ x = ->
             return assert.equal(error.lineNumberEnd, 5);
         },
 
-        'can be enabled with configurable complexity'(source) {
+        'can be enabled with configurable complexity': function (source) {
             const config = { cyclomatic_complexity: { level: 'error', value: 12 } };
             const errors = coffeelint.lint(source);
             assert.isArray(errors);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'An empty function': {
         topic:
-            `\
+            '\
 x = () -> 1234\
-`,
+',
 
-        'has a complexity of one'(source) {
+        'has a complexity of one': function (source) {
             const complexity = getComplexity(source);
             return assert.equal(complexity, 1);
-        }
+        },
     },
 
     'If statement': {
         topic:
-            `\
+            '\
 x = () -> 2 if $ == true\
-`,
+',
 
-        'increments the complexity'(source) {
+        'increments the complexity': function (source) {
             const complexity = getComplexity(source);
             return assert.equal(complexity, 2);
-        }
+        },
     },
 
 
     'If Else statement': {
         topic:
-            `\
+            '\
 y = -> if $ then 1 else 3\
-`,
+',
 
-        'increments the complexity'(source) {
+        'increments the complexity': function (source) {
             const complexity = getComplexity(source);
             return assert.equal(complexity, 2);
-        }
+        },
     },
 
     'If ElseIf statement': {
@@ -106,10 +116,10 @@ x = ->
     'xyz'\
 `,
 
-        'has a complexity of three'(source) {
+        'has a complexity of three': function (source) {
             const complexity = getComplexity(source);
             return assert.equal(complexity, 3);
-        }
+        },
     },
 
     'If If-Else Else statement': {
@@ -124,10 +134,10 @@ z = () ->
     3\
 `,
 
-        'has a complexity of three'(source) {
+        'has a complexity of three': function (source) {
             const complexity = getComplexity(source);
             return assert.equal(complexity, 3);
-        }
+        },
     },
 
     'Nested if statements': {
@@ -139,10 +149,10 @@ z = () ->
       123\
 `,
 
-        'has a complexity of three'(source) {
+        'has a complexity of three': function (source) {
             const complexity = getComplexity(source);
             return assert.equal(complexity, 3);
-        }
+        },
     },
 
     'A while loop': {
@@ -152,22 +162,22 @@ x = () ->
   while 1
     'asdf'\
 `,
-        'increments complexity'(source) {
+        'increments complexity': function (source) {
             const complexity = getComplexity(source);
             return assert.equal(complexity, 2);
-        }
+        },
     },
 
     'An until loop': {
         topic:
-            `\
-x = () -> log 'a' until $?\
-`,
+            '\
+x = () -> log \'a\' until $?\
+',
 
-        'increments complexity'(source) {
+        'increments complexity': function (source) {
             const complexity = getComplexity(source);
             return assert.equal(complexity, 2);
-        }
+        },
     },
 
     'A for loop': {
@@ -178,22 +188,22 @@ x = () ->
     log i\
 `,
 
-        'increments complexity'(source) {
+        'increments complexity': function (source) {
             const complexity = getComplexity(source);
             return assert.equal(complexity, 2);
-        }
+        },
     },
 
     'A list comprehension': {
         topic:
-            `\
+            '\
 x = -> [a for a in window]\
-`,
+',
 
-        'increments complexity'(source) {
+        'increments complexity': function (source) {
             const complexity = getComplexity(source);
             return assert.equal(complexity, 2);
-        }
+        },
     },
 
     'Try / Catch blocks': {
@@ -206,9 +216,9 @@ x = () ->
     log("uh oh")\
 `,
 
-        'increments complexity'(source) {
+        'increments complexity': function (source) {
             return assert.equal(getComplexity(source), 2);
-        }
+        },
     },
 
     'Try / Catch / Finally blocks': {
@@ -223,9 +233,9 @@ x = () ->
     clean()\
 `,
 
-        'increments complexity'(source) {
+        'increments complexity': function (source) {
             return assert.equal(getComplexity(source), 2);
-        }
+        },
     },
 
     'Switch statements without an else': {
@@ -238,10 +248,10 @@ x = () ->
     when "d" then "d"\
 `,
 
-        'increase complexity by the number of cases'(source) {
+        'increase complexity by the number of cases': function (source) {
             const complexity = getComplexity(source);
             return assert.equal(complexity, 4);
-        }
+        },
     },
 
     'Switch statements with an else': {
@@ -255,34 +265,34 @@ x = () ->
     else "e"\
 `,
 
-        'increase complexity by the number of cases'(source) {
+        'increase complexity by the number of cases': function (source) {
             const complexity = getComplexity(source);
             return assert.equal(complexity, 4);
-        }
+        },
     },
 
     'And operators': {
         topic:
-            `\
+            '\
 x = () -> $ and window\
-`,
+',
 
-        'increments the complexity'(source) {
+        'increments the complexity': function (source) {
             const complexity = getComplexity(source);
             return assert.equal(complexity, 2);
-        }
+        },
     },
 
     'Or operators': {
         topic:
-            `\
+            '\
 x = () -> $ or window\
-`,
+',
 
-        'increments the complexity'(source) {
+        'increments the complexity': function (source) {
             const complexity = getComplexity(source);
             return assert.equal(complexity, 2);
-        }
+        },
     },
 
     'Nested functions': {
@@ -293,8 +303,8 @@ x = () ->
     1 or 2\
 `,
 
-        'complexity are not aggregated into the parent function'(source) {
-            const config = {cyclomatic_complexity: { level: 'error', value: 1 }};
+        'complexity are not aggregated into the parent function': function (source) {
+            const config = { cyclomatic_complexity: { level: 'error', value: 1 } };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             assert.lengthOf(errors, 1);
@@ -303,7 +313,7 @@ x = () ->
             assert.equal(error.lineNumber, 2);
             assert.equal(error.lineNumberEnd, 3);
             return assert.equal(error.context, 2);
-        }
+        },
     },
 
     'A complicated example': {
@@ -321,8 +331,8 @@ x = () ->
   return false\
 `,
 
-        'works'(source) {
-            const config = {cyclomatic_complexity: { level: 'error' }};
+        works(source) {
+            const config = { cyclomatic_complexity: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             assert.lengthOf(errors, 1);
@@ -331,7 +341,7 @@ x = () ->
             assert.equal(error.lineNumber, 1);
             assert.equal(error.lineNumberEnd, 10);
             return assert.equal(error.context, 14);
-        }
-    }
+        },
+    },
 
 }).export(module);

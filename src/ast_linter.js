@@ -1,3 +1,26 @@
+/* eslint-disable
+    camelcase,
+    class-methods-use-this,
+    consistent-return,
+    constructor-super,
+    max-classes-per-file,
+    max-len,
+    no-constant-condition,
+    no-eval,
+    no-loop-func,
+    no-multi-assign,
+    no-param-reassign,
+    no-restricted-syntax,
+    no-shadow,
+    no-this-before-super,
+    no-underscore-dangle,
+    no-unused-vars,
+    no-use-before-define,
+    no-var,
+    vars-on-top,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS001: Remove Babel/TypeScript constructor workaround
@@ -9,7 +32,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let ASTLinter;
-const BaseLinter = require('./base_linter.coffee');
+const BaseLinter = require('./base_linter');
 
 const node_children = {
     Class: ['variable', 'parent', 'body'],
@@ -21,26 +44,26 @@ const node_children = {
     Switch: ['subject', 'cases', 'otherwise'],
     Try: ['attempt', 'recovery', 'ensure'],
     Value: ['base', 'properties'],
-    While: ['condition', 'guard', 'body']
+    While: ['condition', 'guard', 'body'],
 };
 
-const hasChildren = (node, children) => (__guard__(node != null ? node.children : undefined, x => x.length) === children.length) &&
-(node != null ? node.children.every((elem, i) => elem === children[i]) : undefined);
+const hasChildren = (node, children) => (__guard__(node != null ? node.children : undefined, (x) => x.length) === children.length)
+&& (node != null ? node.children.every((elem, i) => elem === children[i]) : undefined);
 
 class ASTApi {
     constructor(config) {
         this.config = config;
     }
+
     getNodeName(node) {
-        let name = __guard__(node != null ? node.constructor : undefined, x => x.name);
+        let name = __guard__(node != null ? node.constructor : undefined, (x) => x.name);
         if (node_children[name]) {
             return name;
-        } else {
-            for (name of Object.keys(node_children || {})) {
-                const children = node_children[name];
-                if (hasChildren(node, children)) {
-                    return name;
-                }
+        }
+        for (name of Object.keys(node_children || {})) {
+            const children = node_children[name];
+            if (hasChildren(node, children)) {
+                return name;
             }
         }
     }
@@ -50,14 +73,13 @@ class ASTApi {
 // A class that performs static analysis of the abstract
 // syntax tree.
 module.exports = (ASTLinter = class ASTLinter extends BaseLinter {
-
     constructor(source, config, rules, CoffeeScript) {
         {
-          // Hack: trick Babel/TypeScript into allowing this before super.
-          if (false) { super(); }
-          let thisFn = (() => { return this; }).toString();
-          let thisName = thisFn.match(/return (?:_assertThisInitialized\()*(\w+)\)*;/)[1];
-          eval(`${thisName} = this;`);
+            // Hack: trick Babel/TypeScript into allowing this before super.
+            if (false) { super(); }
+            const thisFn = (() => this).toString();
+            const thisName = thisFn.match(/return (?:_assertThisInitialized\()*(\w+)\)*;/)[1];
+            eval(`${thisName} = this;`);
         }
         this.CoffeeScript = CoffeeScript;
         super(source, config, rules);
@@ -83,7 +105,7 @@ module.exports = (ASTLinter = class ASTLinter extends BaseLinter {
         }
 
         for (var rule of Array.from(this.rules)) {
-            this.astApi.createError = attrs => {
+            this.astApi.createError = (attrs) => {
                 if (attrs == null) { attrs = {}; }
                 return this.createError(rule.rule.name, attrs);
             };
@@ -100,7 +122,7 @@ module.exports = (ASTLinter = class ASTLinter extends BaseLinter {
     }
 
     _parseCoffeeScriptError(coffeeError) {
-        const rule = this.config['coffeescript_error'];
+        const rule = this.config.coffeescript_error;
 
         const message = coffeeError.toString();
 
@@ -115,12 +137,12 @@ module.exports = (ASTLinter = class ASTLinter extends BaseLinter {
         const attrs = {
             message,
             level: rule.level,
-            lineNumber
+            lineNumber,
         };
         return this.createError('coffeescript_error', attrs);
     }
 });
 
 function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+    return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
 }

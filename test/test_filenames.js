@@ -1,3 +1,12 @@
+/* eslint-disable
+    func-names,
+    global-require,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-return-assign,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -18,24 +27,24 @@ const rulesDir = path.join(thisdir, '..', 'src', 'rules');
 const rules = glob.sync(path.join(rulesDir, '*.coffee'));
 
 const hasTests = {
-    'has tests'() {
+    'has tests': function () {
         const ruleFilename = this.context.name;
-        const testFilename = path.join(thisdir, 'test_' + ruleFilename);
+        const testFilename = path.join(thisdir, `test_${ruleFilename}`);
         return assert(fs.existsSync(testFilename), `expected ${testFilename} to exist`);
     },
 
-    'has correct filename'() {
+    'has correct filename': function () {
         const ruleFilename = this.context.name;
         const Rule = require(path.join(rulesDir, ruleFilename));
 
-        const tmp = new Rule;
-        const expectedFilename = tmp.rule.name + '.coffee';
+        const tmp = new Rule();
+        const expectedFilename = `${tmp.rule.name}.coffee`;
 
         return assert.equal(ruleFilename, expectedFilename);
-    }
+    },
 };
 
-rules.forEach(function(rule) {
+rules.forEach((rule) => {
     const filename = path.basename(rule);
     return batch[filename] = hasTests;
 });

@@ -1,3 +1,13 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-dupe-keys,
+    no-multi-str,
+    no-restricted-syntax,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -7,6 +17,7 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const RULE = 'arrow_spacing';
@@ -32,10 +43,10 @@ test10 = (foo, bar) =>
   @baz\
 `,
 
-        'will return an error'(source) {
+        'will return an error': function (source) {
             const config = {
-                'indentation': { 'value': 2, 'level': 'error' },
-                'arrow_spacing': { 'level': 'error' }
+                indentation: { value: 2, level: 'error' },
+                arrow_spacing: { level: 'error' },
             };
             const errors = coffeelint.lint(source, config);
             assert.equal(errors.length, 8);
@@ -57,11 +68,11 @@ test10 = (foo, bar) =>
             return assert.equal(errors[7].rule, RULE);
         },
 
-        'will be ignored (no error)'(source) {
-            const config = { 'arrow_spacing': { 'level': 'ignore' } };
+        'will be ignored (no error)': function (source) {
+            const config = { arrow_spacing: { level: 'ignore' } };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Handles good spacing when parentheses are generated': {
@@ -86,23 +97,23 @@ testingThis.around (a, b) ->
 \
 `,
 
-        'when spacing is not required around arrow operator'(source) {
+        'when spacing is not required around arrow operator': function (source) {
             const config = {
-                'indentation': { 'value': 2, 'level': 'error' },
-                'arrow_spacing': { 'level': 'ignore' }
+                indentation: { value: 2, level: 'error' },
+                arrow_spacing: { level: 'ignore' },
             };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors);
         },
 
-        'when spacing is required around arrow operator'(source) {
+        'when spacing is required around arrow operator': function (source) {
             const config = {
-                'indentation': { 'value': 2, 'level': 'error' },
-                'arrow_spacing': { 'level': 'error' }
+                indentation: { value: 2, level: 'error' },
+                arrow_spacing: { level: 'error' },
             };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Handles bad spacing when parentheses are generated': {
@@ -126,8 +137,8 @@ testingThis ->-> "X"
 testingThis ->->"X"\
 `,
 
-        'when spacing is required around arrow operator'(source) {
-            const config = { 'arrow_spacing': { 'level': 'error' } };
+        'when spacing is required around arrow operator': function (source) {
+            const config = { arrow_spacing: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.equal(errors[0].lineNumber, 3);
             assert.equal(errors[1].lineNumber, 6);
@@ -136,15 +147,15 @@ testingThis ->->"X"\
             assert.equal(errors[4].lineNumber, 14);
             assert.equal(errors[5].lineNumber, 16);
             assert.equal(errors[6].lineNumber, 16);
-            for (let { rule } of Array.from(errors)) { assert.equal(rule, RULE); }
+            for (const { rule } of Array.from(errors)) { assert.equal(rule, RULE); }
             return assert.lengthOf(errors, 7);
         },
 
-        'when spacing is not required around arrow operator'(source) {
-            const config = { 'arrow_spacing': { 'level': 'ignore' } };
+        'when spacing is not required around arrow operator': function (source) {
+            const config = { arrow_spacing: { level: 'ignore' } };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Ignore spacing for non-generated parentheses': {
@@ -157,17 +168,17 @@ x( -> 3)
 x((a,b) -> c)
 (-> true)()\
 `,
-        'when spacing is required around arrow operator'(source) {
-            const config = { 'arrow_spacing': { 'level': 'error' } };
+        'when spacing is required around arrow operator': function (source) {
+            const config = { arrow_spacing: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
         },
 
-        'when spacing is not required around arrow operator'(source) {
-            const config = { 'arrow_spacing': { 'level': 'ignore' } };
+        'when spacing is not required around arrow operator': function (source) {
+            const config = { arrow_spacing: { level: 'ignore' } };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors, 0);
-        }
+        },
     },
 
     'Handle an arrow at beginning of statement': {
@@ -179,17 +190,17 @@ x((a,b) -> c)
   2000\
 `,
 
-        'when spacing is required around arrow operator'(source) {
-            const config = { 'arrow_spacing': { 'level': 'error' } };
+        'when spacing is required around arrow operator': function (source) {
+            const config = { arrow_spacing: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
         },
 
-        'when spacing is not required around arrow operator'(source) {
-            const config = { 'arrow_spacing': { 'level': 'ignore' } };
+        'when spacing is not required around arrow operator': function (source) {
+            const config = { arrow_spacing: { level: 'ignore' } };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors, 0);
-        }
+        },
     },
 
     'Handle an empty arrow at end of expression': {
@@ -200,106 +211,106 @@ x((a,b) -> c)
 (x: ->)\
 `,
 
-        'when spacing is required around arrow operator'(source) {
-            const config = { 'arrow_spacing': { 'level': 'error' } };
+        'when spacing is required around arrow operator': function (source) {
+            const config = { arrow_spacing: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
         },
 
-        'when spacing is not required around arrow operator'(source) {
-            const config = { 'arrow_spacing': { 'level': 'ignore' } };
+        'when spacing is not required around arrow operator': function (source) {
+            const config = { arrow_spacing: { level: 'ignore' } };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors, 0);
-        }
+        },
     },
 
     'Handle a nested arrow at end of file': {
         topic:
-            `\
+            '\
 class A\n  f: ->\
-`,
+',
 
-        'when spacing is required around arrow operator'(source) {
-            const config = { 'arrow_spacing': { 'level': 'error' } };
+        'when spacing is required around arrow operator': function (source) {
+            const config = { arrow_spacing: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
         },
 
-        'when spacing is not required around arrow operator'(source) {
-            const config = { 'arrow_spacing': { 'level': 'ignore' } };
+        'when spacing is not required around arrow operator': function (source) {
+            const config = { arrow_spacing: { level: 'ignore' } };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors, 0);
-        }
+        },
     },
 
     'Handle a nested arrow at end of file': {
         topic:
-            `\
+            '\
 define ->\n  class A\n    f: ->\
-`,
+',
 
-        'when spacing is required around arrow operator'(source) {
-            const config = { 'arrow_spacing': { 'level': 'error' } };
+        'when spacing is required around arrow operator': function (source) {
+            const config = { arrow_spacing: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
         },
 
-        'when spacing is not required around arrow operator'(source) {
-            const config = { 'arrow_spacing': { 'level': 'ignore' } };
+        'when spacing is not required around arrow operator': function (source) {
+            const config = { arrow_spacing: { level: 'ignore' } };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors, 0);
-        }
+        },
     },
 
     'Handle an arrow at end of file': {
         topic:
-            `\
+            '\
 f: ->\
-`,
+',
 
-        'when spacing is required around arrow operator'(source) {
-            const config = { 'arrow_spacing': { 'level': 'error' } };
+        'when spacing is required around arrow operator': function (source) {
+            const config = { arrow_spacing: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
         },
 
-        'when spacing is not required around arrow operator'(source) {
-            const config = { 'arrow_spacing': { 'level': 'ignore' } };
+        'when spacing is not required around arrow operator': function (source) {
+            const config = { arrow_spacing: { level: 'ignore' } };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors, 0);
-        }
+        },
     },
 
     'Handles empty functions': {
         topic:
-            `\
+            '\
 console ?= log: (->), error: (->)\
-`,
+',
 
-        'when spacing is required around arrow operator'(source) {
-            const config = { 'arrow_spacing': { 'level': 'error' } };
+        'when spacing is required around arrow operator': function (source) {
+            const config = { arrow_spacing: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
-        }
+        },
     },
 
     'Handle an arrow at beginning of file': {
         topic:
-            `\
+            '\
 -> foo()\
-`,
+',
 
-        'when spacing is required around arrow operator'(source) {
-            const config = { 'arrow_spacing': { 'level': 'error' } };
+        'when spacing is required around arrow operator': function (source) {
+            const config = { arrow_spacing: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
         },
 
-        'when spacing is not required around arrow operator'(source) {
-            const config = { 'arrow_spacing': { 'level': 'ignore' } };
+        'when spacing is not required around arrow operator': function (source) {
+            const config = { arrow_spacing: { level: 'ignore' } };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors, 0);
-        }
-    }
+        },
+    },
 
 }).export(module);

@@ -1,3 +1,11 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-multi-str,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,6 +14,7 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const RULE = 'no_unnecessary_double_quotes';
@@ -14,32 +23,32 @@ vows.describe(RULE).addBatch({
 
     'Single quotes': {
         topic:
-            `\
-foo = 'single'\
-`,
+            '\
+foo = \'single\'\
+',
 
-        'single quotes should always be allowed'(source) {
+        'single quotes should always be allowed': function (source) {
             const config = { no_unnecessary_double_quotes: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
 
     'Unnecessary double quotes': {
         topic:
-            `\
+            '\
 foo = "double"\
-`,
+',
 
-        'double quotes are allowed by default'(source) {
+        'double quotes are allowed by default': function (source) {
             const errors = coffeelint.lint(source);
             assert.isArray(errors);
             return assert.isEmpty(errors);
         },
 
-        'double quotes can be forbidden'(source) {
+        'double quotes can be forbidden': function (source) {
             const config = { no_unnecessary_double_quotes: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
@@ -47,10 +56,9 @@ foo = "double"\
             const error = errors[0];
             assert.equal(error.lineNumber, 1);
             assert.equal(error.message,
-                'Unnecessary double quotes are forbidden'
-            );
+                'Unnecessary double quotes are forbidden');
             return assert.equal(error.rule, RULE);
-        }
+        },
     },
 
 
@@ -62,12 +70,12 @@ multipleInterpolation = "#{foo}bar#{baz}"
 singleQuote = "single'quote"\
 `,
 
-        'string interpolation should always be allowed'(source) {
+        'string interpolation should always be allowed': function (source) {
             const config = { no_unnecessary_double_quotes: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
 
@@ -79,17 +87,16 @@ foo = """
 """\
 `,
 
-        'block strings with double quotes are not allowed'(source) {
+        'block strings with double quotes are not allowed': function (source) {
             const config = { no_unnecessary_double_quotes: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.lengthOf(errors, 1);
             const error = errors[0];
             assert.equal(error.lineNumber, 1);
             assert.equal(error.message,
-                'Unnecessary double quotes are forbidden'
-            );
+                'Unnecessary double quotes are forbidden');
             return assert.equal(error.rule, RULE);
-        }
+        },
     },
 
 
@@ -101,12 +108,12 @@ foo = """
 """\
 `,
 
-        'block strings with useful content should be allowed'(source) {
+        'block strings with useful content should be allowed': function (source) {
             const config = { no_unnecessary_double_quotes: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
 
@@ -118,32 +125,31 @@ foo = '''
 '''\
 `,
 
-        'block strings with single quotes should be allowed'(source) {
+        'block strings with single quotes should be allowed': function (source) {
             const config = { no_unnecessary_double_quotes: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
 
     'Hand concatenated string with parenthesis': {
         topic:
-            `\
+            '\
 foo = (("inter") + "polation")\
-`,
+',
 
-        'double quotes should not be allowed'(source) {
+        'double quotes should not be allowed': function (source) {
             const config = { no_unnecessary_double_quotes: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.lengthOf(errors, 2);
             const error = errors[0];
             assert.equal(error.lineNumber, 1);
             assert.equal(error.message,
-                'Unnecessary double quotes are forbidden'
-            );
+                'Unnecessary double quotes are forbidden');
             return assert.equal(error.rule, RULE);
-        }
+        },
     },
 
     'use strict': {
@@ -153,7 +159,7 @@ foo = (("inter") + "polation")\
 foo = 'foo'\
 `,
 
-        'should not error at the start of the file #306'(source) {
+        'should not error at the start of the file #306': function (source) {
             const config = { no_unnecessary_double_quotes: { level: 'error' } };
             // Without the fix for 306 this throws an Error.
             const errors = coffeelint.lint(source, config);
@@ -161,20 +167,20 @@ foo = 'foo'\
             const error = errors[0];
             assert.equal(error.lineNumber, 1);
             return assert.equal(error.rule, RULE);
-        }
+        },
     },
 
     'Test RegExp flags #405': {
         topic:
-            `\
+            '\
 d = ///#{foo}///i\
-`,
+',
 
-        'should not generate an error'(source) {
+        'should not generate an error': function (source) {
             const config = { no_unnecessary_double_quotes: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             return assert.lengthOf(errors, 0);
-        }
+        },
     },
 
     'Test multiline regexp #286': {
@@ -189,11 +195,11 @@ b = ///
 c = RegExp(".*#{a}0-9")\
 `,
 
-        'should not generate an error'(source) {
+        'should not generate an error': function (source) {
             const config = { no_unnecessary_double_quotes: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             return assert.lengthOf(errors, 0);
-        }
-    }
+        },
+    },
 
 }).export(module);

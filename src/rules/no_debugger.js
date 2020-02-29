@@ -1,3 +1,14 @@
+/* eslint-disable
+    consistent-return,
+    func-names,
+    max-len,
+    no-multi-assign,
+    no-shadow,
+    no-underscore-dangle,
+    no-use-before-define,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS103: Rewrite code to no longer use __guard__
@@ -6,10 +17,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let NoDebugger;
-module.exports = (NoDebugger = (function() {
+module.exports = (NoDebugger = (function () {
     NoDebugger = class NoDebugger {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'no_debugger',
                 level: 'warn',
@@ -18,9 +28,9 @@ module.exports = (NoDebugger = (function() {
                 description: `\
 This rule detects \`debugger\` and optionally \`console\` calls
 This rule is \`warn\` by default.\
-`
+`,
             };
-    
+
             // TODO: after <1.10.0 is not supported, remove 'DEBUGGER' here
             this.prototype.tokens = ['STATEMENT', 'DEBUGGER', 'IDENTIFIER'];
         }
@@ -31,7 +41,7 @@ This rule is \`warn\` by default.\
             }
 
             if (tokenApi.config[this.rule.name] != null ? tokenApi.config[this.rule.name].console : undefined) {
-                if ((token[1] === 'console') && (__guard__(tokenApi.peek(1), x => x[0]) === '.')) {
+                if ((token[1] === 'console') && (__guard__(tokenApi.peek(1), (x) => x[0]) === '.')) {
                     const method = tokenApi.peek(2);
                     return { context: `found 'console.${method[1]}'` };
                 }
@@ -40,8 +50,8 @@ This rule is \`warn\` by default.\
     };
     NoDebugger.initClass();
     return NoDebugger;
-})());
+}()));
 
 function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+    return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
 }

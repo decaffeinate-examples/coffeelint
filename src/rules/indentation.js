@@ -1,3 +1,22 @@
+/* eslint-disable
+    class-methods-use-this,
+    consistent-return,
+    func-names,
+    max-len,
+    no-continue,
+    no-multi-assign,
+    no-param-reassign,
+    no-plusplus,
+    no-restricted-syntax,
+    no-shadow,
+    no-underscore-dangle,
+    no-unused-vars,
+    no-use-before-define,
+    prefer-const,
+    prefer-destructuring,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -9,10 +28,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let Indentation;
-module.exports = (Indentation = (function() {
+module.exports = (Indentation = (function () {
     Indentation = class Indentation {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'indentation',
                 value: 2,
@@ -33,21 +51,21 @@ twoSpaces = () ->
 </code>
 </pre>
 Two space indentation is enabled by default.\
-`
+`,
             };
-    
+
             this.prototype.tokens = ['INDENT', '[', ']', '.'];
-    
+
             this.prototype.keywords = [
-              '->', '=>', '@', 'CATCH', 'CLASS', 'DEFAULT', 'ELSE', 'EXPORT',
-              'FINALLY', 'FOR', 'FORIN', 'FOROF', 'IDENTIFIER', 'IF', 'IMPORT',
-              'LEADING_WHEN', 'LOOP', 'PROPERTY', 'RETURN', 'SWITCH', 'THROW',
-              'TRY', 'UNTIL', 'WHEN', 'WHILE', 'YIELD'
+                '->', '=>', '@', 'CATCH', 'CLASS', 'DEFAULT', 'ELSE', 'EXPORT',
+                'FINALLY', 'FOR', 'FORIN', 'FOROF', 'IDENTIFIER', 'IF', 'IMPORT',
+                'LEADING_WHEN', 'LOOP', 'PROPERTY', 'RETURN', 'SWITCH', 'THROW',
+                'TRY', 'UNTIL', 'WHEN', 'WHILE', 'YIELD',
             ];
         }
 
         constructor() {
-            this.arrayTokens = [];   // A stack tracking the array token pairs.
+            this.arrayTokens = []; // A stack tracking the array token pairs.
         }
 
         // Return an error if the given indentation token is not correct.
@@ -64,11 +82,11 @@ Two space indentation is enabled by default.\
                 // the linting pass if the '.' token is not at the beginning of
                 // the line
                 const currentLine = lines[lineNumber];
-                if (__guard__(currentLine.match(/\S/), x => x[0]) === '.') {
+                if (__guard__(currentLine.match(/\S/), (x) => x[0]) === '.') {
                     const next = tokenApi.peek(1);
                     if (next[0] === 'PROPERTY') {
-                        const chain = '.' + next[1];
-                        const startsWith = new RegExp('^(\\s*)(\\' + chain + ')');
+                        const chain = `.${next[1]}`;
+                        const startsWith = new RegExp(`^(\\s*)(\\${chain})`);
                         const regExRes = currentLine.match(startsWith);
                         const spaces = (regExRes != null ? regExRes[1].length : undefined) || -1;
                         if (((regExRes != null ? regExRes.index : undefined) === 0) && (spaces === dotIndent)) {
@@ -79,7 +97,7 @@ Two space indentation is enabled by default.\
 
                             if ((dotIndent % expected) !== 0) {
                                 return {
-                                    context: `Expected ${expected} got ${got}`
+                                    context: `Expected ${expected} got ${got}`,
                                 };
                             }
                         }
@@ -107,7 +125,7 @@ Two space indentation is enabled by default.\
             // we can allow things like:
             //   a = b =
             //     c = d
-            const previousSymbol = __guard__(tokenApi.peek(-1), x1 => x1[0]);
+            const previousSymbol = __guard__(tokenApi.peek(-1), (x1) => x1[0]);
             const isMultiline = ['=', ','].includes(previousSymbol);
 
             // Summarize the indentation conditions we'd like to ignore
@@ -150,20 +168,21 @@ Two space indentation is enabled by default.\
             if (all) {
                 return (() => {
                     const result = [];
-                    for (let tok of Array.from(tokensByLine[lineNumber])) {                         result.push(tok);
+                    for (const tok of Array.from(tokensByLine[lineNumber])) {
+                        result.push(tok);
                     }
                     return result;
                 })();
-            } else {
-                return (() => {
-                    const result1 = [];
-                    for (let tok of Array.from(tokensByLine[lineNumber])) {                         if ((tok.generated == null) && (tok[0] !== 'OUTDENT')) {
-                            result1.push(tok);
-                        }
-                    }
-                    return result1;
-                })();
             }
+            return (() => {
+                const result1 = [];
+                for (const tok of Array.from(tokensByLine[lineNumber])) {
+                    if ((tok.generated == null) && (tok[0] !== 'OUTDENT')) {
+                        result1.push(tok);
+                    }
+                }
+                return result1;
+            })();
         }
 
         // Returns a corrected INDENT value if the current line is part of
@@ -172,7 +191,7 @@ Two space indentation is enabled by default.\
             let prevIndent;
             const { lineNumber, lines, tokens } = tokenApi;
 
-            const curIndent = __guard__(lines[lineNumber].match(/\S/), x => x.index);
+            const curIndent = __guard__(lines[lineNumber].match(/\S/), (x) => x.index);
 
             let prevNum = 1;
             while (/^\s*(#|$)/.test(lines[lineNumber - prevNum])) { prevNum += 1; }
@@ -198,93 +217,93 @@ Two space indentation is enabled by default.\
 
                 return [curIndent - (prevTokens[1] != null ? prevTokens[1][2].first_column : undefined),
                     curIndent - prevTokens[0][1]];
-            } else {
-                prevIndent = prevTokens[0] != null ? prevTokens[0][2].first_column : undefined;
-                // This is a scan to handle extra indentation from if/else
-                // statements to make them look nicer: e.g.
-                //
-                // r = if a
-                //   true
-                // else
-                //   false
-                //
-                // is valid.
-                //
-                // r = if a
-                //       true
-                //     else
-                //       false
-                //
-                // is also valid.
-                for (let j = 0; j < prevTokens.length; j++) {
-                    const _ = prevTokens[j];
-                    if ((prevTokens[j][0] === '=') &&
-                        (__guard__(prevTokens[j + 1], x1 => x1[0]) === 'IF')) {
-                        const skipAssign = curIndent - prevTokens[j + 1][2].first_column;
-                        const ret = curIndent - prevIndent;
-                        if (skipAssign < 0) { return [ret]; }
-                        return [skipAssign, ret];
-                    }
-                }
-
-                // This happens when there is an extra indent to maintain long
-                // conditional statements (IF/UNLESS): e.g.
-                //
-                // ->
-                //   if a is c and
-                //     (false or
-                //       long.expression.that.necessitates(linebreak))
-                //     @foo()
-                //
-                // is valid (note that there an only an extra indent in the last
-                // statement is required and not the line above it
-                //
-                // ->
-                //   if a is c and
-                //       (false or
-                //       long.expression.that.necessitates(linebreak))
-                //     @foo()
-                // is also OK.
-                while (prevIndent > curIndent) {
-                    const tryLine = lineNumber - prevNum;
-                    prevTokens = this.grabLineTokens(tokenApi, tryLine, true);
-
-                    // This is to handle weird object/string indentation.
-                    // See: 'Handle edge-case weirdness with strings in objects'
-                    //   test case in test_indentation.coffee or in the file,
-                    //   test_no_empty_functions.coffee, which is why/how I
-                    //   caught this.
-                    if ((prevTokens[0] != null ? prevTokens[0][0] : undefined) === 'INDENT') {
-                        prevIndent = prevTokens[0][1];
-                        prevTokens = prevTokens.slice(1);
-                    }
-
-                    let t = 0;
-                    // keep looping prevTokens until we find a token in @keywords
-                    // or we just run out of tokens in prevTokens
-                    while (!(prevTokens[t] == null) && !Array.from(this.keywords).includes(prevTokens[t][0])) {
-                        t++;
-                    }
-
-                    // slice off everything before 't'
-                    prevTokens = prevTokens.slice(t);
-                    prevNum++;
-
-                    // if there isn't a valid token, restart the while loop
-                    if (prevTokens[0] == null) { continue; }
-
-                    // set new "prevIndent"
-                    prevIndent = prevTokens[0] != null ? prevTokens[0][2].first_column : undefined;
+            }
+            prevIndent = prevTokens[0] != null ? prevTokens[0][2].first_column : undefined;
+            // This is a scan to handle extra indentation from if/else
+            // statements to make them look nicer: e.g.
+            //
+            // r = if a
+            //   true
+            // else
+            //   false
+            //
+            // is valid.
+            //
+            // r = if a
+            //       true
+            //     else
+            //       false
+            //
+            // is also valid.
+            for (let j = 0; j < prevTokens.length; j++) {
+                const _ = prevTokens[j];
+                if ((prevTokens[j][0] === '=')
+                        && (__guard__(prevTokens[j + 1], (x1) => x1[0]) === 'IF')) {
+                    const skipAssign = curIndent - prevTokens[j + 1][2].first_column;
+                    const ret = curIndent - prevIndent;
+                    if (skipAssign < 0) { return [ret]; }
+                    return [skipAssign, ret];
                 }
             }
+
+            // This happens when there is an extra indent to maintain long
+            // conditional statements (IF/UNLESS): e.g.
+            //
+            // ->
+            //   if a is c and
+            //     (false or
+            //       long.expression.that.necessitates(linebreak))
+            //     @foo()
+            //
+            // is valid (note that there an only an extra indent in the last
+            // statement is required and not the line above it
+            //
+            // ->
+            //   if a is c and
+            //       (false or
+            //       long.expression.that.necessitates(linebreak))
+            //     @foo()
+            // is also OK.
+            while (prevIndent > curIndent) {
+                const tryLine = lineNumber - prevNum;
+                prevTokens = this.grabLineTokens(tokenApi, tryLine, true);
+
+                // This is to handle weird object/string indentation.
+                // See: 'Handle edge-case weirdness with strings in objects'
+                //   test case in test_indentation.coffee or in the file,
+                //   test_no_empty_functions.coffee, which is why/how I
+                //   caught this.
+                if ((prevTokens[0] != null ? prevTokens[0][0] : undefined) === 'INDENT') {
+                    prevIndent = prevTokens[0][1];
+                    prevTokens = prevTokens.slice(1);
+                }
+
+                let t = 0;
+                // keep looping prevTokens until we find a token in @keywords
+                // or we just run out of tokens in prevTokens
+                while (!(prevTokens[t] == null) && !Array.from(this.keywords).includes(prevTokens[t][0])) {
+                    t++;
+                }
+
+                // slice off everything before 't'
+                prevTokens = prevTokens.slice(t);
+                prevNum++;
+
+                // if there isn't a valid token, restart the while loop
+                if (prevTokens[0] == null) { continue; }
+
+                // set new "prevIndent"
+                prevIndent = prevTokens[0] != null ? prevTokens[0][2].first_column : undefined;
+            }
+
 
             return [curIndent - prevIndent];
         }
     };
     Indentation.initClass();
     return Indentation;
-})());
+}()));
 
 function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+    return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
 }

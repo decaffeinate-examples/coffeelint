@@ -1,3 +1,14 @@
+/* eslint-disable
+    consistent-return,
+    func-names,
+    no-multi-assign,
+    no-multi-str,
+    no-nested-ternary,
+    no-return-assign,
+    no-shadow,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,32 +17,30 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let CyclomaticComplexity;
-module.exports = (CyclomaticComplexity = (function() {
+module.exports = (CyclomaticComplexity = (function () {
     CyclomaticComplexity = class CyclomaticComplexity {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'cyclomatic_complexity',
                 level: 'ignore',
                 message: 'The cyclomatic complexity is too damn high',
                 value: 10,
-                description: `\
+                description: '\
 Examine the complexity of your function.\
-`
+',
             };
         }
 
         // returns the "complexity" value of the current node.
         getComplexity(node) {
             const name = this.astApi.getNodeName(node);
-            const complexity = ['If', 'While', 'For', 'Try'].includes(name) ?
-                1
-            : (name === 'Op') && ['&&', '||'].includes(node.operator) ?
-                1
-            : name === 'Switch' ?
-                node.cases.length
-            :
-                0;
+            const complexity = ['If', 'While', 'For', 'Try'].includes(name)
+                ? 1
+                : (name === 'Op') && ['&&', '||'].includes(node.operator)
+                    ? 1
+                    : name === 'Switch'
+                        ? node.cases.length
+                        : 0;
             return complexity;
         }
 
@@ -48,7 +57,7 @@ Examine the complexity of your function.\
             let complexity = this.getComplexity(node);
 
             // Add the complexity of all child's nodes to this one.
-            node.eachChild(childNode => {
+            node.eachChild((childNode) => {
                 const childComplexity = this.lintNode(childNode);
                 if ((this.astApi != null ? this.astApi.getNodeName(childNode) : undefined) !== 'Code') {
                     return complexity += childComplexity;
@@ -63,7 +72,7 @@ Examine the complexity of your function.\
                 const error = this.astApi.createError({
                     context: complexity + 1,
                     lineNumber: node.locationData.first_line + 1,
-                    lineNumberEnd: node.locationData.last_line + 1
+                    lineNumberEnd: node.locationData.last_line + 1,
                 });
                 if (error) { this.errors.push(error); }
             }
@@ -74,4 +83,4 @@ Examine the complexity of your function.\
     };
     CyclomaticComplexity.initClass();
     return CyclomaticComplexity;
-})());
+}()));

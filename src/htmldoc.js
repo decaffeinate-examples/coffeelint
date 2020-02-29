@@ -1,3 +1,14 @@
+/* eslint-disable
+    func-names,
+    import/no-unresolved,
+    no-console,
+    no-restricted-syntax,
+    no-unused-vars,
+    no-use-before-define,
+    no-var,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -8,12 +19,12 @@
 const _ = require('underscore');
 const { RULES: rules } = require('./coffeelint');
 
-const render = function() {
+const render = function () {
     const rulesHTML = '';
     const ruleNames = Object.keys(rules).sort();
     return (() => {
         const result = [];
-        for (let ruleName of Array.from(ruleNames)) {
+        for (const ruleName of Array.from(ruleNames)) {
             const rule = rules[ruleName];
             rule.name = ruleName;
             if (!rule.description) { rule.description = '[no description provided]'; }
@@ -23,7 +34,7 @@ const render = function() {
         return result;
     })();
 };
-        // coffeelint: enable=no_debugger
+// coffeelint: enable=no_debugger
 
 var ruleTemplate = _.template(`\
 <tr>
@@ -33,7 +44,6 @@ var ruleTemplate = _.template(`\
     <p><em>default level: <%= level %></em></p>
 </td>
 </tr>\
-`
-);
+`);
 
 render();

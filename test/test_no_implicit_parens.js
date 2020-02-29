@@ -1,3 +1,11 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-restricted-syntax,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -8,6 +16,7 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const RULE = 'no_implicit_parens';
@@ -33,14 +42,14 @@ class B
     @c = a ? _defaultC\
 `,
 
-        'are allowed by default'(source) {
+        'are allowed by default': function (source) {
             const errors = coffeelint.lint(source);
             assert.isArray(errors);
             return assert.isEmpty(errors);
         },
 
-        'can be forbidden'(source) {
-            const config = {no_implicit_parens: { level: 'error' }};
+        'can be forbidden': function (source) {
+            const config = { no_implicit_parens: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             assert.lengthOf(errors, 2);
@@ -48,7 +57,7 @@ class B
             assert.equal(error.lineNumber, 1);
             assert.equal(error.message, 'Implicit parens are forbidden');
             return assert.equal(error.rule, RULE);
-        }
+        },
     },
 
     'No implicit parens strict': {
@@ -63,30 +72,31 @@ blah 'a'
 , 'b'\
 `,
 
-        'blocks all implicit parens by default'(source) {
-            const config = {no_implicit_parens: { level: 'error' }};
+        'blocks all implicit parens by default': function (source) {
+            const config = { no_implicit_parens: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             assert.lengthOf(errors, 2);
             return (() => {
                 const result = [];
-                for (let { rule } of Array.from(errors)) {                     result.push(assert.equal(rule, RULE));
+                for (const { rule } of Array.from(errors)) {
+                    result.push(assert.equal(rule, RULE));
                 }
                 return result;
             })();
         },
 
-        'allows parens at the end of lines when strict is false'(source) {
+        'allows parens at the end of lines when strict is false': function (source) {
             const config = {
                 no_implicit_parens: {
                     level: 'error',
-                    strict: false
-                }
+                    strict: false,
+                },
             };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Nested no implicit parens strict': {
@@ -106,30 +116,31 @@ blah 'a'
 , 'd')\
 `,
 
-        'blocks all implicit parens by default'(source) {
-            const config = {no_implicit_parens: { level: 'error' }};
+        'blocks all implicit parens by default': function (source) {
+            const config = { no_implicit_parens: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             assert.lengthOf(errors, 4);
             return (() => {
                 const result = [];
-                for (let { rule } of Array.from(errors)) {                     result.push(assert.equal(rule, RULE));
+                for (const { rule } of Array.from(errors)) {
+                    result.push(assert.equal(rule, RULE));
                 }
                 return result;
             })();
         },
 
-        'allows parens at the end of lines when strict is false'(source) {
+        'allows parens at the end of lines when strict is false': function (source) {
             const config = {
                 no_implicit_parens: {
                     level: 'error',
-                    strict: false
-                }
+                    strict: false,
+                },
             };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Test for when implicit parens are on the last line': {
@@ -149,12 +160,12 @@ blah 'a'
 , blah('c', 'd')\
 `,
 
-        'throws three errors when strict is true'(source) {
+        'throws three errors when strict is true': function (source) {
             const config = {
                 no_implicit_parens: {
                     level: 'error',
-                    strict: true
-                }
+                    strict: true,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -167,12 +178,12 @@ blah 'a'
 
         // When implicit parens are separated out on multiple lines
         // and strict is set to false, do not return an error.
-        'throws two errors when strict is false'(source) {
+        'throws two errors when strict is false': function (source) {
             const config = {
                 no_implicit_parens: {
                     level: 'error',
-                    strict: false
-                }
+                    strict: false,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -180,7 +191,7 @@ blah 'a'
             assert.lengthOf(errors, 2);
             assert.equal(errors[0].rule, RULE);
             return assert.equal(errors[1].rule, RULE);
-        }
-    }
+        },
+    },
 
 }).export(module);

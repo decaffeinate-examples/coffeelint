@@ -1,3 +1,15 @@
+/* eslint-disable
+    class-methods-use-this,
+    max-classes-per-file,
+    no-multi-assign,
+    no-param-reassign,
+    no-plusplus,
+    no-restricted-syntax,
+    no-shadow,
+    no-unused-vars,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -8,8 +20,7 @@
  */
 let LexicalLinter;
 class TokenApi {
-    static initClass() {  // A map of tokens by line.
-    
+    static initClass() { // A map of tokens by line.
         this.prototype.i = 0;
     }
 
@@ -29,13 +40,12 @@ class TokenApi {
 }
 TokenApi.initClass();
 
-const BaseLinter = require('./base_linter.coffee');
+const BaseLinter = require('./base_linter');
 
 //
 // A class that performs checks on the output of CoffeeScript's lexer.
 //
 module.exports = (LexicalLinter = class LexicalLinter extends BaseLinter {
-
     constructor(source, config, rules, CoffeeScript) {
         super(source, config, rules);
 
@@ -56,7 +66,7 @@ module.exports = (LexicalLinter = class LexicalLinter extends BaseLinter {
         for (let i = 0; i < this.tokenApi.tokens.length; i++) {
             const token = this.tokenApi.tokens[i];
             this.tokenApi.i = i;
-            for (let error of Array.from(this.lintToken(token))) { errors.push(error); }
+            for (const error of Array.from(this.lintToken(token))) { errors.push(error); }
         }
         return errors;
     }
@@ -78,7 +88,7 @@ module.exports = (LexicalLinter = class LexicalLinter extends BaseLinter {
         // Every rule should run even if something has already produced an
         // error for the same token.
         const errors = [];
-        for (let rule of Array.from(this.rules)) {
+        for (const rule of Array.from(this.rules)) {
             if (Array.from(rule.tokens).includes(token[0])) {
                 const v = this.normalizeResult(rule, rule.lintToken(token, this.tokenApi));
                 if (v != null) { errors.push(v); }

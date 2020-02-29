@@ -1,3 +1,16 @@
+/* eslint-disable
+    guard-for-in,
+    no-multi-assign,
+    no-param-reassign,
+    no-plusplus,
+    no-restricted-syntax,
+    no-return-assign,
+    no-shadow,
+    no-underscore-dangle,
+    no-unused-vars,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -8,7 +21,6 @@
 // A summary of errors in a CoffeeLint run.
 let ErrorReport;
 module.exports = (ErrorReport = class ErrorReport {
-
     constructor(coffeelint) {
         this.coffeelint = coffeelint;
         this.paths = {};
@@ -21,19 +33,20 @@ module.exports = (ErrorReport = class ErrorReport {
     }
 
     getExitCode() {
-        for (let path in this.paths) {
+        for (const path in this.paths) {
             if (this.pathHasError(path)) { return 1; }
         }
         return 0;
     }
 
     getSummary() {
-        let errorCount, warningCount;
+        let errorCount; let
+            warningCount;
         let pathCount = (errorCount = (warningCount = 0));
-        for (let path in this.paths) {
+        for (const path in this.paths) {
             const errors = this.paths[path];
             pathCount++;
-            for (let error of Array.from(errors)) {
+            for (const error of Array.from(errors)) {
                 if (error.level === 'error') { errorCount++; }
                 if (error.level === 'warn') { warningCount++; }
             }
@@ -54,14 +67,14 @@ module.exports = (ErrorReport = class ErrorReport {
     }
 
     hasError() {
-        for (let path in this.paths) {
+        for (const path in this.paths) {
             if (this.pathHasError(path)) { return true; }
         }
         return false;
     }
 
     _hasLevel(path, level) {
-        for (let error of Array.from(this.paths[path])) {
+        for (const error of Array.from(this.paths[path])) {
             if (error.level === level) { return true; }
         }
         return false;

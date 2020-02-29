@@ -1,3 +1,10 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,6 +13,7 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const RULE = 'empty_constructor_needs_parens';
@@ -20,15 +28,15 @@ new OPERATIONS[operationSpec.type] operationSpec.field
 new Foo[bar].baz[qux] param1\
 `,
 
-        'should pass'(source) {
+        'should pass': function (source) {
             const config = {
                 empty_constructor_needs_parens: {
-                    level: 'error'
-                }
+                    level: 'error',
+                },
             };
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
-        }
+        },
     },
 
     'Missing Parentheses on "new Foo"': {
@@ -49,11 +57,11 @@ g = new bar.foo.Foo
   config: 'parameter'\
 `,
 
-        'warns about missing parens'(source) {
+        'warns about missing parens': function (source) {
             const config = {
                 empty_constructor_needs_parens: {
-                    level: 'error'
-                }
+                    level: 'error',
+                },
             };
             const errors = coffeelint.lint(source, config);
             assert.equal(errors.length, 2);
@@ -61,7 +69,7 @@ g = new bar.foo.Foo
             assert.equal(errors[0].rule, RULE);
             assert.equal(errors[1].lineNumber, 5);
             return assert.equal(errors[1].rule, RULE);
-        }
-    }
+        },
+    },
 
 }).export(module);

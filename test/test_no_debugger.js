@@ -1,3 +1,11 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-multi-str,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,6 +14,7 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const RULE = 'no_debugger';
@@ -14,25 +23,25 @@ vows.describe(RULE).addBatch({
 
     'console calls': {
         topic:
-            `\
+            '\
 console.log("hello world")\
-`,
+',
 
-        'causes a warning when present'(source) {
-            const config = {no_debugger: { level: 'error', console: true }};
+        'causes a warning when present': function (source) {
+            const config = { no_debugger: { level: 'error', console: true } };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             return assert.lengthOf(errors, 1);
-        }
+        },
     },
 
     'The debugger statement': {
         topic:
-            `\
+            '\
 debugger\
-`,
+',
 
-        'causes a warning when present'(source) {
+        'causes a warning when present': function (source) {
             const errors = coffeelint.lint(source);
             assert.isArray(errors);
             assert.lengthOf(errors, 1);
@@ -42,8 +51,8 @@ debugger\
             return assert.equal(error.rule, RULE);
         },
 
-        'can be set to error'(source) {
-            const config = {no_debugger: {level: 'error'}};
+        'can be set to error': function (source) {
+            const config = { no_debugger: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             assert.isArray(errors);
@@ -51,7 +60,7 @@ debugger\
             const error = errors[0];
             assert.equal(error.lineNumber, 1);
             return assert.equal(error.rule, RULE);
-        }
-    }
+        },
+    },
 
 }).export(module);

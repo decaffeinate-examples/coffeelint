@@ -1,3 +1,12 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-multi-str,
+    no-useless-escape,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,10 +15,11 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
-const configError = {no_trailing_semicolons: { level: 'error' }};
-const configIgnore = {no_trailing_semicolons: { level: 'ignore' }};
+const configError = { no_trailing_semicolons: { level: 'error' } };
+const configIgnore = { no_trailing_semicolons: { level: 'ignore' } };
 
 const RULE = 'no_trailing_semicolons';
 
@@ -22,7 +32,7 @@ x = 1234;
 y = 1234; z = 1234\
 `,
 
-        'are forbidden'(source) {
+        'are forbidden': function (source) {
             const errors = coffeelint.lint(source);
             assert.lengthOf(errors, 1);
             const error = errors[0];
@@ -31,10 +41,10 @@ y = 1234; z = 1234\
             return assert.equal(error.rule, RULE);
         },
 
-        'can be ignored'(source) {
+        'can be ignored': function (source) {
             const errors = coffeelint.lint(source, configIgnore);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Semicolons in multiline expressions': {
@@ -60,94 +70,94 @@ a*\;
 ///\
 `,
 
-        'are ignored'(source) {
+        'are ignored': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Trailing semicolon in comments': {
         topic:
-            `\
+            '\
 undefined\n# comment;\nundefined\
-`,
+',
 
-        'are ignored'(source) {
+        'are ignored': function (source) {
             const errors = coffeelint.lint(source, {});
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Trailing semicolon in comments with no semicolon in statement': {
         topic:
-            `\
+            '\
 x = 3 #set x to 3;\
-`,
+',
 
-        'are ignored'(source) {
+        'are ignored': function (source) {
             const errors = coffeelint.lint(source, configIgnore);
             return assert.isEmpty(errors);
         },
 
-        'will throw an error'(source) {
+        'will throw an error': function (source) {
             const errors = coffeelint.lint(source, configError);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Trailing semicolon in comments with semicolon in statement': {
         topic:
-            `\
+            '\
 x = 3; #set x to 3;\
-`,
+',
 
-        'are ignored'(source) {
+        'are ignored': function (source) {
             const errors = coffeelint.lint(source, configIgnore);
             return assert.isEmpty(errors);
         },
 
-        'will throw an error'(source) {
+        'will throw an error': function (source) {
             const errors = coffeelint.lint(source, configError);
             assert.lengthOf(errors, 1);
             const error = errors[0];
             assert.equal(error.lineNumber, 1);
             assert.equal(error.message, 'Line contains a trailing semicolon');
             return assert.equal(error.rule, RULE);
-        }
+        },
     },
 
     'Trailing semicolon in block comments': {
         topic:
-            `\
+            '\
 ###\nThis is a block comment;\n###\
-`,
+',
 
-        'are ignored'(source) {
+        'are ignored': function (source) {
             const errors = coffeelint.lint(source, configIgnore);
             return assert.isEmpty(errors);
         },
 
-        'are ignored even if config level is error'(source) {
+        'are ignored even if config level is error': function (source) {
             const errors = coffeelint.lint(source, configError);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Semicolons with windows line endings': {
         topic:
-            `\
+            '\
 x = 1234;\r\n\
-`,
+',
 
-        'works as expected'(source) {
-            const config = {line_endings: { value: 'windows' }};
+        'works as expected': function (source) {
+            const config = { line_endings: { value: 'windows' } };
             const errors = coffeelint.lint(source, config);
             assert.lengthOf(errors, 1);
             const error = errors[0];
             assert.equal(error.lineNumber, 1);
             assert.equal(error.message, 'Line contains a trailing semicolon');
             return assert.equal(error.rule, RULE);
-        }
+        },
     },
 
     'Semicolons inside of blockquote string': {
@@ -170,14 +180,14 @@ this neither;
 """\
 `,
 
-        'are ignored'(source) {
+        'are ignored': function (source) {
             const errors = coffeelint.lint(source, configError);
             assert.lengthOf(errors, 1);
             const error = errors[0];
             assert.equal(error.lineNumber, 1);
             assert.equal(error.message, 'Line contains a trailing semicolon');
             return assert.equal(error.rule, RULE);
-        }
-    }
+        },
+    },
 
 }).export(module);

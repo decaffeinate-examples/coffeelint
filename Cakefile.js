@@ -1,3 +1,17 @@
+/* eslint-disable
+    camelcase,
+    consistent-return,
+    func-names,
+    global-require,
+    implicit-arrow-linebreak,
+    import/no-unresolved,
+    no-console,
+    no-restricted-syntax,
+    no-undef,
+    no-unused-vars,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -15,19 +29,19 @@ const { exec } = require('child_process');
 
 const copySync = (src, dest) => fs.writeFileSync(dest, fs.readFileSync(src));
 
-const coffeeSync = function(input, output) {
+const coffeeSync = function (input, output) {
     const coffee = fs.readFileSync(input).toString();
     return fs.writeFileSync(output, CoffeeScript.compile(coffee));
 };
 
-task('compile', 'Compile Coffeelint', function() {
+task('compile', 'Compile Coffeelint', () => {
     console.log('Compiling Coffeelint...');
     if (!fs.existsSync('lib')) { fs.mkdirSync('lib'); }
     invoke('compile:browserify');
     return invoke('compile:commandline');
 });
 
-task('compile:commandline', 'Compiles commandline.js', function() {
+task('compile:commandline', 'Compiles commandline.js', () => {
     coffeeSync('src/commandline.coffee', 'lib/commandline.js');
     coffeeSync('src/configfinder.coffee', 'lib/configfinder.js');
     coffeeSync('src/cache.coffee', 'lib/cache.js');
@@ -35,25 +49,24 @@ task('compile:commandline', 'Compiles commandline.js', function() {
     if (!fs.existsSync('lib/reporters')) { fs.mkdirSync('lib/reporters'); }
     return (() => {
         const result = [];
-        for (let src of Array.from(glob.sync('reporters/*.coffee', { cwd: 'src' }))) {
+        for (const src of Array.from(glob.sync('reporters/*.coffee', { cwd: 'src' }))) {
         // Slice the "coffee" extension of the end and replace with js
-            const dest = src.slice(0, -6) + 'js';
+            const dest = `${src.slice(0, -6)}js`;
             result.push(coffeeSync(`src/${src}`, `lib/${dest}`));
         }
         return result;
     })();
 });
 
-task('compile:browserify', 'Uses browserify to compile coffeelint', function() {
-    const opts =
-        {standalone: 'coffeelint'};
+task('compile:browserify', 'Uses browserify to compile coffeelint', () => {
+    const opts = { standalone: 'coffeelint' };
     const b = browserify(opts);
-    b.add([ './src/coffeelint.coffee' ]);
+    b.add(['./src/coffeelint.coffee']);
     b.transform(require('coffeeify'));
     return b.bundle().pipe(fs.createWriteStream('lib/coffeelint.js'));
 });
 
-task('prepublish', 'Prepublish', function() {
+task('prepublish', 'Prepublish', () => {
     const { npm_config_argv } = process.env;
     if ((npm_config_argv != null) && (JSON.parse(npm_config_argv).original[0] === 'install')) {
         return;
@@ -72,16 +85,16 @@ task('prepublish', 'Prepublish', function() {
 });
 
 task('postpublish', 'Postpublish', () => // Revert the package.json back to it's original state
-exec('git checkout ./package.json', function(err) {
-  if (err) {
-    return console.error('Error reverting package.json: ' + err);
-}
-}));
+    exec('git checkout ./package.json', (err) => {
+        if (err) {
+            return console.error(`Error reverting package.json: ${err}`);
+        }
+    }));
 
 task('publish', 'publish', () => copySync('.package.json', 'package.json'));
 
-task('install', 'Install', function() {
-    if (!require("fs").existsSync("lib/commandline.js")) {
+task('install', 'Install', () => {
+    if (!require('fs').existsSync('lib/commandline.js')) {
         return invoke('compile');
     }
 });

@@ -1,3 +1,28 @@
+/* eslint-disable
+    func-names,
+    guard-for-in,
+    max-len,
+    no-continue,
+    no-empty,
+    no-loop-func,
+    no-multi-assign,
+    no-param-reassign,
+    no-plusplus,
+    no-restricted-syntax,
+    no-return-assign,
+    no-sequences,
+    no-shadow,
+    no-undef,
+    no-underscore-dangle,
+    no-unused-expressions,
+    no-unused-vars,
+    no-use-before-define,
+    no-var,
+    prefer-destructuring,
+    vars-on-top,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -19,7 +44,8 @@ CoffeeLint is freely distributable under the MIT license.
 // Coffeelint's namespace.
 // Browserify wrapps this file in a UMD that will set window.coffeelint to
 // exports
-let CoffeeScript, RULES;
+let CoffeeScript; let
+    RULES;
 const coffeelint = exports;
 
 // Hide from browserify
@@ -28,7 +54,7 @@ const nodeRequire = require;
 if (typeof window !== 'undefined' && window !== null) {
     // If we're in the browser assume CoffeeScript is already loaded.
     ({
-        CoffeeScript
+        CoffeeScript,
     } = window);
 }
 // By using nodeRequire it prevents browserify from finding this dependency.
@@ -52,16 +78,16 @@ const packageJSON = require('./../package.json');
 coffeelint.VERSION = packageJSON.version;
 
 // CoffeeLint error levels.
-const ERROR   = 'error';
-const WARN    = 'warn';
-const IGNORE  = 'ignore';
+const ERROR = 'error';
+const WARN = 'warn';
+const IGNORE = 'ignore';
 
-coffeelint.RULES = (RULES = require('./rules.coffee'));
+coffeelint.RULES = (RULES = require('./rules'));
 
 // Patch the source properties onto the destination.
-const extend = function(destination, ...sources) {
-    for (let source of Array.from(sources)) {
-        for (let k in source) { const v = source[k]; destination[k] = v; }
+const extend = function (destination, ...sources) {
+    for (const source of Array.from(sources)) {
+        for (const k in source) { const v = source[k]; destination[k] = v; }
     }
     return destination;
 };
@@ -70,7 +96,7 @@ const extend = function(destination, ...sources) {
 const defaults = (source, defaults) => extend({}, defaults, source);
 
 // Helper to add rules to disabled list
-const union = function(a, b) {
+const union = function (a, b) {
     let x;
     const c = {};
     for (x of Array.from(a)) {
@@ -92,15 +118,15 @@ const union = function(a, b) {
 // Helper to remove rules from disabled list
 const difference = (a, b) => Array.from(a).filter((x) => !Array.from(b).includes(x));
 
-const LineLinter = require('./line_linter.coffee');
-const LexicalLinter = require('./lexical_linter.coffee');
-const ASTLinter = require('./ast_linter.coffee');
+const LineLinter = require('./line_linter');
+const LexicalLinter = require('./lexical_linter');
+const ASTLinter = require('./ast_linter');
 
 // Cache instance, disabled by default
 let cache = null;
 
 // Merge default and user configuration.
-const mergeDefaultConfig = function(userConfig) {
+const mergeDefaultConfig = function (userConfig) {
     // When run from the browser it may not be able to find the ruleLoader.
     try {
         const ruleLoader = nodeRequire('./ruleLoader');
@@ -111,7 +137,7 @@ const mergeDefaultConfig = function(userConfig) {
     if (userConfig.coffeelint) {
         config.coffeelint = userConfig.coffeelint;
     }
-    for (let rule in RULES) {
+    for (const rule in RULES) {
         const ruleConfig = RULES[rule];
         config[rule] = defaults(userConfig[rule], ruleConfig);
     }
@@ -120,10 +146,10 @@ const mergeDefaultConfig = function(userConfig) {
 
 const sameJSON = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
-coffeelint.trimConfig = function(userConfig) {
+coffeelint.trimConfig = function (userConfig) {
     const newConfig = {};
     userConfig = mergeDefaultConfig(userConfig);
-    for (let rule in userConfig) {
+    for (const rule in userConfig) {
         const config = userConfig[rule];
         const dConfig = RULES[rule];
 
@@ -146,7 +172,7 @@ coffeelint.trimConfig = function(userConfig) {
         } else {
             config.module = config._module;
             delete config._module;
-            for (let key in config) {
+            for (const key in config) {
                 const value = config[key];
                 if (['message', 'description', 'name'].includes(key)) { continue; }
 
@@ -161,7 +187,7 @@ coffeelint.trimConfig = function(userConfig) {
     return newConfig;
 };
 
-coffeelint.invertLiterate = function(source) {
+coffeelint.invertLiterate = function (source) {
     source = CoffeeScript.helpers.invertLiterate(source);
     // Strip the first 4 spaces or a tab from every line.
     // After this the markdown is commented and all of the other code
@@ -183,12 +209,12 @@ coffeelint.invertLiterate = function(source) {
 };
 
 const _rules = {};
-coffeelint.registerRule = function(RuleConstructor, ruleName) {
+coffeelint.registerRule = function (RuleConstructor, ruleName) {
     if (ruleName == null) { ruleName = undefined; }
-    const p = new RuleConstructor;
+    const p = new RuleConstructor();
 
-    const name = __guard__(p != null ? p.rule : undefined, x => x.name) || '(unknown)';
-    const e = function(msg) { throw new Error(`Invalid rule: ${name} ${msg}`); };
+    const name = __guard__(p != null ? p.rule : undefined, (x) => x.name) || '(unknown)';
+    const e = function (msg) { throw new Error(`Invalid rule: ${name} ${msg}`); };
     if (p.rule == null) {
         e('Rules must provide rule attribute with a default configuration.');
     }
@@ -207,8 +233,8 @@ coffeelint.registerRule = function(RuleConstructor, ruleName) {
 
     if (typeof p.lintToken === 'function') {
         if (!p.tokens) { e("'tokens' is required for 'lintToken'"); }
-    } else if ((typeof p.lintLine !== 'function') &&
-            (typeof p.lintAST !== 'function')) {
+    } else if ((typeof p.lintLine !== 'function')
+            && (typeof p.lintAST !== 'function')) {
         e('Rules must implement lintToken, lintLine, or lintAST');
     }
 
@@ -217,60 +243,60 @@ coffeelint.registerRule = function(RuleConstructor, ruleName) {
     return _rules[p.rule.name] = RuleConstructor;
 };
 
-coffeelint.getRules = function() {
+coffeelint.getRules = function () {
     const output = {};
-    for (let key of Array.from(Object.keys(RULES).sort())) {
+    for (const key of Array.from(Object.keys(RULES).sort())) {
         output[key] = RULES[key];
     }
     return output;
 };
 
 // These all need to be explicitly listed so they get picked up by browserify.
-coffeelint.registerRule(require('./rules/arrow_spacing.coffee'));
-coffeelint.registerRule(require('./rules/braces_spacing.coffee'));
-coffeelint.registerRule(require('./rules/no_tabs.coffee'));
-coffeelint.registerRule(require('./rules/no_trailing_whitespace.coffee'));
-coffeelint.registerRule(require('./rules/max_line_length.coffee'));
-coffeelint.registerRule(require('./rules/line_endings.coffee'));
-coffeelint.registerRule(require('./rules/no_trailing_semicolons.coffee'));
-coffeelint.registerRule(require('./rules/indentation.coffee'));
-coffeelint.registerRule(require('./rules/camel_case_classes.coffee'));
-coffeelint.registerRule(require('./rules/colon_assignment_spacing.coffee'));
-coffeelint.registerRule(require('./rules/no_implicit_braces.coffee'));
-coffeelint.registerRule(require('./rules/no_nested_string_interpolation.coffee'));
-coffeelint.registerRule(require('./rules/no_plusplus.coffee'));
-coffeelint.registerRule(require('./rules/no_throwing_strings.coffee'));
-coffeelint.registerRule(require('./rules/no_backticks.coffee'));
-coffeelint.registerRule(require('./rules/no_implicit_parens.coffee'));
-coffeelint.registerRule(require('./rules/no_empty_param_list.coffee'));
-coffeelint.registerRule(require('./rules/no_stand_alone_at.coffee'));
-coffeelint.registerRule(require('./rules/space_operators.coffee'));
-coffeelint.registerRule(require('./rules/duplicate_key.coffee'));
-coffeelint.registerRule(require('./rules/empty_constructor_needs_parens.coffee'));
-coffeelint.registerRule(require('./rules/cyclomatic_complexity.coffee'));
-coffeelint.registerRule(require('./rules/newlines_after_classes.coffee'));
-coffeelint.registerRule(require('./rules/no_unnecessary_fat_arrows.coffee'));
-coffeelint.registerRule(require('./rules/missing_fat_arrows.coffee'));
+coffeelint.registerRule(require('./rules/arrow_spacing'));
+coffeelint.registerRule(require('./rules/braces_spacing'));
+coffeelint.registerRule(require('./rules/no_tabs'));
+coffeelint.registerRule(require('./rules/no_trailing_whitespace'));
+coffeelint.registerRule(require('./rules/max_line_length'));
+coffeelint.registerRule(require('./rules/line_endings'));
+coffeelint.registerRule(require('./rules/no_trailing_semicolons'));
+coffeelint.registerRule(require('./rules/indentation'));
+coffeelint.registerRule(require('./rules/camel_case_classes'));
+coffeelint.registerRule(require('./rules/colon_assignment_spacing'));
+coffeelint.registerRule(require('./rules/no_implicit_braces'));
+coffeelint.registerRule(require('./rules/no_nested_string_interpolation'));
+coffeelint.registerRule(require('./rules/no_plusplus'));
+coffeelint.registerRule(require('./rules/no_throwing_strings'));
+coffeelint.registerRule(require('./rules/no_backticks'));
+coffeelint.registerRule(require('./rules/no_implicit_parens'));
+coffeelint.registerRule(require('./rules/no_empty_param_list'));
+coffeelint.registerRule(require('./rules/no_stand_alone_at'));
+coffeelint.registerRule(require('./rules/space_operators'));
+coffeelint.registerRule(require('./rules/duplicate_key'));
+coffeelint.registerRule(require('./rules/empty_constructor_needs_parens'));
+coffeelint.registerRule(require('./rules/cyclomatic_complexity'));
+coffeelint.registerRule(require('./rules/newlines_after_classes'));
+coffeelint.registerRule(require('./rules/no_unnecessary_fat_arrows'));
+coffeelint.registerRule(require('./rules/missing_fat_arrows'));
 coffeelint.registerRule(
-    require('./rules/non_empty_constructor_needs_parens.coffee')
+    require('./rules/non_empty_constructor_needs_parens'),
 );
-coffeelint.registerRule(require('./rules/no_unnecessary_double_quotes.coffee'));
-coffeelint.registerRule(require('./rules/no_debugger.coffee'));
+coffeelint.registerRule(require('./rules/no_unnecessary_double_quotes'));
+coffeelint.registerRule(require('./rules/no_debugger'));
 coffeelint.registerRule(
-    require('./rules/no_interpolation_in_single_quotes.coffee')
+    require('./rules/no_interpolation_in_single_quotes'),
 );
-coffeelint.registerRule(require('./rules/no_empty_functions.coffee'));
-coffeelint.registerRule(require('./rules/prefer_english_operator.coffee'));
-coffeelint.registerRule(require('./rules/spacing_after_comma.coffee'));
+coffeelint.registerRule(require('./rules/no_empty_functions'));
+coffeelint.registerRule(require('./rules/prefer_english_operator'));
+coffeelint.registerRule(require('./rules/spacing_after_comma'));
 coffeelint.registerRule(
-    require('./rules/transform_messes_up_line_numbers.coffee')
+    require('./rules/transform_messes_up_line_numbers'),
 );
-coffeelint.registerRule(require('./rules/ensure_comprehensions.coffee'));
-coffeelint.registerRule(require('./rules/no_this.coffee'));
-coffeelint.registerRule(require('./rules/eol_last.coffee'));
-coffeelint.registerRule(require('./rules/no_private_function_fat_arrows.coffee'));
+coffeelint.registerRule(require('./rules/ensure_comprehensions'));
+coffeelint.registerRule(require('./rules/no_this'));
+coffeelint.registerRule(require('./rules/eol_last'));
+coffeelint.registerRule(require('./rules/no_private_function_fat_arrows'));
 
-const hasSyntaxError = function(source) {
+const hasSyntaxError = function (source) {
     try {
         // If there are syntax errors this will abort the lexical and line
         // linters.
@@ -280,7 +306,8 @@ const hasSyntaxError = function(source) {
     return true;
 };
 
-const ErrorReport = require('./error_report.coffee');
+const ErrorReport = require('./error_report');
+
 coffeelint.getErrorReport = () => new ErrorReport(coffeelint);
 
 // Check the source against the given configuration and return an array
@@ -295,8 +322,9 @@ coffeelint.getErrorReport = () => new ErrorReport(coffeelint);
 //       context:    'Optional details about why the rule was violated'
 //   }
 //
-coffeelint.lint = function(source, userConfig, literate) {
-    let inlineConfig, name, rule, ruleLoader, set;
+coffeelint.lint = function (source, userConfig, literate) {
+    let inlineConfig; let name; let rule; let ruleLoader; let
+        set;
     if (userConfig == null) { userConfig = {}; }
     if (literate == null) { literate = false; }
     let errors = [];
@@ -308,9 +336,9 @@ coffeelint.lint = function(source, userConfig, literate) {
     const config = mergeDefaultConfig(userConfig);
 
     if (literate) { source = this.invertLiterate(source); }
-    if (__guard__(userConfig != null ? userConfig.coffeelint : undefined, x => x.transforms) != null) {
+    if (__guard__(userConfig != null ? userConfig.coffeelint : undefined, (x) => x.transforms) != null) {
         const sourceLength = source.split('\n').length;
-        for (let m of Array.from(__guard__(userConfig != null ? userConfig.coffeelint : undefined, x1 => x1.transforms))) {
+        for (const m of Array.from(__guard__(userConfig != null ? userConfig.coffeelint : undefined, (x1) => x1.transforms))) {
             try {
                 ruleLoader = nodeRequire('./ruleLoader');
                 const transform = ruleLoader.require(m);
@@ -322,22 +350,21 @@ coffeelint.lint = function(source, userConfig, literate) {
         // changes one line into two early in the file and later condenses two
         // into one you'll end up with the same length and not get the warning
         // even though everything in between will be off by one.
-        if ((sourceLength !== source.split('\n').length) &&
-                (config.transform_messes_up_line_numbers.level !== 'ignore')) {
-
+        if ((sourceLength !== source.split('\n').length)
+                && (config.transform_messes_up_line_numbers.level !== 'ignore')) {
             errors.push(extend(
                 {
                     lineNumber: 1,
                     context: `File was transformed from \
 ${sourceLength} lines to \
-${source.split("\n").length} lines`
+${source.split('\n').length} lines`,
                 },
-                config.transform_messes_up_line_numbers
+                config.transform_messes_up_line_numbers,
             ));
         }
     }
 
-    if (__guard__(userConfig != null ? userConfig.coffeelint : undefined, x2 => x2.coffeescript) != null) {
+    if (__guard__(userConfig != null ? userConfig.coffeelint : undefined, (x2) => x2.coffeescript) != null) {
         CoffeeScript = ruleLoader.require(userConfig.coffeelint.coffeescript);
     }
 
@@ -361,12 +388,13 @@ ${source.split("\n").length} lines`
     // the actual inlined comment appears
     const disabledInitially = [];
     // Check ahead for inline enabled rules
-    for (let l of Array.from(source.split('\n'))) {
-        var array, regex;
+    for (const l of Array.from(source.split('\n'))) {
+        var array; var
+            regex;
         array = LineLinter.getDirective(l) || [],
-            regex = array[0],
-            set = array[1],
-            rule = array[array.length - 1];
+        regex = array[0],
+        set = array[1],
+        rule = array[array.length - 1];
         if (['enable', 'enable-line'].includes(set) && ((config[rule] != null ? config[rule].level : undefined) === 'ignore')) {
             disabledInitially.push(rule);
             config[rule].level = 'error';
@@ -387,14 +415,14 @@ ${source.split("\n").length} lines`
 
         // Do line linting.
         const {
-            tokensByLine
+            tokensByLine,
         } = lexicalLinter;
         const lineLinter = new LineLinter(source, config, _rules, tokensByLine,
             literate);
         const lineErrors = lineLinter.lint();
         errors = errors.concat(lineErrors);
         ({
-            inlineConfig
+            inlineConfig,
         } = lineLinter);
     } else {
         // default this so it knows what to do
@@ -402,7 +430,7 @@ ${source.split("\n").length} lines`
             enable: {},
             disable: {},
             'enable-line': {},
-            'disable-line': {}
+            'disable-line': {},
         };
     }
 
@@ -410,7 +438,7 @@ ${source.split("\n").length} lines`
     errors.sort((a, b) => a.lineNumber - b.lineNumber);
 
     // Create a list of all errors
-    const disabledEntirely = (function() {
+    const disabledEntirely = (function () {
         const result = [];
         const map = {};
         for ({ name } of Array.from(errors || [])) {
@@ -420,49 +448,47 @@ ${source.split("\n").length} lines`
             }
         }
         return result;
-    })();
+    }());
 
     // Disable/enable rules for inline blocks
     const allErrors = errors;
     errors = [];
     let disabled = disabledInitially;
     let nextLine = 0;
-    for (let i = 0, end = source.split('\n').length, asc = 0 <= end; asc ? i < end : i > end; asc ? i++ : i--) {
+    for (let i = 0, end = source.split('\n').length, asc = end >= 0; asc ? i < end : i > end; asc ? i++ : i--) {
         var disabledLine = disabled;
-        for (let cmd in inlineConfig) {
+        for (const cmd in inlineConfig) {
             var rules = inlineConfig[cmd][i];
-            if (rules != null) { ({
-                'disable'() {
-                    if (rules.length) {
-                        disabled = union(disabled, rules);
-                        return disabledLine = union(disabledLine, rules);
-                    } else {
+            if (rules != null) {
+                ({
+                    disable() {
+                        if (rules.length) {
+                            disabled = union(disabled, rules);
+                            return disabledLine = union(disabledLine, rules);
+                        }
                         return disabled = (disabledLine = disabledEntirely);
-                    }
-                },
-                'disable-line'() {
-                    if (rules.length) {
-                        return disabledLine = union(disabledLine, rules);
-                    } else {
+                    },
+                    'disable-line': function () {
+                        if (rules.length) {
+                            return disabledLine = union(disabledLine, rules);
+                        }
                         return disabledLine = disabledEntirely;
-                    }
-                },
-                'enable'() {
-                    if (rules.length) {
-                        disabled = difference(disabled, rules);
-                        return disabledLine = difference(disabledLine, rules);
-                    } else {
+                    },
+                    enable() {
+                        if (rules.length) {
+                            disabled = difference(disabled, rules);
+                            return disabledLine = difference(disabledLine, rules);
+                        }
                         return disabled = (disabledLine = disabledInitially);
-                    }
-                },
-                'enable-line'() {
-                    if (rules.length) {
-                        return disabledLine = difference(disabledLine, rules);
-                    } else {
+                    },
+                    'enable-line': function () {
+                        if (rules.length) {
+                            return disabledLine = difference(disabledLine, rules);
+                        }
                         return disabledLine = disabledInitially;
-                    }
-                }
-            }[cmd]()); }
+                    },
+                }[cmd]());
+            }
         }
         // advance line and append relevant messages
         while ((nextLine === i) && (allErrors.length > 0)) {
@@ -482,8 +508,8 @@ ${source.split("\n").length} lines`
     return errors;
 };
 
-coffeelint.setCache = obj => cache = obj;
+coffeelint.setCache = (obj) => cache = obj;
 
 function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+    return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
 }

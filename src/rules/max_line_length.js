@@ -1,3 +1,13 @@
+/* eslint-disable
+    consistent-return,
+    func-names,
+    max-len,
+    no-multi-assign,
+    no-multi-str,
+    no-shadow,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS206: Consider reworking classes to avoid initClass
@@ -6,21 +16,20 @@
  */
 let MaxLineLength;
 const regexes = {
-    literateComment: new RegExp(`\
+    literateComment: new RegExp('\
 ^\
 \\#\\s\
-`),
-    longUrlComment: new RegExp(`\
+'),
+    longUrlComment: new RegExp('\
 ^\\s*\\#\
 \\s*\
 http[^\\s]+$\
-`)
+'),
 };
 
-module.exports = (MaxLineLength = (function() {
+module.exports = (MaxLineLength = (function () {
     MaxLineLength = class MaxLineLength {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'max_line_length',
                 value: 80,
@@ -34,7 +43,7 @@ guide</a> does a good job explaining why you might want to limit the
 length of your lines, though this is a matter of taste.
     
 Lines can be no longer than eighty characters by default.\
-`
+`,
             };
         }
 
@@ -48,7 +57,6 @@ Lines can be no longer than eighty characters by default.\
             }
 
             if (max && (max < lineLength) && !regexes.longUrlComment.test(line)) {
-
                 if (!limitComments) {
                     if (lineApi.getLineTokens().length === 0) {
                         return;
@@ -56,11 +64,11 @@ Lines can be no longer than eighty characters by default.\
                 }
 
                 return {
-                    context: `Length is ${lineLength}, max is ${max}`
+                    context: `Length is ${lineLength}, max is ${max}`,
                 };
             }
         }
     };
     MaxLineLength.initClass();
     return MaxLineLength;
-})());
+}()));

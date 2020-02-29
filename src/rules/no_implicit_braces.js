@@ -1,3 +1,19 @@
+/* eslint-disable
+    consistent-return,
+    func-names,
+    max-len,
+    no-cond-assign,
+    no-multi-assign,
+    no-plusplus,
+    no-sequences,
+    no-shadow,
+    no-underscore-dangle,
+    no-unused-vars,
+    prefer-destructuring,
+    prefer-rest-params,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -8,10 +24,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let NoImplicitBraces;
-module.exports = (NoImplicitBraces = (function() {
+module.exports = (NoImplicitBraces = (function () {
     NoImplicitBraces = class NoImplicitBraces {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'no_implicit_braces',
                 level: 'ignore',
@@ -33,12 +48,12 @@ myFunction(a, b, {1:2, 3:4})
 </pre>
 Implicit braces are permitted by default, since their use is
 idiomatic CoffeeScript.\
-`
+`,
             };
-    
+
             this.prototype.tokens = [
                 '{', 'OUTDENT', 'INDENT', 'CLASS',
-                'IDENTIFIER', 'PROPERTY', 'EXTENDS'
+                'IDENTIFIER', 'PROPERTY', 'EXTENDS',
             ];
             this.prototype.dent = 0;
         }
@@ -90,7 +105,8 @@ idiomatic CoffeeScript.\
                     // is a bit weird. It generates '{' tokens around instance
                     // methods (also known as the prototypes of an Object).
 
-                    let _type, _val, ref;
+                    let _type; let _val; let
+                        ref;
                     [prevToken] = Array.from(tokenApi.peek(-1));
                     // If there is a TERMINATOR token right before the '{' token
                     if (prevToken === 'TERMINATOR') {
@@ -117,8 +133,8 @@ idiomatic CoffeeScript.\
         }
 
         trackClass(token, tokenApi) {
-
-            const array = [token, tokenApi.peek()], array1 = array[0], n0 = array1[0], ln = array1[array1.length - 1], [n1] = Array.from(array[1]);
+            const array = [token, tokenApi.peek()]; const array1 = array[0]; const n0 = array1[0]; const ln = array1[array1.length - 1]; const
+                [n1] = Array.from(array[1]);
 
             if (n0 === 'INDENT') { this.dent++; }
             if (n0 === 'OUTDENT') { this.dent--; }
@@ -135,4 +151,4 @@ idiomatic CoffeeScript.\
     };
     NoImplicitBraces.initClass();
     return NoImplicitBraces;
-})());
+}()));

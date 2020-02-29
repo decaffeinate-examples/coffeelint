@@ -1,3 +1,16 @@
+/* eslint-disable
+    class-methods-use-this,
+    func-names,
+    guard-for-in,
+    no-console,
+    no-multi-assign,
+    no-param-reassign,
+    no-restricted-syntax,
+    no-shadow,
+    no-useless-escape,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -9,11 +22,11 @@
 let CheckstyleReporter;
 const JsLintReporter = require('./jslint');
 
-module.exports = (CheckstyleReporter = (function() {
+module.exports = (CheckstyleReporter = (function () {
     CheckstyleReporter = class CheckstyleReporter {
         static initClass() {
-                // coffeelint: enable=no_debugger
-    
+            // coffeelint: enable=no_debugger
+
             this.prototype.escape = JsLintReporter.prototype.escape;
         }
 
@@ -32,15 +45,15 @@ module.exports = (CheckstyleReporter = (function() {
             this.print('<?xml version="1.0" encoding="utf-8"?>');
             this.print('<checkstyle version="4.3">');
 
-            for (let path in this.errorReport.paths) {
+            for (const path in this.errorReport.paths) {
                 const errors = this.errorReport.paths[path];
                 if (errors.length) {
                     this.print(`<file name=\"${path}\">`);
 
-                    for (let e of Array.from(errors)) {
+                    for (const e of Array.from(errors)) {
                         if (!this.quiet || (e.level === 'error')) {
                             let {
-                                level
+                                level,
                             } = e;
                             if (level === 'warn') { level = 'warning'; }
 
@@ -50,10 +63,9 @@ module.exports = (CheckstyleReporter = (function() {
                             this.print(`\
 <error line="${e.lineNumber}"
         severity="${this.escape(level)}"
-        message="${this.escape(e.message+'; context: '+context)}"
+        message="${this.escape(`${e.message}; context: ${context}`)}"
         source="coffeelint"/>\
-`
-                            );
+`);
                         }
                     }
                     this.print('</file>');
@@ -65,4 +77,4 @@ module.exports = (CheckstyleReporter = (function() {
     };
     CheckstyleReporter.initClass();
     return CheckstyleReporter;
-})());
+}()));

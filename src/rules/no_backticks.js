@@ -1,3 +1,12 @@
+/* eslint-disable
+    class-methods-use-this,
+    func-names,
+    no-multi-assign,
+    no-shadow,
+    no-unused-vars,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS206: Consider reworking classes to avoid initClass
@@ -5,10 +14,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let NoBackticks;
-module.exports = (NoBackticks = (function() {
+module.exports = (NoBackticks = (function () {
     NoBackticks = class NoBackticks {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'no_backticks',
                 level: 'error',
@@ -20,9 +28,9 @@ niche circumstances, they should be avoided because so none of
 JavaScript's "bad parts", like <tt>with</tt> and <tt>eval</tt>,
 sneak into CoffeeScript.
 This rule is enabled by default.\
-`
+`,
             };
-    
+
             this.prototype.tokens = ['JS'];
         }
 
@@ -32,4 +40,4 @@ This rule is enabled by default.\
     };
     NoBackticks.initClass();
     return NoBackticks;
-})());
+}()));

@@ -1,3 +1,11 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-unused-vars,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,6 +14,7 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const RULE = 'newlines_after_classes';
@@ -24,20 +33,20 @@ class Foo
     c: 'd'\
 `,
 
-        "won't match"(source) {
+        "won't match": function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 3
+                    value: 3,
                 },
                 indentation: {
                     level: 'ignore',
-                    value: 4
-                }
+                    value: 4,
+                },
             };
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
-        }
+        },
     },
 
     'Class with arbitrary Code following': {
@@ -59,27 +68,27 @@ class Bar extends Foo
         bla()\
 `,
 
-        'defaults to ignore newlines_after_classes'(source) {
+        'defaults to ignore newlines_after_classes': function (source) {
             const config = {
                 indentation: {
                     level: 'ignore',
-                    value: 4
-                }
+                    value: 4,
+                },
             };
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
         },
 
-        'has too few newlines after class'(source) {
+        'has too few newlines after class': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 4
+                    value: 4,
                 },
                 indentation: {
                     level: 'ignore',
-                    value: 4
-                }
+                    value: 4,
+                },
             };
             const errors = coffeelint.lint(source, config);
             assert.equal(errors.length, 1);
@@ -91,16 +100,16 @@ class Bar extends Foo
             return assert.equal(error.context, 'Expected 4 got 3');
         },
 
-        'has too many newlines after class'(source) {
+        'has too many newlines after class': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 2
+                    value: 2,
                 },
                 indentation: {
                     level: 'ignore',
-                    value: 4
-                }
+                    value: 4,
+                },
             };
             const errors = coffeelint.lint(source, config);
             assert.equal(errors.length, 1);
@@ -112,20 +121,20 @@ class Bar extends Foo
             return assert.equal(error.context, 'Expected 2 got 3');
         },
 
-        'has no errors'(source) {
+        'has no errors': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 3
+                    value: 3,
                 },
                 indentation: {
                     level: 'ignore',
-                    value: 4
-                }
+                    value: 4,
+                },
             };
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
-        }
+        },
     },
 
     'Fix #230, error when class ends with function': {
@@ -138,18 +147,18 @@ class Foo
 return Foo\
 `,
 
-        'passes properly with value of 2'(source) {
+        'passes properly with value of 2': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 2
-                }
+                    value: 2,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
             const error = errors[0];
             return assert.equal(errors.length, 1);
-        }
+        },
     },
 
     'Fix #245, error of class inside function call': {
@@ -168,12 +177,12 @@ test(->
 )\
 `,
 
-        'fails with value of 1'(source) {
+        'fails with value of 1': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 1
-                }
+                    value: 1,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -185,24 +194,24 @@ test(->
             return assert.equal(errors[0].context, 'Expected 1 got 2');
         },
 
-        'passes properly with value of 2'(source) {
+        'passes properly with value of 2': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 2
-                }
+                    value: 2,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
         },
 
-        'fails with value of 3'(source) {
+        'fails with value of 3': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 3
-                }
+                    value: 3,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -212,7 +221,7 @@ test(->
             assert.equal(errors[0].line, '');
             assert.equal(errors[0].rule, RULE);
             return assert.equal(errors[0].context, 'Expected 3 got 2');
-        }
+        },
     },
 
     'Fix #245, other case': {
@@ -227,12 +236,12 @@ a 'test case', ->
     f = result()\
 `,
 
-        'fails with value of 0'(source) {
+        'fails with value of 0': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 0
-                }
+                    value: 0,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -244,24 +253,24 @@ a 'test case', ->
             return assert.equal(errors[0].context, 'Expected 0 got 1');
         },
 
-        'passes with value of 1'(source) {
+        'passes with value of 1': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 1
-                }
+                    value: 1,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
         },
 
-        'fails with value of 2'(source) {
+        'fails with value of 2': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 2
-                }
+                    value: 2,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -271,7 +280,7 @@ a 'test case', ->
             assert.equal(errors[0].line, '');
             assert.equal(errors[0].rule, RULE);
             return assert.equal(errors[0].context, 'Expected 2 got 1');
-        }
+        },
     },
 
     'Fix #347, error when class ends with non-function property': {
@@ -283,18 +292,18 @@ class WhitespaceTest
 \
 `,
 
-        'passes properly with value of 2'(source) {
+        'passes properly with value of 2': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 2
-                }
+                    value: 2,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
             const error = errors[0];
             return assert.equal(errors.length, 0);
-        }
+        },
     },
 
     'Handles same line class declarations': {
@@ -309,23 +318,23 @@ A = class extends B
 Z = {}\
 `,
 
-        'passes when value is set to 1'(source) {
+        'passes when value is set to 1': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 1
-                }
+                    value: 1,
+                },
             };
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
         },
 
-        'fails when value is set to 2'(source) {
+        'fails when value is set to 2': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 2
-                }
+                    value: 2,
+                },
             };
             const errors = coffeelint.lint(source, config);
 
@@ -334,7 +343,7 @@ Z = {}\
             assert.equal(errors[0].line, '');
             assert.equal(errors[0].rule, RULE);
             return assert.equal(errors[0].context, 'Expected 2 got 1');
-        }
+        },
     },
 
     'Handle comments out after a class': {
@@ -352,12 +361,12 @@ class Bar extends Foo
 s = 3\
 `,
 
-        'throws error when newlines_after_classes is set to 0'(source) {
+        'throws error when newlines_after_classes is set to 0': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 0
-                }
+                    value: 0,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -368,12 +377,12 @@ s = 3\
             return assert.equal(errors[0].context, 'Expected 0 got 2');
         },
 
-        'throws error when newlines_after_classes is set to 1'(source) {
+        'throws error when newlines_after_classes is set to 1': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 1
-                }
+                    value: 1,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -384,17 +393,17 @@ s = 3\
             return assert.equal(errors[0].context, 'Expected 1 got 2');
         },
 
-        'passes when newlines_after_classes is set to 2'(source) {
+        'passes when newlines_after_classes is set to 2': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 2
-                }
+                    value: 2,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
-        }
+        },
     },
 
     'Fix #375, comments should not count as an empty line': {
@@ -407,17 +416,17 @@ class A
 FooBar()\
 `,
 
-        'defaults to ignore newlines_after_classes'(source) {
+        'defaults to ignore newlines_after_classes': function (source) {
             const errors = coffeelint.lint(source);
             return assert.equal(errors.length, 0);
         },
 
-        'throws error when newlines_after_classes is set to 0'(source) {
+        'throws error when newlines_after_classes is set to 0': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 0
-                }
+                    value: 0,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -428,24 +437,24 @@ FooBar()\
             return assert.equal(errors[0].context, 'Expected 0 got 1');
         },
 
-        'ignores comment when newlines_after_classes is set to 1'(source) {
+        'ignores comment when newlines_after_classes is set to 1': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 1
-                }
+                    value: 1,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
         },
 
-        'throws error when newlines_after_classes is set to 2'(source) {
+        'throws error when newlines_after_classes is set to 2': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 2
-                }
+                    value: 2,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -456,12 +465,12 @@ FooBar()\
             return assert.equal(errors[0].context, 'Expected 2 got 1');
         },
 
-        'throws error when newlines_after_classes is set to 3'(source) {
+        'throws error when newlines_after_classes is set to 3': function (source) {
             const config = {
                 newlines_after_classes: {
                     level: 'error',
-                    value: 3
-                }
+                    value: 3,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -470,7 +479,7 @@ FooBar()\
             assert.equal(errors[0].line, '');
             assert.equal(errors[0].rule, RULE);
             return assert.equal(errors[0].context, 'Expected 3 got 1');
-        }
-    }
+        },
+    },
 
 }).export(module);

@@ -1,3 +1,10 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -25,8 +32,7 @@ if true
     undefined\
 `,
 
-        '(example)'(code) {
-
+        '(example)': function (code) {
             // Grab your own ErrorReport
             const errorReport = coffeelint.getErrorReport();
             // Lint your files, no need to save the results.
@@ -41,7 +47,7 @@ if true
             assert.equal(result.stdin.length, 1);
             const error = result.stdin[0];
             return assert.equal(error.name, 'indentation');
-        }
-    }
+        },
+    },
 
 }).export(module);

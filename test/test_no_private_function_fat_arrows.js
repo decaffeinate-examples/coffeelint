@@ -1,3 +1,10 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,18 +13,19 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const config = {
     no_unnecessary_fat_arrows: { level: 'ignore' },
-    no_private_function_fat_arrows: { level: 'error' }
-  };
+    no_private_function_fat_arrows: { level: 'error' },
+};
 
 const RULE = 'no_private_function_fat_arrows';
 
 vows.describe(RULE).addBatch({
-    'eol': {
-        'should warn with fat arrow'() {
+    eol: {
+        'should warn with fat arrow': function () {
             const result = coffeelint.lint(`\
 class Foo
   foo = =>\
@@ -25,9 +33,9 @@ class Foo
             assert.equal(result.length, 1);
             assert.equal(result[0].rule, RULE);
             return assert.equal(result[0].level, 'error');
-          },
+        },
 
-        'should work with nested classes'() {
+        'should work with nested classes': function () {
             let result = coffeelint.lint(`\
 class Bar
   foo = ->
@@ -48,14 +56,14 @@ class Bar
             assert.equal(result.length, 1);
             assert.equal(result[0].rule, RULE);
             return assert.equal(result[0].level, 'error');
-          },
+        },
 
-        'should not warn without fat arrow'() {
+        'should not warn without fat arrow': function () {
             return assert.isEmpty(coffeelint.lint(`\
 class Foo
   foo = ->\
 `, config));
-          }
-      }
+        },
+    },
 
 }).export(module);

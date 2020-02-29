@@ -1,3 +1,19 @@
+/* eslint-disable
+    consistent-return,
+    func-names,
+    global-require,
+    guard-for-in,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-param-reassign,
+    no-restricted-syntax,
+    no-return-assign,
+    no-underscore-dangle,
+    no-use-before-define,
+    no-var,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -20,28 +36,27 @@ const findFileResults = {};
 
 // Searches for a file with a specified name starting with 'dir' and going all
 // the way up either until it finds the file or hits the root.
-var findFile = function(name, dir) {
+var findFile = function (name, dir) {
     dir = dir || process.cwd();
     const filename = path.normalize(path.join(dir, name));
     if (findFileResults[filename]) { return findFileResults[filename]; }
     const parent = path.resolve(dir, '../');
     if (fs.existsSync(filename)) {
         return findFileResults[filename] = filename;
-    } else if (dir === parent) {
+    } if (dir === parent) {
         return findFileResults[filename] = null;
-    } else {
-        return findFile(name, parent);
     }
+    return findFile(name, parent);
 };
 
 // Possibly find CoffeeLint configuration within a package.json file.
-const loadNpmConfig = function(dir) {
+const loadNpmConfig = function (dir) {
     const fp = findFile('package.json', dir);
-    if (fp) { return __guard__(loadJSON(fp), x => x.coffeelintConfig); }
+    if (fp) { return __guard__(loadJSON(fp), (x) => x.coffeelintConfig); }
 };
 
 // Parse a JSON file gracefully.
-var loadJSON = function(filename) {
+var loadJSON = function (filename) {
     try {
         return JSON.parse(stripComments(fs.readFileSync(filename).toString()));
     } catch (e) {
@@ -54,9 +69,9 @@ var loadJSON = function(filename) {
 // given), as either the package.json's 'coffeelintConfig' property, or a project
 // specific 'coffeelint.json' or a global 'coffeelint.json' in the home
 // directory.
-const getConfig = function(dir) {
-    if (process.env.COFFEELINT_CONFIG &&
-            fs.existsSync(process.env.COFFEELINT_CONFIG)) {
+const getConfig = function (dir) {
+    if (process.env.COFFEELINT_CONFIG
+            && fs.existsSync(process.env.COFFEELINT_CONFIG)) {
         return loadJSON(process.env.COFFEELINT_CONFIG);
     }
 
@@ -76,41 +91,42 @@ const getConfig = function(dir) {
 // filename and can accurately resolve module names. This will find all of the
 // modules and expand them into full paths so that they can be found when the
 // source and config are passed to `coffeelint.lint`
-const expandModuleNames = function(dir, config) {
-    for (let ruleName in config) {
+const expandModuleNames = function (dir, config) {
+    for (const ruleName in config) {
         const data = config[ruleName];
         if ((data != null ? data.module : undefined) != null) {
             config[ruleName]._module = config[ruleName].module;
             config[ruleName].module = resolve(data.module, {
                 basedir: dir,
-                extensions: ['.js', '.coffee', '.litcoffee', '.coffee.md']
+                extensions: ['.js', '.coffee', '.litcoffee', '.coffee.md'],
             });
         }
     }
 
     const {
-        coffeelint
+        coffeelint,
     } = config;
     if ((coffeelint != null ? coffeelint.transforms : undefined) != null) {
         coffeelint._transforms = coffeelint.transforms;
-        coffeelint.transforms = coffeelint.transforms.map(moduleName => resolve(moduleName, {
+        coffeelint.transforms = coffeelint.transforms.map((moduleName) => resolve(moduleName, {
             basedir: dir,
-            extensions: ['.js', '.coffee', '.litcoffee', '.coffee.md']
+            extensions: ['.js', '.coffee', '.litcoffee', '.coffee.md'],
         }));
     }
     if ((coffeelint != null ? coffeelint.coffeescript : undefined) != null) {
         coffeelint._coffeescript = coffeelint.coffeescript;
         coffeelint.coffeescript = resolve(coffeelint.coffeescript, {
             basedir: dir,
-            extensions: ['.js', '.coffee', '.litcoffee', '.coffee.md']
+            extensions: ['.js', '.coffee', '.litcoffee', '.coffee.md'],
         });
     }
 
     return config;
 };
 
-const extendConfig = function(config) {
-    let rule, ruleName;
+const extendConfig = function (config) {
+    let rule; let
+        ruleName;
     if (!config.extends) {
         return config;
     }
@@ -131,7 +147,7 @@ const extendConfig = function(config) {
 };
 
 
-exports.getConfig = function(filename = null) {
+exports.getConfig = function (filename = null) {
     let dir;
     if (filename) {
         dir = path.dirname(path.resolve(filename));
@@ -150,5 +166,5 @@ exports.getConfig = function(filename = null) {
 };
 
 function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+    return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
 }

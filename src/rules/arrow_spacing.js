@@ -1,3 +1,12 @@
+/* eslint-disable
+    class-methods-use-this,
+    consistent-return,
+    func-names,
+    no-multi-assign,
+    no-shadow,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,10 +15,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let ArrowSpacing;
-module.exports = (ArrowSpacing = (function() {
+module.exports = (ArrowSpacing = (function () {
     ArrowSpacing = class ArrowSpacing {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'arrow_spacing',
                 level: 'ignore',
@@ -30,9 +38,9 @@ x( -> 3)
 x((a,b)-> 3)
 </code>
 </pre>\
-`
+`,
             };
-    
+
             this.prototype.tokens = ['->', '=>'];
         }
 
@@ -59,22 +67,21 @@ x((a,b)-> 3)
             if (!pp) { return; }
 
             // Ignore empty functions
-            if (!token.spaced &&
-                    (tokenApi.peek(1)[0] === 'INDENT') &&
-                    (tokenApi.peek(2)[0] === 'OUTDENT')) {
+            if (!token.spaced
+                    && (tokenApi.peek(1)[0] === 'INDENT')
+                    && (tokenApi.peek(2)[0] === 'OUTDENT')) {
                 return null;
-            } else if (((token.spaced == null) && (token.newLine == null)) ||
+            } if (((token.spaced == null) && (token.newLine == null))
                    // Throw error unless the previous token...
-                   (((pp.spaced == null) && (pp[0] !== 'TERMINATOR')) && //1
-                    (pp.generated == null) && //2
-                    (pp[0] !== 'INDENT') && //3
-                    ((pp[1] !== '(') || !(pp.generated == null)))) { //4
+                   || (((pp.spaced == null) && (pp[0] !== 'TERMINATOR')) // 1
+                    && (pp.generated == null) // 2
+                    && (pp[0] !== 'INDENT') // 3
+                    && ((pp[1] !== '(') || !(pp.generated == null)))) { // 4
                 return true;
-            } else {
-                return null;
             }
+            return null;
         }
     };
     ArrowSpacing.initClass();
     return ArrowSpacing;
-})());
+}()));

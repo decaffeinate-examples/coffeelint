@@ -1,3 +1,17 @@
+/* eslint-disable
+    class-methods-use-this,
+    consistent-return,
+    guard-for-in,
+    no-console,
+    no-multi-assign,
+    no-param-reassign,
+    no-restricted-syntax,
+    no-shadow,
+    no-unused-vars,
+    no-useless-escape,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -7,7 +21,6 @@
  */
 let JSLintReporter;
 module.exports = (JSLintReporter = class JSLintReporter {
-
     constructor(errorReport, options) {
         this.errorReport = errorReport;
         if (options == null) { options = {}; }
@@ -18,17 +31,17 @@ module.exports = (JSLintReporter = class JSLintReporter {
         // coffeelint: disable=no_debugger
         return console.log(message);
     }
-        // coffeelint: enable=no_debugger
+    // coffeelint: enable=no_debugger
 
     publish() {
         this.print('<?xml version="1.0" encoding="utf-8"?><jslint>');
 
-        for (let path in this.errorReport.paths) {
+        for (const path in this.errorReport.paths) {
             const errors = this.errorReport.paths[path];
             if (errors.length) {
                 this.print(`<file name=\"${path}\">`);
 
-                for (let e of Array.from(errors)) {
+                for (const e of Array.from(errors)) {
                     // continue if @quiet and e.level isnt 'error'
 
                     if (!this.quiet || (e.level === 'error')) {
@@ -37,8 +50,7 @@ module.exports = (JSLintReporter = class JSLintReporter {
             lineEnd="${e.lineNumberEnd != null ? e.lineNumberEnd : e.lineNumber}"
             reason="[${this.escape(e.level)}] ${this.escape(e.message)}"
             evidence="${this.escape(e.context)}"/>\
-`
-                        );
+`);
                     }
                 }
                 this.print('</file>');
@@ -50,7 +62,7 @@ module.exports = (JSLintReporter = class JSLintReporter {
 
     escape(msg) {
         // Force msg to be a String
-        msg = '' + msg;
+        msg = `${msg}`;
         if (!msg) {
             return;
         }
@@ -61,10 +73,10 @@ module.exports = (JSLintReporter = class JSLintReporter {
             [/"/g, '&quot;'],
             [/</g, '&lt;'],
             [/>/g, '&gt;'],
-            [/'/g, '&apos;']
+            [/'/g, '&apos;'],
         ];
 
-        for (let r of Array.from(replacements)) {
+        for (const r of Array.from(replacements)) {
             msg = msg.replace(r[0], r[1]);
         }
 

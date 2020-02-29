@@ -1,3 +1,14 @@
+/* eslint-disable
+    consistent-return,
+    func-names,
+    no-multi-assign,
+    no-multi-str,
+    no-shadow,
+    no-unused-vars,
+    prefer-rest-params,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -8,10 +19,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let DuplicateKey;
-module.exports = (DuplicateKey = (function() {
+module.exports = (DuplicateKey = (function () {
     DuplicateKey = class DuplicateKey {
         static initClass() {
-    
             this.prototype.rule = {
                 // I don't know of any legitimate reason to define duplicate keys in an
                 // object. It seems to always be a mistake, it's also a syntax error in
@@ -20,22 +30,22 @@ module.exports = (DuplicateKey = (function() {
                 name: 'duplicate_key',
                 level: 'error',
                 message: 'Duplicate key defined in object or class',
-                description: `\
+                description: '\
 Prevents defining duplicate keys in object literals and classes\
-`
+',
             };
-    
+
             // TODO: after <1.10.0 is not supported, remove 'IDENTIFIER' here
             this.prototype.tokens = ['IDENTIFIER', 'PROPERTY', '{', '}'];
         }
 
         constructor() {
-            this.braceScopes = [];   // A stack tracking keys defined in nexted scopes.
+            this.braceScopes = []; // A stack tracking keys defined in nexted scopes.
         }
 
         lintToken(...args) {
-
-            const [type] = Array.from(args[0]), tokenApi = args[1];
+            const [type] = Array.from(args[0]); const
+                tokenApi = args[1];
             if (['{', '}'].includes(type)) {
                 this.lintBrace(...arguments);
                 return undefined;
@@ -67,10 +77,9 @@ Prevents defining duplicate keys in object literals and classes\
             key = `identifier-${key}`;
             if (this.currentScope[key]) {
                 return true;
-            } else {
-                this.currentScope[key] = token;
-                return null;
             }
+            this.currentScope[key] = token;
+            return null;
         }
 
         lintBrace(token) {
@@ -86,4 +95,4 @@ Prevents defining duplicate keys in object literals and classes\
     };
     DuplicateKey.initClass();
     return DuplicateKey;
-})());
+}()));

@@ -1,3 +1,13 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-restricted-syntax,
+    no-unused-vars,
+    prefer-destructuring,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -8,6 +18,7 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const RULE = 'no_implicit_braces';
@@ -28,14 +39,14 @@ z.y =
 \
 `,
 
-        'are allowed by default'(source) {
+        'are allowed by default': function (source) {
             const errors = coffeelint.lint(source);
             assert.isArray(errors);
             return assert.isEmpty(errors);
         },
 
-        'can be forbidden'(source) {
-            const config = {no_implicit_braces: { level: 'error' }};
+        'can be forbidden': function (source) {
+            const config = { no_implicit_braces: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             assert.lengthOf(errors, 3);
@@ -53,7 +64,7 @@ z.y =
             assert.equal(error.lineNumber, 7);
             assert.equal(error.message, 'Implicit braces are forbidden');
             return assert.equal(error.rule, RULE);
-        }
+        },
     },
 
     'Implicit braces strict': {
@@ -66,31 +77,32 @@ foo =
   baz: ['a', 'b', 'c']\
 `,
 
-        'blocks all implicit braces by default'(source) {
-            const config = {no_implicit_braces: { level: 'error' }};
+        'blocks all implicit braces by default': function (source) {
+            const config = { no_implicit_braces: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             assert.lengthOf(errors, 2);
             return (() => {
                 const result = [];
-                for (let { rule } of Array.from(errors)) {                     result.push(assert.equal(rule, RULE));
+                for (const { rule } of Array.from(errors)) {
+                    result.push(assert.equal(rule, RULE));
                 }
                 return result;
             })();
         },
 
-        'allows braces at the end of lines when strict is false'(source) {
+        'allows braces at the end of lines when strict is false': function (source) {
             const config = {
                 no_implicit_braces: {
                     level: 'error',
-                    strict: false
-                }
+                    strict: false,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Implicit braces in class definitions': {
@@ -119,12 +131,12 @@ z = class
 r = class then 1:2\
 `,
 
-        'are always ignored'(source) {
-            const config = {no_implicit_braces: { level: 'error' }};
+        'are always ignored': function (source) {
+            const config = { no_implicit_braces: { level: 'error' } };
             const errors = coffeelint.lint(source);
             assert.isArray(errors);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Test against use of implicit braces in loop with conditional (#459)': {
@@ -141,12 +153,12 @@ list =
       age: item.Age\
 `,
 
-        'throws no errors for this when strict is false'(source) {
+        'throws no errors for this when strict is false': function (source) {
             const config = {
                 no_implicit_braces: {
                     level: 'error',
-                    strict: false
-                }
+                    strict: false,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -154,17 +166,17 @@ list =
             return assert.lengthOf(errors, 0);
         },
 
-        'throws 2 errors when strict is true'(source) {
+        'throws 2 errors when strict is true': function (source) {
             const config = {
                 no_implicit_braces: {
                     level: 'error',
-                    strict: true
-                }
+                    strict: true,
+                },
             };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             return assert.lengthOf(errors, 2);
-        }
+        },
     },
 
 
@@ -221,12 +233,12 @@ class X extends A.B # check for . in class name.
 `;
         },
 
-        'throws no errors for this when strict is false'(source) {
+        'throws no errors for this when strict is false': function (source) {
             const config = {
                 no_implicit_braces: {
                     level: 'error',
-                    strict: false
-                }
+                    strict: false,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -234,12 +246,12 @@ class X extends A.B # check for . in class name.
             return assert.lengthOf(errors, 0);
         },
 
-        'throws 3 errors for this when strict is true'(source) {
+        'throws 3 errors for this when strict is true': function (source) {
             const config = {
                 no_implicit_braces: {
                     level: 'error',
-                    strict: true
-                }
+                    strict: true,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -254,7 +266,7 @@ class X extends A.B # check for . in class name.
 
             assert.equal(errors[2].lineNumber, 34);
             return assert.equal(errors[2].line, '    enumerable: true');
-        }
+        },
     },
 
     'Test Class with initial code in class being a defined function': {
@@ -268,13 +280,12 @@ class Foo
 `;
         },
 
-        'should pass without errors'(source) {
-
+        'should pass without errors': function (source) {
             const config = {
                 no_implicit_braces: {
                     level: 'error',
-                    strict: true
-                }
+                    strict: true,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -283,20 +294,19 @@ class Foo
             return assert.lengthOf(errors, 0);
         },
 
-        'should pass without errors when strict=false'(source) {
-
+        'should pass without errors when strict=false': function (source) {
             const config = {
                 no_implicit_braces: {
                     level: 'error',
-                    strict: false
-                }
+                    strict: false,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
 
             assert.isArray(errors);
             return assert.lengthOf(errors, 0);
-        }
+        },
     },
 
     'Test Class with @ in class name': {
@@ -308,13 +318,12 @@ class @A
 `;
         },
 
-        'should pass without errors'(source) {
-
+        'should pass without errors': function (source) {
             const config = {
                 no_implicit_braces: {
                     level: 'error',
-                    strict: true
-                }
+                    strict: true,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -323,20 +332,19 @@ class @A
             return assert.lengthOf(errors, 0);
         },
 
-        'should pass without errors when strict=false'(source) {
-
+        'should pass without errors when strict=false': function (source) {
             const config = {
                 no_implicit_braces: {
                     level: 'error',
-                    strict: false
-                }
+                    strict: false,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
 
             assert.isArray(errors);
             return assert.lengthOf(errors, 0);
-        }
-    }
+        },
+    },
 
 }).export(module);

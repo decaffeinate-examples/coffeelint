@@ -1,3 +1,16 @@
+/* eslint-disable
+    class-methods-use-this,
+    consistent-return,
+    func-names,
+    no-cond-assign,
+    no-multi-assign,
+    no-shadow,
+    no-underscore-dangle,
+    no-use-before-define,
+    prefer-destructuring,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS103: Rewrite code to no longer use __guard__
@@ -8,13 +21,11 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let CamelCaseClasses;
-const regexes =
-    {camelCase: /^[A-Z_][a-zA-Z\d]*$/};
+const regexes = { camelCase: /^[A-Z_][a-zA-Z\d]*$/ };
 
-module.exports = (CamelCaseClasses = (function() {
+module.exports = (CamelCaseClasses = (function () {
     CamelCaseClasses = class CamelCaseClasses {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'camel_case_classes',
                 level: 'error',
@@ -33,9 +44,9 @@ class boaConstrictor
 </code>
 </pre>
 This rule is enabled by default.\
-`
+`,
             };
-    
+
             this.prototype.tokens = ['CLASS'];
         }
 
@@ -55,9 +66,9 @@ This rule is enabled by default.\
             let className = null;
             let offset = 1;
             while (!className) {
-                if (__guard__(tokenApi.peek(offset + 1), x => x[0]) === '.') {
+                if (__guard__(tokenApi.peek(offset + 1), (x) => x[0]) === '.') {
                     offset += 2;
-                } else if (__guard__(tokenApi.peek(offset), x1 => x1[0]) === '@') {
+                } else if (__guard__(tokenApi.peek(offset), (x1) => x1[0]) === '@') {
                     offset += 1;
                 } else {
                     className = tokenApi.peek(offset)[1];
@@ -72,8 +83,8 @@ This rule is enabled by default.\
     };
     CamelCaseClasses.initClass();
     return CamelCaseClasses;
-})());
+}()));
 
 function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+    return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
 }

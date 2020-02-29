@@ -1,3 +1,14 @@
+/* eslint-disable
+    camelcase,
+    consistent-return,
+    func-names,
+    no-multi-assign,
+    no-shadow,
+    no-underscore-dangle,
+    no-use-before-define,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -8,10 +19,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let PreferEnglishOperator;
-module.exports = (PreferEnglishOperator = (function() {
+module.exports = (PreferEnglishOperator = (function () {
     PreferEnglishOperator = class PreferEnglishOperator {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'prefer_english_operator',
                 level: 'ignore',
@@ -21,9 +31,9 @@ module.exports = (PreferEnglishOperator = (function() {
 This rule prohibits &&, ||, ==, != and !.
 Use and, or, is, isnt, and not instead.
 !! for converting to a boolean is ignored.\
-`
+`,
             };
-    
+
             this.prototype.tokens = ['COMPARE', 'UNARY_MATH', '&&', '||'];
         }
 
@@ -31,32 +41,33 @@ Use and, or, is, isnt, and not instead.
             let level;
             const config = tokenApi.config[this.rule.name];
             ({
-                level
+                level,
             } = config);
             // Compare the actual token with the lexed token.
             const { first_column, last_column } = token[2];
             const line = tokenApi.lines[tokenApi.lineNumber];
             const actual_token = line.slice(first_column, +last_column + 1 || undefined);
-            const context =
-                (() => { switch (actual_token) {
-                    case '==': return 'Replace "==" with "is"';
-                    case '!=': return 'Replace "!=" with "isnt"';
-                    case '||': return 'Replace "||" with "or"';
-                    case '&&': return 'Replace "&&" with "and"';
-                    case '!':
-                        // `not not expression` seems awkward, so `!!expression`
-                        // gets special handling.
-                        if (__guard__(tokenApi.peek(1), x => x[0]) === 'UNARY_MATH') {
-                            level = config.doubleNotLevel;
-                            return '"?" is usually better than "!!"';
-                        } else if (__guard__(tokenApi.peek(-1), x1 => x1[0]) === 'UNARY_MATH') {
-                            // Ignore the 2nd half of the double not
-                            return undefined;
-                        } else {
-                            return 'Replace "!" with "not"';
-                        }
-                    default: return undefined;
-                } })();
+            const context = (() => {
+                switch (actual_token) {
+                case '==': return 'Replace "==" with "is"';
+                case '!=': return 'Replace "!=" with "isnt"';
+                case '||': return 'Replace "||" with "or"';
+                case '&&': return 'Replace "&&" with "and"';
+                case '!':
+                // `not not expression` seems awkward, so `!!expression`
+                // gets special handling.
+                    if (__guard__(tokenApi.peek(1), (x) => x[0]) === 'UNARY_MATH') {
+                        level = config.doubleNotLevel;
+                        return '"?" is usually better than "!!"';
+                    } if (__guard__(tokenApi.peek(-1), (x1) => x1[0]) === 'UNARY_MATH') {
+                    // Ignore the 2nd half of the double not
+                        return undefined;
+                    }
+                    return 'Replace "!" with "not"';
+
+                default: return undefined;
+                }
+            })();
 
             if (context != null) {
                 return { level, context };
@@ -65,8 +76,8 @@ Use and, or, is, isnt, and not instead.
     };
     PreferEnglishOperator.initClass();
     return PreferEnglishOperator;
-})());
+}()));
 
 function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+    return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
 }

@@ -1,3 +1,12 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-param-reassign,
+    no-restricted-syntax,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -8,13 +17,14 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const RULE = 'no_tabs';
 
 vows.describe(RULE).addBatch({
 
-    'Tabs': {
+    Tabs: {
         topic:
             `\
 x = () ->
@@ -22,7 +32,7 @@ x = () ->
 \t\treturn 1234\
 `,
 
-        'can be forbidden'(source) {
+        'can be forbidden': function (source) {
             const errors = coffeelint.lint(source);
             assert.equal(errors.length, 4);
             const error = errors[1];
@@ -31,34 +41,35 @@ x = () ->
             return assert.equal(error.rule, RULE);
         },
 
-        'can be permitted'(source) {
+        'can be permitted': function (source) {
             const config = {
                 no_tabs: { level: 'ignore' },
-                indentation: { level: 'error', value: 1 }
+                indentation: { level: 'error', value: 1 },
             };
 
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
         },
 
-        'are forbidden by default'(source) {
-            const config = {indentation: { level: 'error', value: 1 }};
+        'are forbidden by default': function (source) {
+            const config = { indentation: { level: 'error', value: 1 } };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             assert.equal(errors.length, 2);
             return (() => {
                 const result = [];
-                for (let { rule } of Array.from(errors)) {                     result.push(assert.equal(rule, RULE));
+                for (const { rule } of Array.from(errors)) {
+                    result.push(assert.equal(rule, RULE));
                 }
                 return result;
             })();
         },
 
-        'are allowed in strings'() {
+        'are allowed in strings': function () {
             const source = "x = () -> '\t'";
             const errors = coffeelint.lint(source);
             return assert.equal(errors.length, 0);
-        }
+        },
     },
 
     'Tabs in multi-line strings': {
@@ -70,10 +81,10 @@ y = """
 """\
 `,
 
-        'are ignored'(errors) {
+        'are ignored': function (errors) {
             errors = coffeelint.lint(errors);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Tabs in Heredocs': {
@@ -84,10 +95,10 @@ y = """
 ###\
 `,
 
-        'are ignored'(errors) {
+        'are ignored': function (errors) {
             errors = coffeelint.lint(errors);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Tabs in multi line regular expressions': {
@@ -98,10 +109,10 @@ y = """
 ///\
 `,
 
-        'are ignored'(errors) {
+        'are ignored': function (errors) {
             errors = coffeelint.lint(errors);
             return assert.isEmpty(errors);
-        }
-    }
+        },
+    },
 
 }).export(module);

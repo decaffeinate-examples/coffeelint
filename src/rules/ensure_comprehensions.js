@@ -1,3 +1,14 @@
+/* eslint-disable
+    consistent-return,
+    func-names,
+    no-cond-assign,
+    no-multi-assign,
+    no-multi-str,
+    no-plusplus,
+    no-shadow,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -6,21 +17,20 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let EnsureComprehensions;
-module.exports = (EnsureComprehensions = (function() {
+module.exports = (EnsureComprehensions = (function () {
     EnsureComprehensions = class EnsureComprehensions {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'ensure_comprehensions',
                 level: 'warn',
                 message: 'Comprehensions must have parentheses around them',
-                description: `\
+                description: '\
 This rule makes sure that parentheses are around comprehensions.\
-`
+',
             };
-    
+
             this.prototype.tokens = ['FOR'];
-    
+
             this.prototype.forBlock = false;
         }
 
@@ -49,7 +59,6 @@ This rule makes sure that parentheses are around comprehensions.\
             const prevIdents = [];
 
             while (prevToken = tokenApi.peek(peeker)) {
-
                 if (prevToken[0] === 'CALL_END') { numCallEnds++; }
                 if (prevToken[0] === 'CALL_START') { numCallStarts++; }
 
@@ -117,4 +126,4 @@ This rule makes sure that parentheses are around comprehensions.\
     };
     EnsureComprehensions.initClass();
     return EnsureComprehensions;
-})());
+}()));

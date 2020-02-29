@@ -1,3 +1,14 @@
+/* eslint-disable
+    class-methods-use-this,
+    consistent-return,
+    func-names,
+    no-multi-assign,
+    no-shadow,
+    no-underscore-dangle,
+    no-use-before-define,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -8,10 +19,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let NoStandAloneAt;
-module.exports = (NoStandAloneAt = (function() {
+module.exports = (NoStandAloneAt = (function () {
     NoStandAloneAt = class NoStandAloneAt {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'no_stand_alone_at',
                 level: 'ignore',
@@ -21,9 +31,9 @@ This rule checks that no stand alone @ are in use, they are
 discouraged. Further information in CoffeeScript issue <a
 href="https://github.com/jashkenas/coffee-script/issues/1601">
 #1601</a>\
-`
+`,
             };
-    
+
             this.prototype.tokens = ['@'];
         }
 
@@ -42,8 +52,8 @@ href="https://github.com/jashkenas/coffee-script/issues/1601">
             // sense to group it into no_stand_alone_at
             //
             // TODO: after v1.10.0 is not supported, remove 'IDENTIFIER' here
-            const isProtoProp = (nextToken === '::') &&
-                (needle = __guard__(tokenApi.peek(2), x => x[0]), ['IDENTIFIER', 'PROPERTY'].includes(needle));
+            const isProtoProp = (nextToken === '::')
+                && (needle = __guard__(tokenApi.peek(2), (x) => x[0]), ['IDENTIFIER', 'PROPERTY'].includes(needle));
 
             // Return an error after an '@' token unless:
             // 1: there is a '.' afterwards (isDot)
@@ -57,8 +67,8 @@ href="https://github.com/jashkenas/coffee-script/issues/1601">
     };
     NoStandAloneAt.initClass();
     return NoStandAloneAt;
-})());
+}()));
 
 function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+    return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
 }

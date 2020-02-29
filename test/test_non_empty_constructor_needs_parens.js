@@ -1,3 +1,11 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-restricted-syntax,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -8,6 +16,7 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const RULE = 'non_empty_constructor_needs_parens';
@@ -39,12 +48,12 @@ j = new bar.foo.Foo(
 )\
 `,
 
-        'warns about missing parens'(source) {
+        'warns about missing parens': function (source) {
             const config = {
                 non_empty_constructor_needs_parens: {
-                    level: 'error'
-                  }
-              };
+                    level: 'error',
+                },
+            };
 
             const errors = coffeelint.lint(source, config);
             assert.equal(errors.length, 4);
@@ -53,12 +62,13 @@ j = new bar.foo.Foo(
             assert.equal(errors[2].lineNumber, 9);
             assert.equal(errors[3].lineNumber, 10);
             return (() => {
-              const result = [];
-              for (let { rule } of Array.from(errors)) {                 result.push(assert.equal(rule, RULE));
-              }
-              return result;
+                const result = [];
+                for (const { rule } of Array.from(errors)) {
+                    result.push(assert.equal(rule, RULE));
+                }
+                return result;
             })();
-          }
-      }
+        },
+    },
 
 }).export(module);

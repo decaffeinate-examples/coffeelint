@@ -1,3 +1,10 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,6 +13,7 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 vows.describe('comment_config').addBatch({
@@ -21,16 +29,15 @@ c 'everybody gets a semi-colon';\
 `;
         },
 
-        'can disable rules in your config'(source) {
-            const config =
-                {no_trailing_semicolons: {level: 'error'}};
+        'can disable rules in your config': function (source) {
+            const config = { no_trailing_semicolons: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.equal(errors.length, 1);
             assert.equal(errors[0].rule, 'no_trailing_semicolons');
             assert.equal(errors[0].level, 'error');
             assert.equal(errors[0].lineNumber, 5);
             return assert.ok(errors[0].message);
-        }
+        },
     },
 
     'Disable all statements': {
@@ -44,16 +51,15 @@ c 'everybody gets a semi-colon';\
 `;
         },
 
-        'can disable rules in your config'(source) {
-            const config =
-                {no_trailing_semicolons: {level: 'error'}};
+        'can disable rules in your config': function (source) {
+            const config = { no_trailing_semicolons: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.equal(errors.length, 1);
             assert.equal(errors[0].rule, 'no_trailing_semicolons');
             assert.equal(errors[0].level, 'error');
             assert.equal(errors[0].lineNumber, 5);
             return assert.ok(errors[0].message);
-        }
+        },
     },
 
     'Disable statements per line': {
@@ -64,16 +70,15 @@ b 'bar';\
 `;
         },
 
-        'can disable rules in your config'(source) {
-            const config =
-                {no_trailing_semicolons: {level: 'error'}};
+        'can disable rules in your config': function (source) {
+            const config = { no_trailing_semicolons: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.equal(errors.length, 1);
             assert.equal(errors[0].rule, 'no_trailing_semicolons');
             assert.equal(errors[0].level, 'error');
             assert.equal(errors[0].lineNumber, 2);
             return assert.ok(errors[0].message);
-        }
+        },
     },
 
     'Expand shortcuts': {
@@ -84,16 +89,15 @@ b 'bar';\
 `;
         },
 
-        'will expand and honor directive shortcuts'(source) {
-            const config =
-                {no_trailing_semicolons: {level: 'error'}};
+        'will expand and honor directive shortcuts': function (source) {
+            const config = { no_trailing_semicolons: { level: 'error' } };
             const errors = coffeelint.lint(source, config);
             assert.equal(errors.length, 1);
             assert.equal(errors[0].rule, 'no_trailing_semicolons');
             assert.equal(errors[0].level, 'error');
             assert.equal(errors[0].lineNumber, 2);
             return assert.ok(errors[0].message);
-        }
+        },
     },
 
     'Disable all statements per line': {
@@ -104,12 +108,10 @@ b 'bar';\
 `;
         },
 
-        'can disable rules in your config'(source) {
+        'can disable rules in your config': function (source) {
             const config = {
-                no_trailing_semicolons: { level: 'error'
-            },
-                no_implicit_parens: { level: 'error'
-            }
+                no_trailing_semicolons: { level: 'error' },
+                no_implicit_parens: { level: 'error' },
             };
             const errors = coffeelint.lint(source, config);
             assert.equal(errors.length, 2);
@@ -121,7 +123,7 @@ b 'bar';\
             assert.equal(errors[1].level, 'error');
             assert.equal(errors[1].lineNumber, 2);
             return assert.ok(errors[1].message);
-        }
+        },
     },
 
     'Enable statements': {
@@ -135,7 +137,7 @@ c 'implicit parens allowed here'\
 `;
         },
 
-        'can enable rules not in your config'(source) {
+        'can enable rules not in your config': function (source) {
             const errors = coffeelint.lint(source);
             assert.equal(errors.length, 2);
 
@@ -148,7 +150,7 @@ c 'implicit parens allowed here'\
             assert.equal(errors[1].level, 'error');
             assert.equal(errors[1].lineNumber, 3);
             return assert.ok(errors[1].message);
-        }
+        },
     },
 
     'Enable statements per line': {
@@ -160,14 +162,14 @@ c 'baz'\
 `;
         },
 
-        'can enable rules not in your config'(source) {
+        'can enable rules not in your config': function (source) {
             const errors = coffeelint.lint(source);
             assert.equal(errors.length, 1);
             assert.equal(errors[0].rule, 'no_implicit_parens');
             assert.equal(errors[0].level, 'error');
             assert.equal(errors[0].lineNumber, 2);
             return assert.ok(errors[0].message);
-        }
+        },
     },
 
     'Revert to post-config state': {
@@ -181,12 +183,10 @@ c 'everybody gets a semi-colon';\
 `;
         },
 
-        'will re-enable all rules in your config'(source) {
+        'will re-enable all rules in your config': function (source) {
             const config = {
-                no_implicit_parens: { level: 'error'
-            },
-                no_trailing_semicolons: { level: 'error'
-            }
+                no_implicit_parens: { level: 'error' },
+                no_trailing_semicolons: { level: 'error' },
             };
             const errors = coffeelint.lint(source, config);
             assert.equal(errors.length, 2);
@@ -200,7 +200,7 @@ c 'everybody gets a semi-colon';\
             assert.equal(errors[1].level, 'error');
             assert.equal(errors[1].lineNumber, 5);
             return assert.ok(errors[1].message);
-        }
-    }
+        },
+    },
 
 }).export(module);

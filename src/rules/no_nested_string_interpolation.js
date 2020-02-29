@@ -1,3 +1,13 @@
+/* eslint-disable
+    consistent-return,
+    func-names,
+    no-multi-assign,
+    no-return-assign,
+    no-shadow,
+    no-unused-vars,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -7,10 +17,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let NoNestedStringInterpolation;
-module.exports = (NoNestedStringInterpolation = (function() {
+module.exports = (NoNestedStringInterpolation = (function () {
     NoNestedStringInterpolation = class NoNestedStringInterpolation {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'no_nested_string_interpolation',
                 level: 'warn',
@@ -26,9 +35,9 @@ str = "Book by #{firstName.toUpperCase()} #{lastName.toUpperCase()}"
 str = "Book by #{"#{firstName} #{lastName}".toUpperCase()}"
 </code>
 </pre>\
-`
+`,
             };
-    
+
             this.prototype.tokens = ['STRING_START', 'STRING_END'];
         }
 
@@ -38,12 +47,12 @@ str = "Book by #{"#{firstName} #{lastName}".toUpperCase()}"
         }
 
         lintToken(...args) {
-            const [type] = Array.from(args[0]), tokenApi = args[1];
+            const [type] = Array.from(args[0]); const
+                tokenApi = args[1];
             if (type === 'STRING_START') {
                 return this.trackStringStart();
-            } else {
-                return this.trackStringEnd();
             }
+            return this.trackStringEnd();
         }
 
         trackStringStart() {
@@ -63,4 +72,4 @@ str = "Book by #{"#{firstName} #{lastName}".toUpperCase()}"
     };
     NoNestedStringInterpolation.initClass();
     return NoNestedStringInterpolation;
-})());
+}()));

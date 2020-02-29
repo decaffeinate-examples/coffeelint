@@ -1,3 +1,12 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-multi-str,
+    prefer-destructuring,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,6 +15,7 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const RULE = 'ensure_comprehensions';
@@ -27,12 +37,12 @@ if a is b
     console.log x\
 `,
 
-        'are ignored'(source) {
+        'are ignored': function (source) {
             config[RULE] = { level: 'error' };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'When forgetting parens': {
@@ -48,7 +58,7 @@ if a is b
     console.log x\
 `,
 
-        'throws an error'(source) {
+        'throws an error': function (source) {
             config[RULE] = { level: 'error' };
 
             const errors = coffeelint.lint(source, config);
@@ -61,12 +71,12 @@ if a is b
             return assert.equal(error.rule, RULE);
         },
 
-        'doesn\'t throw an error when rule is ignore'(source) {
+        'doesn\'t throw an error when rule is ignore': function (source) {
             config[RULE] = { level: 'ignore' };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Doesn\'t trigger if we encounter key/value of the loop before equal sign': {
@@ -88,7 +98,7 @@ yak(food) for food in foods when food isnt 'chocolate'
 newConfig[key] = value for key, value of config\
 `,
 
-        'doesn\'t throw an error'(source) {
+        'doesn\'t throw an error': function (source) {
             config[RULE] = { level: 'error' };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
@@ -103,7 +113,7 @@ newConfig[key] = value for key, value of config\
             assert.equal(error.lineNumber, 9);
             assert.equal(error.message, errorMessage);
             return assert.equal(error.rule, RULE);
-        }
+        },
     },
 
     'Doesn\'t trigger if we encounter key/value and there is no equal sign': {
@@ -119,12 +129,12 @@ sum += n for n in nums
 eat food for food in foods when food isnt 'chocolate'\
 `,
 
-        'doesn\'t throw an error'(source) {
+        'doesn\'t throw an error': function (source) {
             config[RULE] = { level: 'error' };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Doesn\'t trigger when variable is set to a for-loop with a block': {
@@ -138,12 +148,12 @@ myLines = for row in [start..end]
   line\
 `,
 
-        'doesn\'t throw an error'(source) {
+        'doesn\'t throw an error': function (source) {
             config[RULE] = { level: 'error' };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Functions return all comprehensions as an array': {
@@ -161,26 +171,26 @@ myLines = -> (row[start] + "!" for row in [start..end])
 \
 `,
 
-        'doesn\'t throw an error'(source) {
+        'doesn\'t throw an error': function (source) {
             config[RULE] = { level: 'error' };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Comprehensions that are called as a function parameter should not error': {
         topic:
-            `\
-b = a(food for food in foods when food isnt 'chocolate')\
-`,
+            '\
+b = a(food for food in foods when food isnt \'chocolate\')\
+',
 
-        'doesn\'t throw an error'(source) {
+        'doesn\'t throw an error': function (source) {
             config[RULE] = { level: 'error' };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     "Nested loops don't trigger errors unless set to something": {
@@ -196,7 +206,7 @@ matrix2 = (col for cols, col of rows for rows in mtx)
 matrix3 = k for k,v in mtx\
 `,
 
-        'doesn\'t throw an error'(source) {
+        'doesn\'t throw an error': function (source) {
             config[RULE] = { level: 'error' };
             const errors = coffeelint.lint(source, config);
             assert.isArray(errors);
@@ -206,7 +216,7 @@ matrix3 = k for k,v in mtx\
             assert.equal(error.lineNumber, 8);
             assert.equal(error.message, errorMessage);
             return assert.equal(error.rule, RULE);
-        }
-    }
+        },
+    },
 
 }).export(module);

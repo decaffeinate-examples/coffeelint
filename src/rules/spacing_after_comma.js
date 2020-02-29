@@ -1,3 +1,12 @@
+/* eslint-disable
+    consistent-return,
+    func-names,
+    no-multi-assign,
+    no-multi-str,
+    no-shadow,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -6,18 +15,18 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let SpacingAfterComma;
-module.exports = (SpacingAfterComma = (function() {
+module.exports = (SpacingAfterComma = (function () {
     SpacingAfterComma = class SpacingAfterComma {
         static initClass() {
             this.prototype.rule = {
                 name: 'spacing_after_comma',
                 level: 'ignore',
                 message: 'a space is required after commas',
-                description: `\
+                description: '\
 This rule checks to make sure you have a space after commas.\
-`
+',
             };
-    
+
             this.prototype.tokens = [',', 'REGEX_START', 'REGEX_END'];
         }
 
@@ -37,8 +46,8 @@ This rule checks to make sure you have a space after commas.\
                 return;
             }
 
-            if (!token.spaced && !token.newLine && !token.generated &&
-                    !this.isRegexFlag(token, tokenApi)) {
+            if (!token.spaced && !token.newLine && !token.generated
+                    && !this.isRegexFlag(token, tokenApi)) {
                 return true;
             }
         }
@@ -55,4 +64,4 @@ This rule checks to make sure you have a space after commas.\
     };
     SpacingAfterComma.initClass();
     return SpacingAfterComma;
-})());
+}()));

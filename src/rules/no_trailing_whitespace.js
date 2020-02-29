@@ -1,3 +1,17 @@
+/* eslint-disable
+    class-methods-use-this,
+    consistent-return,
+    func-names,
+    max-len,
+    no-multi-assign,
+    no-param-reassign,
+    no-restricted-syntax,
+    no-self-assign,
+    no-shadow,
+    no-useless-escape,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -9,13 +23,12 @@ let NoTrailingWhitespace;
 const regexes = {
     trailingWhitespace: /[^\s]+[\t ]+\r?$/,
     onlySpaces: /^[\t ]+\r?$/,
-    lineHasComment: /^\s*[^\#]*\#/
+    lineHasComment: /^\s*[^\#]*\#/,
 };
 
-module.exports = (NoTrailingWhitespace = (function() {
+module.exports = (NoTrailingWhitespace = (function () {
     NoTrailingWhitespace = class NoTrailingWhitespace {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'no_trailing_whitespace',
                 level: 'error',
@@ -25,12 +38,12 @@ module.exports = (NoTrailingWhitespace = (function() {
                 description: `\
 This rule forbids trailing whitespace in your code, since it is
 needless cruft. It is enabled by default.\
-`
+`,
             };
         }
 
         lintLine(line, lineApi) {
-            if (!(lineApi.config['no_trailing_whitespace'] != null ? lineApi.config['no_trailing_whitespace'].allowed_in_empty_lines : undefined)) {
+            if (!(lineApi.config.no_trailing_whitespace != null ? lineApi.config.no_trailing_whitespace.allowed_in_empty_lines : undefined)) {
                 if (regexes.onlySpaces.test(line)) {
                     return true;
                 }
@@ -38,7 +51,7 @@ needless cruft. It is enabled by default.\
 
             if (regexes.trailingWhitespace.test(line)) {
                 // By default only the regex above is needed.
-                if (!(lineApi.config['no_trailing_whitespace'] != null ? lineApi.config['no_trailing_whitespace'].allowed_in_comments : undefined)) {
+                if (!(lineApi.config.no_trailing_whitespace != null ? lineApi.config.no_trailing_whitespace.allowed_in_comments : undefined)) {
                     return true;
                 }
 
@@ -53,7 +66,7 @@ needless cruft. It is enabled by default.\
 
                 // To avoid confusion when a string might contain a "#", every string
                 // on this line will be removed. before checking for a comment
-                for (let str of Array.from((Array.from(tokens).filter((token) => token[0] === 'STRING').map((token) => token[1])))) {
+                for (const str of Array.from((Array.from(tokens).filter((token) => token[0] === 'STRING').map((token) => token[1])))) {
                     line = line.replace(str, 'STRING');
                 }
 
@@ -65,4 +78,4 @@ needless cruft. It is enabled by default.\
     };
     NoTrailingWhitespace.initClass();
     return NoTrailingWhitespace;
-})());
+}()));

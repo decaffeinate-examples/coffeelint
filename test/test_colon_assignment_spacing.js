@@ -1,3 +1,11 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-restricted-syntax,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -7,6 +15,7 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const RULE = 'colon_assignment_spacing';
@@ -23,19 +32,19 @@ stringyObject =
   'stringkey' : 'ok'\
 `,
 
-        'will not return an error'(source) {
+        'will not return an error': function (source) {
             const config = {
                 colon_assignment_spacing: {
                     level: 'error',
                     spacing: {
                         left: 1,
-                        right: 1
-                    }
-                }
+                        right: 1,
+                    },
+                },
             };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'No space before assignment': {
@@ -50,19 +59,19 @@ stringyObject =
   'stringkey': 'ok'\
 `,
 
-        'will not return an error'(source) {
+        'will not return an error': function (source) {
             const config = {
                 colon_assignment_spacing: {
                     level: 'error',
                     spacing: {
                         left: 0,
-                        right: 1
-                    }
-                }
+                        right: 1,
+                    },
+                },
             };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Newline to the right of assignment': {
@@ -73,19 +82,19 @@ query:
   isArray: false\
 `,
 
-        'will not return an error'(source) {
+        'will not return an error': function (source) {
             const config = {
                 colon_assignment_spacing: {
                     level: 'error',
                     spacing: {
                         left: 0,
-                        right: 1
-                    }
-                }
+                        right: 1,
+                    },
+                },
             };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Improper spacing around assignment': {
@@ -98,34 +107,34 @@ stringyObject =
   'stringkey': 'notcool'\
 `,
 
-        'will return an error'(source) {
+        'will return an error': function (source) {
             const config = {
                 colon_assignment_spacing: {
                     level: 'error',
                     spacing: {
                         left: 1,
-                        right: 1
-                    }
-                }
+                        right: 1,
+                    },
+                },
             };
             const errors = coffeelint.lint(source, config);
-            for (let { rule } of Array.from(errors)) { assert.equal(rule, RULE); }
+            for (const { rule } of Array.from(errors)) { assert.equal(rule, RULE); }
             return assert.lengthOf(errors, 3);
         },
 
-        'will ignore an error'(source) {
+        'will ignore an error': function (source) {
             const config = {
                 colon_assignment_spacing: {
                     level: 'ignore',
                     spacing: {
                         left: 1,
-                        right: 1
-                    }
-                }
+                        right: 1,
+                    },
+                },
             };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Should not complain about strings': {
@@ -136,19 +145,19 @@ foo = (stuff) ->
   # do real work\
 `,
 
-        'will return an error'(source) {
+        'will return an error': function (source) {
             const config = {
                 colon_assignment_spacing: {
                     level: 'error',
                     spacing: {
                         left: 1,
-                        right: 1
-                    }
-                }
+                        right: 1,
+                    },
+                },
             };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors);
-        }
-    }
+        },
+    },
 
 }).export(module);

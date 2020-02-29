@@ -1,3 +1,13 @@
+/* eslint-disable
+    consistent-return,
+    func-names,
+    no-multi-assign,
+    no-plusplus,
+    no-shadow,
+    no-unused-vars,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -6,10 +16,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let NewlinesAfterClasses;
-module.exports = (NewlinesAfterClasses = (function() {
+module.exports = (NewlinesAfterClasses = (function () {
     NewlinesAfterClasses = class NewlinesAfterClasses {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'newlines_after_classes',
                 value: 3,
@@ -21,11 +30,11 @@ module.exports = (NewlinesAfterClasses = (function() {
 Options:
 - <pre><code>value</code></pre> - The number of required newlines
 after class definitions. Defaults to 3.\
-`
+`,
             };
-    
+
             this.prototype.tokens = ['CLASS', '}', '{'];
-    
+
             this.prototype.classBracesCount = 0;
             this.prototype.classCount = 0;
         }
@@ -82,7 +91,7 @@ after class definitions. Defaults to 3.\
                         if ((got !== ending) && ((trueLine + ending) <= lines.length)) {
                             return {
                                 context: `Expected ${ending} got ${got}`,
-                                lineNumber: trueLine
+                                lineNumber: trueLine,
                             };
                         }
                     }
@@ -92,4 +101,4 @@ after class definitions. Defaults to 3.\
     };
     NewlinesAfterClasses.initClass();
     return NewlinesAfterClasses;
-})());
+}()));

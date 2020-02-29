@@ -1,3 +1,11 @@
+/* eslint-disable
+    class-methods-use-this,
+    func-names,
+    no-multi-assign,
+    no-shadow,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -5,10 +13,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let NoThrowingStrings;
-module.exports = (NoThrowingStrings = (function() {
+module.exports = (NoThrowingStrings = (function () {
     NoThrowingStrings = class NoThrowingStrings {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'no_throwing_strings',
                 level: 'error',
@@ -32,9 +39,9 @@ throw getSomeString()
 </code>
 </pre>
 This rule is enabled by default.\
-`
+`,
             };
-    
+
             this.prototype.tokens = ['THROW'];
         }
 
@@ -49,4 +56,4 @@ This rule is enabled by default.\
     };
     NoThrowingStrings.initClass();
     return NoThrowingStrings;
-})());
+}()));

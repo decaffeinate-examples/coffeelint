@@ -1,3 +1,16 @@
+/* eslint-disable
+    class-methods-use-this,
+    consistent-return,
+    func-names,
+    no-multi-assign,
+    no-multi-str,
+    no-param-reassign,
+    no-restricted-syntax,
+    no-shadow,
+    no-unused-vars,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -7,28 +20,27 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let SpaceOperators;
-module.exports = (SpaceOperators = (function() {
+module.exports = (SpaceOperators = (function () {
     SpaceOperators = class SpaceOperators {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'space_operators',
                 level: 'ignore',
                 message: 'Operators must be spaced properly',
-                description: `\
+                description: '\
 This rule enforces that operators have spaces around them.\
-`
+',
             };
-    
+
             this.prototype.tokens = ['+', '-', '=', '**', 'MATH', 'COMPARE',
                 '&', '^', '|', '&&', '||', 'COMPOUND_ASSIGN',
-                'STRING_START', 'STRING_END', 'CALL_START', 'CALL_END'
+                'STRING_START', 'STRING_END', 'CALL_START', 'CALL_END',
             ];
         }
 
         constructor() {
-            this.callTokens = [];    // A stack tracking the call token pairs.
-            this.parenTokens = [];   // A stack tracking the parens token pairs.
+            this.callTokens = []; // A stack tracking the call token pairs.
+            this.parenTokens = []; // A stack tracking the parens token pairs.
             this.interpolationLevel = 0;
         }
 
@@ -47,9 +59,8 @@ This rule enforces that operators have spaces around them.\
             // These may return errors
             if (['+', '-'].includes(type)) {
                 return this.lintPlus(token, tokenApi);
-            } else {
-                return this.lintMath(token, tokenApi);
             }
+            return this.lintMath(token, tokenApi);
         }
 
         lintPlus(token, tokenApi) {
@@ -62,32 +73,30 @@ This rule enforces that operators have spaces around them.\
             const p = tokenApi.peek(-1);
 
             const unaries = ['TERMINATOR', '(', '=', '-', '+', ',', 'CALL_START',
-                        'INDEX_START', '..', '...', 'COMPARE', 'IF', 'THROW',
-                        '&', '^', '|', '&&', '||', 'POST_IF', ':', '[', 'INDENT',
-                        'COMPOUND_ASSIGN', 'RETURN', 'MATH', 'BY', 'LEADING_WHEN'];
+                'INDEX_START', '..', '...', 'COMPARE', 'IF', 'THROW',
+                '&', '^', '|', '&&', '||', 'POST_IF', ':', '[', 'INDENT',
+                'COMPOUND_ASSIGN', 'RETURN', 'MATH', 'BY', 'LEADING_WHEN'];
 
             const isUnary = !p ? false : Array.from(unaries).includes(p[0]);
             const notFirstToken = (p || (token.spaced != null) || token.newLine);
-            if (notFirstToken && ((isUnary && (token.spaced != null)) ||
-                    (!isUnary && !token.newLine &&
-                    (!token.spaced || (p && !p.spaced))))) {
+            if (notFirstToken && ((isUnary && (token.spaced != null))
+                    || (!isUnary && !token.newLine
+                    && (!token.spaced || (p && !p.spaced))))) {
                 return { context: token[1] };
-            } else {
-                return null;
             }
+            return null;
         }
 
         lintMath(token, tokenApi) {
             const p = tokenApi.peek(-1);
             if (!token.newLine && (!token.spaced || (p && !p.spaced))) {
                 return { context: token[1] };
-            } else {
-                return null;
             }
+            return null;
         }
 
         isInExtendedRegex() {
-            for (let t of Array.from(this.callTokens)) {
+            for (const t of Array.from(this.callTokens)) {
                 if (t.isRegex) { return true; }
             }
             return false;
@@ -122,4 +131,4 @@ This rule enforces that operators have spaces around them.\
     };
     SpaceOperators.initClass();
     return SpaceOperators;
-})());
+}()));

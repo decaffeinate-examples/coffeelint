@@ -1,3 +1,13 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    max-len,
+    no-plusplus,
+    no-restricted-syntax,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -8,6 +18,7 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const RULE = 'space_operators';
@@ -97,16 +108,16 @@ a//b
 a%%b\
 `,
 
-        'are permitted by default'(source) {
+        'are permitted by default': function (source) {
             const config = { no_nested_string_interpolation: { level: 'ignore' } };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors);
         },
 
-        'can be forbidden'(source) {
+        'can be forbidden': function (source) {
             const config = {
                 space_operators: { level: 'error' },
-                no_nested_string_interpolation: { level: 'ignore' }
+                no_nested_string_interpolation: { level: 'ignore' },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -119,7 +130,7 @@ a%%b\
             assert.equal(error.rule, RULE);
             assert.equal(error.lineNumber, 1);
             return assert.equal(error.message, 'Operators must be spaced properly');
-        }
+        },
     },
 
     'Correctly spaced operators': {
@@ -184,15 +195,15 @@ switch x
   when -1 then 42\
 `,
 
-        'are permitted'(source) {
+        'are permitted': function (source) {
             const config = {
                 space_operators: { level: 'error' },
-                no_nested_string_interpolation: { level: 'ignore' }
+                no_nested_string_interpolation: { level: 'ignore' },
             };
 
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Spaces around unary operators': {
@@ -202,26 +213,27 @@ switch x
 - - 1\
 `,
 
-        'are permitted by default'(source) {
+        'are permitted by default': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
         },
 
-        'can be forbidden'(source) {
+        'can be forbidden': function (source) {
             const config = {
                 space_operators: { level: 'error' },
-                no_nested_string_interpolation: { level: 'ignore' }
+                no_nested_string_interpolation: { level: 'ignore' },
             };
 
             const errors = coffeelint.lint(source, config);
             assert.lengthOf(errors, 2);
             return (() => {
                 const result = [];
-                for (let { rule } of Array.from(errors)) {                     result.push(assert.equal(rule, RULE));
+                for (const { rule } of Array.from(errors)) {
+                    result.push(assert.equal(rule, RULE));
                 }
                 return result;
             })();
-        }
-    }
+        },
+    },
 
 }).export(module);

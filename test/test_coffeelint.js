@@ -1,3 +1,11 @@
+/* eslint-disable
+    consistent-return,
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,6 +14,7 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 vows.describe('coffeelint').addBatch({
@@ -13,24 +22,25 @@ vows.describe('coffeelint').addBatch({
     "CoffeeLint's version number": {
         topic: coffeelint.VERSION,
 
-        'exists'(version) {
+        exists(version) {
             return assert.isString(version);
-        }
+        },
     },
 
     "CoffeeLint's errors": {
-        topic() { return coffeelint.lint(`\
+        topic() {
+            return coffeelint.lint(`\
 a = () ->\t
     1234\
-`
-        ); },
+`);
+        },
 
-        'are sorted by line number'(errors) {
+        'are sorted by line number': function (errors) {
             assert.isArray(errors);
             assert.lengthOf(errors, 2);
             assert.equal(errors[1].lineNumber, 2);
             return assert.equal(errors[0].lineNumber, 1);
-        }
+        },
     },
 
     'Errors in the source': {
@@ -42,7 +52,7 @@ switch 'a'
     something\
 `,
 
-        'are reported'(source) {
+        'are reported': function (source) {
             let m;
             const errors = coffeelint.lint(source);
             assert.isArray(errors);
@@ -62,7 +72,7 @@ switch 'a'
             }
 
             return assert.equal(error.message, m);
-        }
-    }
+        },
+    },
 
 }).export(module);

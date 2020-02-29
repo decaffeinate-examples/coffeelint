@@ -1,3 +1,11 @@
+/* eslint-disable
+    class-methods-use-this,
+    no-multi-assign,
+    no-shadow,
+    no-unused-vars,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 // this is used for testing... best not to actually use
 
 let PassThroughReporter;

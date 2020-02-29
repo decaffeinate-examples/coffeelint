@@ -1,3 +1,10 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,6 +13,7 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const RULE = 'no_throwing_strings';
@@ -22,7 +30,7 @@ throw """
 """\
 `,
 
-        'is forbidden by default'(source) {
+        'is forbidden by default': function (source) {
             const errors = coffeelint.lint(source);
             assert.lengthOf(errors, 3);
             const error = errors[0];
@@ -30,11 +38,11 @@ throw """
             return assert.equal(error.rule, RULE);
         },
 
-        'can be permitted'(source) {
-            const config = {no_throwing_strings: { level: 'ignore' }};
+        'can be permitted': function (source) {
+            const config = { no_throwing_strings: { level: 'ignore' } };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors);
-        }
-    }
+        },
+    },
 
 }).export(module);

@@ -1,13 +1,22 @@
+/* eslint-disable
+    class-methods-use-this,
+    func-names,
+    no-multi-assign,
+    no-shadow,
+    no-unused-vars,
+    no-useless-escape,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS206: Consider reworking classes to avoid initClass
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let NoInterpolationInSingleQuotes;
-module.exports = (NoInterpolationInSingleQuotes = (function() {
+module.exports = (NoInterpolationInSingleQuotes = (function () {
     NoInterpolationInSingleQuotes = class NoInterpolationInSingleQuotes {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'no_interpolation_in_single_quotes',
                 level: 'ignore',
@@ -24,9 +33,9 @@ foo = "#{bar}"
 </pre>
 String interpolation in single quoted strings is permitted by
 default.\
-`
+`,
             };
-    
+
             this.prototype.tokens = ['STRING'];
         }
 
@@ -38,4 +47,4 @@ default.\
     };
     NoInterpolationInSingleQuotes.initClass();
     return NoInterpolationInSingleQuotes;
-})());
+}()));

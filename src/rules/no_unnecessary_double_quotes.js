@@ -1,3 +1,16 @@
+/* eslint-disable
+    class-methods-use-this,
+    func-names,
+    no-multi-assign,
+    no-shadow,
+    no-underscore-dangle,
+    no-unused-vars,
+    no-use-before-define,
+    no-useless-escape,
+    prefer-rest-params,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -7,10 +20,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let NoUnnecessaryDoubleQuotes;
-module.exports = (NoUnnecessaryDoubleQuotes = (function() {
+module.exports = (NoUnnecessaryDoubleQuotes = (function () {
     NoUnnecessaryDoubleQuotes = class NoUnnecessaryDoubleQuotes {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'no_unnecessary_double_quotes',
                 level: 'ignore',
@@ -30,9 +42,9 @@ foo = "I'm just following the 'rules'"
 </code>
 </pre>
 Double quotes are permitted by default.\
-`
+`,
             };
-    
+
             this.prototype.tokens = ['STRING', 'STRING_START', 'STRING_END'];
         }
 
@@ -54,7 +66,7 @@ Double quotes are permitted by default.\
 
             // When CoffeeScript generates calls to RegExp it double quotes the 2nd
             // parameter. Using peek(2) becuase the peek(1) would be a CALL_END
-            if (__guard__(tokenApi.peek(2), x => x[0]) === 'REGEX_END') {
+            if (__guard__(tokenApi.peek(2), (x) => x[0]) === 'REGEX_END') {
                 return false;
             }
 
@@ -82,8 +94,8 @@ Double quotes are permitted by default.\
     };
     NoUnnecessaryDoubleQuotes.initClass();
     return NoUnnecessaryDoubleQuotes;
-})());
+}()));
 
 function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+    return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
 }

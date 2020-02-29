@@ -1,3 +1,13 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-multi-str,
+    no-unused-vars,
+    prefer-destructuring,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,13 +16,14 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const RULE = 'indentation';
 
 vows.describe(RULE).addBatch({
 
-    'Indentation': {
+    Indentation: {
         topic:
             `\
 x = () ->
@@ -22,7 +33,7 @@ a = () ->
     'four spaces'\
 `,
 
-        'defaults to two spaces'(source) {
+        'defaults to two spaces': function (source) {
             const errors = coffeelint.lint(source);
             assert.equal(errors.length, 1);
             const error = errors[0];
@@ -33,12 +44,12 @@ a = () ->
             return assert.equal(error.context, 'Expected 2 got 4');
         },
 
-        'can be overridden'(source) {
+        'can be overridden': function (source) {
             const config = {
                 indentation: {
                     level: 'error',
-                    value: 4
-                }
+                    value: 4,
+                },
             };
             const errors = coffeelint.lint(source, config);
             assert.equal(errors.length, 1);
@@ -46,16 +57,16 @@ a = () ->
             return assert.equal(error.lineNumber, 2);
         },
 
-        'is optional'(source) {
+        'is optional': function (source) {
             const config = {
                 indentation: {
                     level: 'ignore',
-                    value: 4
-                }
+                    value: 4,
+                },
             };
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 0);
-        }
+        },
     },
 
     'Nested indentation errors': {
@@ -66,12 +77,12 @@ x = () ->
       1234\
 `,
 
-        'are caught'(source) {
+        'are caught': function (source) {
             const errors = coffeelint.lint(source);
             assert.lengthOf(errors, 1);
             const error = errors[0];
             return assert.equal(error.lineNumber, 3);
-        }
+        },
     },
 
     'Compiler generated indentation': {
@@ -81,27 +92,27 @@ x = () ->
     if 1 then 2 else 3\
 `,
 
-        'is ignored when not using two spaces'(source) {
+        'is ignored when not using two spaces': function (source) {
             const config = {
                 indentation: {
-                    value: 4
-                }
+                    value: 4,
+                },
             };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Indentation inside interpolation': {
         topic:
-            `\
+            '\
 a = "#{ 1234 }"\
-`,
+',
 
-        'is ignored'(source) {
+        'is ignored': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Indentation in multi-line expressions': {
@@ -111,10 +122,10 @@ x = '1234' + '1234' + '1234' +
         '1234' + '1234'\
 `,
 
-        'is ignored'(source) {
+        'is ignored': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Indentation across line breaks': {
@@ -132,10 +143,10 @@ arr = [() ->
 ]\
 `,
 
-        'is ignored'(source) {
+        'is ignored': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Indentation on seperate line invocation': {
@@ -150,10 +161,10 @@ rockrockrock.
           1234\
 `,
 
-        'is ignored. Issue #4'(source) {
+        'is ignored. Issue #4': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Consecutive indented chained invocations': {
@@ -166,9 +177,9 @@ $('body')
     .hide()\
 `,
 
-        'is permitted'(source) {
+        'is permitted': function (source) {
             return assert.isEmpty(coffeelint.lint(source));
-        }
+        },
     },
 
     'Consecutive chained invocations and blank line': {
@@ -179,9 +190,9 @@ $('body')
     .addClass('k').hide()\
 `,
 
-        'is permitted'(source) {
+        'is permitted': function (source) {
             return assert.isEmpty(coffeelint.lint(source));
-        }
+        },
     },
 
     'Consecutive chained invocations with a prop method call': {
@@ -193,9 +204,9 @@ $('<input>')
     .hide()\
 `,
 
-        'is permitted'(source) {
+        'is permitted': function (source) {
             return assert.isEmpty(coffeelint.lint(source));
-        }
+        },
     },
 
     'Consecutive chained invocations with string concatenation': {
@@ -205,9 +216,9 @@ $('body')
     .addClass("hello-" + world).addClass("red")\
 `,
 
-        'is permitted'(source) {
+        'is permitted': function (source) {
             return assert.isEmpty(coffeelint.lint(source));
-        }
+        },
     },
 
     'Consecutive indented chained invocations and multi-line expression': {
@@ -220,9 +231,9 @@ $('body')
   .removeClass 'k'\
 `,
 
-        'is permitted'(source) {
+        'is permitted': function (source) {
             return assert.isEmpty(coffeelint.lint(source));
-        }
+        },
     },
 
     'Consecutive indented chained invocations with bad indents': {
@@ -238,7 +249,7 @@ $('body')
     # comments are ignored
      .hide() # this will check with '.animated()' and complain\
 `,
-        'fails with indent error'(source) {
+        'fails with indent error': function (source) {
             const errors = coffeelint.lint(source);
             assert.equal(errors.length, 1);
             const error = errors[0];
@@ -246,7 +257,7 @@ $('body')
             assert.equal(error.rule, RULE);
             assert.equal(error.lineNumber, 9);
             return assert.equal(error.context, 'Expected 2 got 1');
-        }
+        },
     },
 
     'One chain invocations with bad indents': {
@@ -255,7 +266,7 @@ $('body')
 $('body')
    .addClass('k')\
 `,
-        'fails with indent error'(source) {
+        'fails with indent error': function (source) {
             const errors = coffeelint.lint(source);
             assert.equal(errors.length, 1);
             const error = errors[0];
@@ -263,7 +274,7 @@ $('body')
             assert.equal(error.rule, RULE);
             assert.equal(error.lineNumber, 2);
             return assert.equal(error.context, 'Expected 2 got 3');
-        }
+        },
     },
 
     'Separate chained invocations with bad indents': {
@@ -279,7 +290,7 @@ $('html')
    .hello()\
 `,
 
-        'correctly identifies two errors'(source) {
+        'correctly identifies two errors': function (source) {
             const errors = coffeelint.lint(source);
             assert.equal(errors.length, 2);
             let error = errors[0];
@@ -293,7 +304,7 @@ $('html')
             assert.equal(error.rule, RULE);
             assert.equal(error.lineNumber, 8);
             return assert.equal(error.context, 'Expected 2 got 3');
-        }
+        },
     },
 
 
@@ -311,15 +322,15 @@ test()
     )
     .s()\
 `,
-        'no error when comment is in first line of a chain'(source) {
+        'no error when comment is in first line of a chain': function (source) {
             const config = {
                 indentation: {
-                    value: 4
-                }
+                    value: 4,
+                },
             };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Ignore blank line in indented chained invocations': {
@@ -335,15 +346,15 @@ test()
     )
     .s()\
 `,
-        'no error when blank line is in first line of a chain'(source) {
+        'no error when blank line is in first line of a chain': function (source) {
             const config = {
                 indentation: {
-                    value: 4
-                }
+                    value: 4,
+                },
             };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Arbitrarily indented arguments': {
@@ -354,10 +365,10 @@ myReallyLongFunction withLots,
                      everywhere\
 `,
 
-        'are permitted'(source) {
+        'are permitted': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Indenting a callback in a chained call inside a function': {
@@ -368,10 +379,10 @@ someFunction = ->
     .done (result) ->
       foo = result.bar\
 `,
-        'is permitted. See issue #88'(source) {
+        'is permitted. See issue #88': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Handle multiple chained calls': {
@@ -386,10 +397,10 @@ anObject
     moreStuff()
     return s\
 `,
-        'is permitted'(source) {
+        'is permitted': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Handle multiple chained calls (4 spaces)': {
@@ -404,7 +415,7 @@ anObject
         moreStuff()
         return s\
 `,
-        'fails when using 2 space indentation default'(source) {
+        'fails when using 2 space indentation default': function (source) {
             const msg = 'Line contains inconsistent indentation';
 
             const errors = coffeelint.lint(source);
@@ -424,15 +435,15 @@ anObject
             return assert.equal(error.context, 'Expected 2 got 4');
         },
 
-        'is permitted when changing configuration to use 4 spaces'(source) {
+        'is permitted when changing configuration to use 4 spaces': function (source) {
             const config = {
                 indentation: {
-                    value: 4
-                }
+                    value: 4,
+                },
             };
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Handle multiple chained calls inside more indentation': {
@@ -451,10 +462,10 @@ someLongFunction = (a, b, c, d) ->
   retValue + [1]
 \
 `,
-        'is permitted'(source) {
+        'is permitted': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Handle chains where there are tokens with generated property': {
@@ -471,10 +482,10 @@ anObject 'bar'
         e ->
       .finally x\
 `,
-        'is permitted'(source) {
+        'is permitted': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Handle nested chain calls': {
@@ -489,10 +500,10 @@ anObject
     moreStuff()
     return s\
 `,
-        'is permitted'(source) {
+        'is permitted': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Make sure indentation check is not affected outside proper scope': {
@@ -510,10 +521,10 @@ c = ->
       long.expression.that.necessitates(linebreak))
     @foo()\
 `,
-        'returns no errors outside scope'(source) {
+        'returns no errors outside scope': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Handle edge-case weirdness with strings in objects': {
@@ -528,10 +539,10 @@ call(
 )\
 `,
 
-        'is permitted'(source) {
+        'is permitted': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     // Fixes people wanted to heavily indent if statements attached to assignment
@@ -579,10 +590,10 @@ u = if p1
     3\
 `,
 
-        'is permitted'(source) {
+        'is permitted': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     // See #469
@@ -605,10 +616,10 @@ bar (
   return\
 `,
 
-        'is permitted'(source) {
+        'is permitted': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     // Fixes #312
@@ -624,10 +635,10 @@ x = ->
       "unknown"\
 `,
 
-        'is permitted'(source) {
+        'is permitted': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     // Fix #504, a regression caused by bffa2532efd8bcca5d9c1b3a9d3b5914e882dd5f
@@ -645,10 +656,10 @@ func()
   .length\
 `,
 
-        'is permitted'(source) {
+        'is permitted': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     // Fix #511 by ignoring explicitly generated indentation tabs.
@@ -675,10 +686,10 @@ finally
   d\
 `,
 
-        'is permitted'(source) {
+        'is permitted': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
     // a property/method in a class is now checked against in indentation
     'Handle property/method in class': {
@@ -690,10 +701,10 @@ c) ->
     a + b + c\
 `,
 
-        'returns no errors'(source) {
+        'returns no errors': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
     'Handle new keywords': {
         topic:
@@ -704,16 +715,16 @@ ABCD
   .g (def) -> 2 + 2
   .h ijk.lmn\
 `,
-        'returns no errors'(source) {
+        'returns no errors': function (source) {
             const config = {
                 indentation: {
                     level: 'error',
-                    value: 2
-                }
+                    value: 2,
+                },
             };
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
+        },
     },
     'Make sure chain method with a same name later on isnt counted': {
         topic:
@@ -724,16 +735,16 @@ newMethod: ->
       tree: true
     .ghi @abc.ghi()\
 `,
-        'returns no errors'(source) {
+        'returns no errors': function (source) {
             const config = {
                 indentation: {
                     level: 'error',
-                    value: 2
-                }
+                    value: 2,
+                },
             };
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
-    }
+        },
+    },
 
 }).export(module);

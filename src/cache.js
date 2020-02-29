@@ -1,3 +1,16 @@
+/* eslint-disable
+    class-methods-use-this,
+    global-require,
+    import/no-unresolved,
+    import/order,
+    no-multi-assign,
+    no-return-assign,
+    no-shadow,
+    no-undef,
+    no-unused-vars,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -14,7 +27,6 @@ const csVer = ((typeof window !== 'undefined' && window !== null ? window.Coffee
 
 
 module.exports = (Cache = class Cache {
-
     constructor(basepath) {
         this.basepath = basepath;
         if (!fs.existsSync(this.basepath)) {
@@ -40,7 +52,7 @@ module.exports = (Cache = class Cache {
 
 
     hash(data) {
-        return crypto.createHash('md5').update('' + data).digest('hex').substring(0, 8);
+        return crypto.createHash('md5').update(`${data}`).digest('hex').substring(0, 8);
     }
 
 

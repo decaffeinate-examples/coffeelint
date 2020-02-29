@@ -1,3 +1,14 @@
+/* eslint-disable
+    class-methods-use-this,
+    consistent-return,
+    func-names,
+    no-multi-assign,
+    no-shadow,
+    no-underscore-dangle,
+    no-use-before-define,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,10 +17,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let NoThis;
-module.exports = (NoThis = (function() {
+module.exports = (NoThis = (function () {
     NoThis = class NoThis {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'no_this',
                 level: 'ignore',
@@ -17,23 +27,23 @@ module.exports = (NoThis = (function() {
                 description: `\
 This rule prohibits 'this'.
 Use '@' instead.\
-`
+`,
             };
-    
+
             this.prototype.tokens = ['THIS'];
         }
 
         lintToken(token, tokenApi) {
             const { config: { no_stand_alone_at: { level } } } = tokenApi;
-            const nextToken = __guard__(tokenApi.peek(1), x => x[0]);
+            const nextToken = __guard__(tokenApi.peek(1), (x) => x[0]);
 
             if ((level === 'ignore') || (nextToken === '.')) { return true; }
         }
     };
     NoThis.initClass();
     return NoThis;
-})());
+}()));
 
 function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+    return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
 }

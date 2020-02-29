@@ -1,3 +1,18 @@
+/* eslint-disable
+    class-methods-use-this,
+    guard-for-in,
+    no-console,
+    no-loop-func,
+    no-multi-assign,
+    no-param-reassign,
+    no-restricted-syntax,
+    no-shadow,
+    no-unused-vars,
+    no-var,
+    vars-on-top,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -8,7 +23,6 @@
  */
 let CSVReporter;
 module.exports = (CSVReporter = class CSVReporter {
-
     constructor(errorReport, options) {
         this.errorReport = errorReport;
         if (options == null) { options = {}; }
@@ -19,7 +33,7 @@ module.exports = (CSVReporter = class CSVReporter {
         // coffeelint: disable=no_debugger
         return console.log(message);
     }
-        // coffeelint: enable=no_debugger
+    // coffeelint: enable=no_debugger
 
     publish() {
         const header = ['path', 'lineNumber', 'lineNumberEnd', 'level', 'message'];
@@ -30,7 +44,7 @@ module.exports = (CSVReporter = class CSVReporter {
                 var errors = this.errorReport.paths[path];
                 result.push((() => {
                     const result1 = [];
-                    for (let e of Array.from(errors)) {
+                    for (const e of Array.from(errors)) {
                     // Having the context is useful for the cyclomatic_complexity
                     // rule and critical for the undefined_variables rule.
                         if (!this.quiet || (e.level === 'error')) {
@@ -40,7 +54,7 @@ module.exports = (CSVReporter = class CSVReporter {
                                 e.lineNumber,
                                 e.lineNumberEnd != null ? e.lineNumberEnd : e.lineNumberEnd,
                                 e.level,
-                                e.message
+                                e.message,
                             ];
                             result1.push(this.print(f.join(',')));
                         }

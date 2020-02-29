@@ -1,3 +1,14 @@
+/* eslint-disable
+    func-names,
+    max-len,
+    no-continue,
+    no-multi-assign,
+    no-param-reassign,
+    no-restricted-syntax,
+    no-shadow,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -8,7 +19,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let NoPrivateFunctionFatArrows;
-module.exports = (NoPrivateFunctionFatArrows = (function() {
+module.exports = (NoPrivateFunctionFatArrows = (function () {
     NoPrivateFunctionFatArrows = class NoPrivateFunctionFatArrows {
         constructor() {
             this.isCode = this.isCode.bind(this);
@@ -19,7 +30,6 @@ module.exports = (NoPrivateFunctionFatArrows = (function() {
         }
 
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'no_private_function_fat_arrows',
                 level: 'warn',
@@ -28,7 +38,7 @@ module.exports = (NoPrivateFunctionFatArrows = (function() {
 Warns when you use the fat arrow for a private function
 inside a class definition scope. It is not necessary and
 it does not do anything.\
-`
+`,
             };
         }
 
@@ -41,34 +51,37 @@ it does not do anything.\
         lintNode(node, functions) {
             if (functions == null) { functions = []; }
             if (this.isFatArrowCode(node) && Array.from(functions).includes(node)) {
-                const error = this.astApi.createError({
-                    lineNumber: node.locationData.first_line + 1});
+                const error = this.astApi.createError({ lineNumber: node.locationData.first_line + 1 });
                 this.errors.push(error);
             }
 
-            return node.eachChild(child => this.lintNode(child,
-                (() => { switch (false) {
+            return node.eachChild((child) => this.lintNode(child,
+                (() => {
+                    switch (false) {
                     case !this.isClass(node): return this.functionsOfClass(node);
                     // Once we've hit a function, we know we can't be in the top
                     // level of a function anymore, so we can safely reset the
                     // functions to empty to save work.
                     case !this.isCode(node): return [];
                     default: return functions;
-                } })()
-            )
-            );
+                    }
+                })()));
         }
 
         isCode(node) { return this.astApi.getNodeName(node) === 'Code'; }
+
         isClass(node) { return this.astApi.getNodeName(node) === 'Class'; }
+
         isValue(node) { return this.astApi.getNodeName(node) === 'Value'; }
+
         isObject(node) { return this.astApi.getNodeName(node) === 'Obj'; }
+
         isFatArrowCode(node) { return this.isCode(node) && node.bound; }
 
         functionsOfClass(classNode) {
             const bodyValues = (() => {
                 const result = [];
-                for (let bodyNode of Array.from(classNode.body.expressions)) {
+                for (const bodyNode of Array.from(classNode.body.expressions)) {
                     if (this.isValue(bodyNode) && this.isObject(bodyNode.base)) { continue; }
 
                     result.push(bodyNode.value);
@@ -80,4 +93,4 @@ it does not do anything.\
     };
     NoPrivateFunctionFatArrows.initClass();
     return NoPrivateFunctionFatArrows;
-})());
+}()));

@@ -1,3 +1,12 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-restricted-syntax,
+    no-return-assign,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -8,6 +17,7 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const RULE = 'max_line_length';
@@ -16,12 +26,12 @@ vows.describe(RULE).addBatch({
     'Maximum line length': {
         topic() {
             // Every line generated here is a comment.
-            const line = length => '# ' + new Array(length - 1).join('-');
+            const line = (length) => `# ${new Array(length - 1).join('-')}`;
             const lengths = [50, 79, 80, 81, 100, 200];
             return (Array.from(lengths).map((l) => line(l))).join('\n');
         },
 
-        'defaults to 80'(source) {
+        'defaults to 80': function (source) {
             const errors = coffeelint.lint(source);
             assert.equal(errors.length, 3);
             const error = errors[0];
@@ -30,26 +40,26 @@ vows.describe(RULE).addBatch({
             return assert.equal(error.rule, RULE);
         },
 
-        'is configurable'(source) {
+        'is configurable': function (source) {
             const config = {
                 max_line_length: {
                     value: 99,
-                    level: 'error'
-                }
+                    level: 'error',
+                },
             };
             const errors = coffeelint.lint(source, config);
             return assert.equal(errors.length, 2);
         },
 
-        'is optional'(source) {
+        'is optional': function (source) {
             return (() => {
                 const result = [];
-                for (let length of [null, 0, false]) {
+                for (const length of [null, 0, false]) {
                     const config = {
                         max_line_length: {
                             value: length,
-                            level: 'ignore'
-                        }
+                            level: 'ignore',
+                        },
                     };
                     const errors = coffeelint.lint(source, config);
                     result.push(assert.isEmpty(errors));
@@ -58,39 +68,39 @@ vows.describe(RULE).addBatch({
             })();
         },
 
-        'can ignore comments'(source) {
+        'can ignore comments': function (source) {
             const config = {
                 max_line_length: {
-                    limitComments: false
-                }
+                    limitComments: false,
+                },
             };
 
             const errors = coffeelint.lint(source, config);
             return assert.isEmpty(errors);
         },
 
-        'respects Windows line breaks'() {
-            const source = new Array(81).join('X') + '\r\n';
+        'respects Windows line breaks': function () {
+            const source = `${new Array(81).join('X')}\r\n`;
 
             const errors = coffeelint.lint(source, {});
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Literate Line Length': {
         topic() {
             // This creates a line with 80 Xs.
-            let source = new Array(81).join('X') + '\n';
+            let source = `${new Array(81).join('X')}\n`;
 
             // Long URLs are ignored by default even in Literate code.
-            return source += 'http://testing.example.com/really-really-long-url-' +
-                'that-shouldnt-have-to-be-split-to-avoid-the-lint-error';
+            return source += 'http://testing.example.com/really-really-long-url-'
+                + 'that-shouldnt-have-to-be-split-to-avoid-the-lint-error';
         },
 
-        'long urls are ignored'(source) {
+        'long urls are ignored': function (source) {
             const errors = coffeelint.lint(source, {}, true);
             return assert.isEmpty(errors);
-        }
+        },
     },
 
     'Maximum length exceptions': {
@@ -103,10 +113,10 @@ vows.describe(RULE).addBatch({
 # http://testing.example.com/really-really-long-url-that-shouldnt-have-to-be-split-to-avoid-the-lint-error\
 `,
 
-        'excludes long urls'(source) {
+        'excludes long urls': function (source) {
             const errors = coffeelint.lint(source);
             return assert.isEmpty(errors);
-        }
-    }
+        },
+    },
 
 }).export(module);

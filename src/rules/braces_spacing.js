@@ -1,3 +1,15 @@
+/* eslint-disable
+    class-methods-use-this,
+    func-names,
+    max-len,
+    no-constant-condition,
+    no-continue,
+    no-multi-assign,
+    no-shadow,
+    no-useless-escape,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -7,10 +19,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let BracesSpacing;
-module.exports = (BracesSpacing = (function() {
+module.exports = (BracesSpacing = (function () {
     BracesSpacing = class BracesSpacing {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'braces_spacing',
                 level: 'ignore',
@@ -49,9 +60,9 @@ The spacing amount for empty objects is specified by
 </code></pre>
     
 This rule is disabled by default.\
-`
+`,
             };
-    
+
             this.prototype.tokens = ['{', '}'];
         }
 
@@ -77,18 +88,16 @@ This rule is disabled by default.\
             const config = tokenApi.config[this.rule.name];
             if ((firstToken[0] === '{') && (secondToken[0] === '}')) {
                 return config.empty_object_spaces != null ? config.empty_object_spaces : config.spaces;
-            } else {
-                return config.spaces;
             }
+            return config.spaces;
         }
 
         lintToken(token, tokenApi) {
             if (token.generated) { return null; }
 
-            const [firstToken, secondToken] = Array.from(token[0] === '{' ?
-                [token, this.findNearestToken(token, tokenApi, 1)]
-            :
-                [this.findNearestToken(token, tokenApi, -1), token]);
+            const [firstToken, secondToken] = Array.from(token[0] === '{'
+                ? [token, this.findNearestToken(token, tokenApi, 1)]
+                : [this.findNearestToken(token, tokenApi, -1), token]);
 
             if (!this.tokensOnSameLine(firstToken, secondToken)) { return null; }
 
@@ -97,14 +106,13 @@ This rule is disabled by default.\
 
             if (actual === expected) {
                 return null;
-            } else {
-                let msg = `There should be ${expected} space`;
-                if (expected !== 1) { msg += 's'; }
-                msg += ` inside \"${token[0]}\"`;
-                return {context: msg};
             }
+            let msg = `There should be ${expected} space`;
+            if (expected !== 1) { msg += 's'; }
+            msg += ` inside \"${token[0]}\"`;
+            return { context: msg };
         }
     };
     BracesSpacing.initClass();
     return BracesSpacing;
-})());
+}()));

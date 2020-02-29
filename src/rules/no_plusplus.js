@@ -1,13 +1,21 @@
+/* eslint-disable
+    class-methods-use-this,
+    func-names,
+    no-multi-assign,
+    no-shadow,
+    no-unused-vars,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS206: Consider reworking classes to avoid initClass
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let NoPlusPlus;
-module.exports = (NoPlusPlus = (function() {
+module.exports = (NoPlusPlus = (function () {
     NoPlusPlus = class NoPlusPlus {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'no_plusplus',
                 level: 'ignore',
@@ -18,9 +26,9 @@ Some people believe the <tt>++</tt> and <tt>--</tt> to be cryptic
 and the cause of bugs due to misunderstandings of their precedence
 rules.
 This rule is disabled by default.\
-`
+`,
             };
-    
+
             this.prototype.tokens = ['++', '--'];
         }
 
@@ -30,4 +38,4 @@ This rule is disabled by default.\
     };
     NoPlusPlus.initClass();
     return NoPlusPlus;
-})());
+}()));

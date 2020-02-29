@@ -1,3 +1,15 @@
+/* eslint-disable
+    global-require,
+    guard-for-in,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-console,
+    no-empty,
+    no-param-reassign,
+    no-restricted-syntax,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -16,7 +28,7 @@ module.exports = {
             // Try to find the project-level rule first.
             const rulePath = resolve(moduleName, {
                 basedir: process.cwd(),
-                extensions: ['.js', '.coffee', '.litcoffee', '.coffee.md']
+                extensions: ['.js', '.coffee', '.litcoffee', '.coffee.md'],
             });
             return require(rulePath);
         } catch (error) {}
@@ -43,7 +55,7 @@ module.exports = {
     loadFromConfig(coffeelint, config) {
         return (() => {
             const result = [];
-            for (let ruleName in config) {
+            for (const ruleName in config) {
                 const data = config[ruleName];
                 if ((data != null ? data.module : undefined) != null) {
                     result.push(this.loadRule(coffeelint, data.module, ruleName));
@@ -62,16 +74,14 @@ module.exports = {
             // Most rules can export as a single constructor function
             if (typeof ruleModule === 'function') {
                 return coffeelint.registerRule(ruleModule, ruleName);
-            } else {
-                // Or it can export an array of rules to load.
-                return Array.from(ruleModule).map((rule) =>
-                    coffeelint.registerRule(rule));
             }
+            // Or it can export an array of rules to load.
+            return Array.from(ruleModule).map((rule) => coffeelint.registerRule(rule));
         } catch (e) {
             // coffeelint: disable=no_debugger
             console.error(`Error loading ${moduleName}`);
             throw e;
         }
-    }
+    },
 };
-            // coffeelint: enable=no_debugger
+// coffeelint: enable=no_debugger

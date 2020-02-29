@@ -1,3 +1,18 @@
+/* eslint-disable
+    class-methods-use-this,
+    consistent-return,
+    func-names,
+    guard-for-in,
+    no-multi-assign,
+    no-param-reassign,
+    no-restricted-syntax,
+    no-shadow,
+    no-unused-vars,
+    no-var,
+    vars-on-top,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -8,9 +23,9 @@
  */
 // Patch the source properties onto the destination.
 let BaseLinter;
-const extend = function(destination, ...sources) {
-    for (let source of Array.from(sources)) {
-        for (let k in source) { const v = source[k]; destination[k] = v; }
+const extend = function (destination, ...sources) {
+    for (const source of Array.from(sources)) {
+        for (const k in source) { const v = source[k]; destination[k] = v; }
     }
     return destination;
 };
@@ -19,7 +34,6 @@ const extend = function(destination, ...sources) {
 const defaults = (source, defaults) => extend({}, defaults, source);
 
 module.exports = (BaseLinter = class BaseLinter {
-
     constructor(source, config, rules) {
         this.source = source;
         this.config = config;
@@ -38,7 +52,7 @@ module.exports = (BaseLinter = class BaseLinter {
         if (attrs.level == null) { attrs.level = this.config[ruleName].level; }
 
         const {
-            level
+            level,
         } = attrs;
         if (!['ignore', 'warn', 'error'].includes(level)) {
             throw new Error(`unknown level ${level} for rule: ${ruleName}`);
@@ -47,9 +61,8 @@ module.exports = (BaseLinter = class BaseLinter {
         if (['error', 'warn'].includes(level)) {
             attrs.rule = ruleName;
             return defaults(attrs, this.config[ruleName]);
-        } else {
-            return null;
         }
+        return null;
     }
 
     acceptRule(rule) {
@@ -61,11 +74,11 @@ module.exports = (BaseLinter = class BaseLinter {
         this.rules = [];
         return (() => {
             const result = [];
-            for (let name in rules) {
+            for (const name in rules) {
                 var rule;
                 const RuleConstructor = rules[name];
                 const {
-                    level
+                    level,
                 } = this.config[name];
                 if (['error', 'warn'].includes(level)) {
                     rule = new RuleConstructor(this, this.config);

@@ -1,3 +1,15 @@
+/* eslint-disable
+    class-methods-use-this,
+    consistent-return,
+    func-names,
+    max-len,
+    no-multi-assign,
+    no-plusplus,
+    no-shadow,
+    no-unused-vars,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -7,13 +19,11 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let NoTrailingSemicolons;
-const regexes =
-    {trailingSemicolon: /;\r?$/};
+const regexes = { trailingSemicolon: /;\r?$/ };
 
-module.exports = (NoTrailingSemicolons = (function() {
+module.exports = (NoTrailingSemicolons = (function () {
     NoTrailingSemicolons = class NoTrailingSemicolons {
         static initClass() {
-    
             this.prototype.rule = {
                 name: 'no_trailing_semicolons',
                 level: 'error',
@@ -30,12 +40,11 @@ alert('end of line');
 </code>
 </pre>
 Trailing semicolons are forbidden by default.\
-`
+`,
             };
         }
 
         lintLine(line, lineApi) {
-
             // The TERMINATOR token is extended through to the next token. As a
             // result a line with a comment DOES have a token: the TERMINATOR from
             // the last line of code.
@@ -49,7 +58,6 @@ Trailing semicolons are forbidden by default.\
 
             let newLine = line;
             if ((tokenLen > 1) && (lineTokens[tokenLen - 1][0] === 'TERMINATOR')) {
-
                 // `startPos` contains the end pos of the last non-TERMINATOR token
                 // `endPos` contains the start position of the TERMINATOR token
 
@@ -68,16 +76,17 @@ Trailing semicolons are forbidden by default.\
             }
 
             const hasSemicolon = regexes.trailingSemicolon.test(newLine);
-            const adjustedLength = Math.max(lineTokens.length, 1), first = lineTokens.slice(0, adjustedLength - 1), last = lineTokens[adjustedLength - 1];
+            const adjustedLength = Math.max(lineTokens.length, 1); const first = lineTokens.slice(0, adjustedLength - 1); const
+                last = lineTokens[adjustedLength - 1];
             const hasNewLine = last && (last.newLine != null);
             // Don't throw errors when the contents of multiline strings,
             // regexes and the like end in ";"
-            if (hasSemicolon && !hasNewLine && lineApi.lineHasToken() &&
-                    !(['STRING', 'IDENTIFIER', 'STRING_END'].includes(last[0]))) {
+            if (hasSemicolon && !hasNewLine && lineApi.lineHasToken()
+                    && !(['STRING', 'IDENTIFIER', 'STRING_END'].includes(last[0]))) {
                 return true;
             }
         }
     };
     NoTrailingSemicolons.initClass();
     return NoTrailingSemicolons;
-})());
+}()));

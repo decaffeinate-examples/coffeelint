@@ -1,3 +1,14 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    no-param-reassign,
+    no-shadow,
+    no-use-before-define,
+    no-var,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -7,34 +18,35 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
-const runLint = function(source) {
+const runLint = function (source) {
     const config = { no_unnecessary_fat_arrows: { level: 'error' } };
     return coffeelint.lint(source, config);
 };
 
-const shouldError = function(source, numErrors) {
+const shouldError = function (source, numErrors) {
     if (numErrors == null) { numErrors = 1; }
     return {
         topic: source,
 
-        'errors for unnecessary arrow'(source) {
+        'errors for unnecessary arrow': function (source) {
             const errors = runLint(source);
             assert.lengthOf(errors, numErrors, `Expected ${numErrors} errors`);
             const error = errors[0];
             return assert.equal(error.rule, RULE);
-        }
+        },
     };
 };
 
-const shouldPass = source => ({
+const shouldPass = (source) => ({
     topic: source,
 
-    'does not error for necessary arrow'(source) {
+    'does not error for necessary arrow': function (source) {
         const errors = runLint(source);
         return assert.isEmpty(errors, `Expected no errors, got ${errors}`);
-    }
+    },
 });
 
 var RULE = 'no_unnecessary_fat_arrows';
@@ -51,19 +63,19 @@ vows.describe(RULE).addBatch({
     'nested simple functions': {
         'with inner fat arrow': shouldError('-> => 1'),
         'with outer fat arrow': shouldError('=> -> 1'),
-        'with both fat arrows': shouldError('=> => 1', 2)
+        'with both fat arrows': shouldError('=> => 1', 2),
     },
 
     'nested functions with this inside': {
         'with inner fat arrow': shouldPass('-> => this'),
         'with outer fat arrow': shouldError('=> -> this'),
-        'with both fat arrows': shouldPass('=> => this')
+        'with both fat arrows': shouldPass('=> => this'),
     },
 
     'nested functions with this outside': {
         'with inner fat arrow': shouldError('-> (this; =>)'),
         'with outer fat arrow': shouldPass('=> (this; ->)'),
-        'with both fat arrows': shouldError('=> (this; =>)')
+        'with both fat arrows': shouldError('=> (this; =>)'),
     },
 
     'deeply nested simple function': shouldError('-> -> -> -> => 1'),
@@ -73,8 +85,7 @@ vows.describe(RULE).addBatch({
 f = ->
   x = 2
   z ((a) => x; a)\
-`
-    ),
+`),
 
     'functions with parameters': shouldError('(a) =>'),
     'functions with parameter assignment': shouldPass('(@a) =>'),
@@ -85,7 +96,6 @@ define [], ->
   class MyClass
     @omg: ->
 \
-`
-    )
+`),
 
 }).export(module);

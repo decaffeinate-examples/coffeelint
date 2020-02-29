@@ -1,3 +1,11 @@
+/* eslint-disable
+    func-names,
+    import/no-dynamic-require,
+    import/no-unresolved,
+    prefer-destructuring,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,6 +14,7 @@
 const path = require('path');
 const vows = require('vows');
 const assert = require('assert');
+
 const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
 const configError = { no_this: { level: 'error' } };
@@ -14,21 +23,21 @@ const RULE = 'no_this';
 
 vows.describe(RULE).addBatch({
 
-    'this': {
-        'should warn when \'this\' is used'() {
+    this: {
+        'should warn when \'this\' is used': function () {
             const result = coffeelint.lint('this.foo()', configError)[0];
             assert.equal(result.lineNumber, 1);
             return assert.equal(result.rule, RULE);
-        }
+        },
     },
 
     '@': {
-        'should not warn when \'@\' is used'() {
+        'should not warn when \'@\' is used': function () {
             return assert.isEmpty(coffeelint.lint('@foo()', configError));
-        }
+        },
     },
 
-    'Comments': {
+    Comments: {
         topic:
             `\
 # this.foo()
@@ -37,28 +46,28 @@ this.foo()
 ###\
 `,
 
-        'should not warn when \'this\' is used in a comment'(source) {
+        'should not warn when \'this\' is used in a comment': function (source) {
             return assert.isEmpty(coffeelint.lint(source, configError));
-        }
+        },
     },
 
-    'Strings': {
-        'should not warn when \'this\' is used in a single-quote string'() {
+    Strings: {
+        'should not warn when \'this\' is used in a single-quote string': function () {
             return assert.isEmpty(coffeelint.lint('\'this.foo()\'', configError));
         },
 
-        'should not warn when \'this\' is used in a double-quote string'() {
+        'should not warn when \'this\' is used in a double-quote string': function () {
             return assert.isEmpty(coffeelint.lint('"this.foo()"', configError));
         },
 
-        'should not warn when \'this\' is used in a multiline string'() {
+        'should not warn when \'this\' is used in a multiline string': function () {
             const source = `\
 """
 this.foo()
 """\
 `;
             return assert.isEmpty(coffeelint.lint(source, configError));
-        }
+        },
     },
 
     'Compatibility with no_stand_alone_at': {
@@ -74,14 +83,14 @@ class Y extends X
 \
 `,
 
-        'returns an error if no_stand_alone_at is on ignore'(source) {
+        'returns an error if no_stand_alone_at is on ignore': function (source) {
             const config = {
                 no_stand_alone_at: {
-                    level: 'ignore'
+                    level: 'ignore',
                 },
                 no_this: {
-                    level: 'error'
-                }
+                    level: 'error',
+                },
             };
 
             const errors = coffeelint.lint(source, config);
@@ -95,14 +104,14 @@ class Y extends X
             return assert.equal(error.rule, RULE);
         },
 
-        'returns no errors if no_stand_alone_at is on warn/error'(source) {
+        'returns no errors if no_stand_alone_at is on warn/error': function (source) {
             let config = {
                 no_stand_alone_at: {
-                    level: 'warn'
+                    level: 'warn',
                 },
                 no_this: {
-                    level: 'error'
-                }
+                    level: 'error',
+                },
             };
 
             let errors = coffeelint.lint(source, config);
@@ -114,11 +123,11 @@ class Y extends X
 
             config = {
                 no_stand_alone_at: {
-                    level: 'error'
+                    level: 'error',
                 },
                 no_this: {
-                    level: 'error'
-                }
+                    level: 'error',
+                },
             };
 
             errors = coffeelint.lint(source, config);
@@ -127,7 +136,7 @@ class Y extends X
             error = errors[0];
             assert.equal(error.lineNumber, 7);
             return assert.equal(error.rule, RULE);
-        }
-    }
+        },
+    },
 
 }).export(module);
