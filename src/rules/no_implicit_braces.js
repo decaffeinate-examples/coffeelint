@@ -1,100 +1,138 @@
-module.exports = class NoImplicitBraces
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS104: Avoid inline assignments
+ * DS201: Simplify complex destructure assignments
+ * DS204: Change includes calls to have a more natural evaluation order
+ * DS206: Consider reworking classes to avoid initClass
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let NoImplicitBraces;
+module.exports = (NoImplicitBraces = (function() {
+    NoImplicitBraces = class NoImplicitBraces {
+        static initClass() {
+    
+            this.prototype.rule = {
+                name: 'no_implicit_braces',
+                level: 'ignore',
+                message: 'Implicit braces are forbidden',
+                strict: true,
+                description: `\
+This rule prohibits implicit braces when declaring object literals.
+Implicit braces can make code more difficult to understand,
+especially when used in combination with optional parenthesis.
+<pre>
+<code># Do you find this code ambiguous? Is it a
+# function call with three arguments or four?
+myFunction a, b, 1:2, 3:4
+    
+# While the same code written in a more
+# explicit manner has no ambiguity.
+myFunction(a, b, {1:2, 3:4})
+</code>
+</pre>
+Implicit braces are permitted by default, since their use is
+idiomatic CoffeeScript.\
+`
+            };
+    
+            this.prototype.tokens = [
+                '{', 'OUTDENT', 'INDENT', 'CLASS',
+                'IDENTIFIER', 'PROPERTY', 'EXTENDS'
+            ];
+            this.prototype.dent = 0;
+        }
 
-    rule:
-        name: 'no_implicit_braces'
-        level: 'ignore'
-        message: 'Implicit braces are forbidden'
-        strict: true
-        description: '''
-            This rule prohibits implicit braces when declaring object literals.
-            Implicit braces can make code more difficult to understand,
-            especially when used in combination with optional parenthesis.
-            <pre>
-            <code># Do you find this code ambiguous? Is it a
-            # function call with three arguments or four?
-            myFunction a, b, 1:2, 3:4
+        constructor() {
+            this.isClass = false;
+            this.className = '';
+        }
 
-            # While the same code written in a more
-            # explicit manner has no ambiguity.
-            myFunction(a, b, {1:2, 3:4})
-            </code>
-            </pre>
-            Implicit braces are permitted by default, since their use is
-            idiomatic CoffeeScript.
-            '''
+        lintToken(token, tokenApi) {
+            let c;
+            const [type, val, lineNum] = Array.from(token);
+            if (['OUTDENT', 'INDENT', 'CLASS'].includes(type)) {
+                return this.trackClass(...arguments);
+            }
 
-    tokens: [
-        '{', 'OUTDENT', 'INDENT', 'CLASS',
-        'IDENTIFIER', 'PROPERTY', 'EXTENDS'
-    ]
-    dent: 0
+            // reset "className" if class uses EXTENDS keyword
+            if (type === 'EXTENDS') {
+                this.className = '';
+                return;
+            }
 
-    constructor: ->
-        @isClass = false
-        @className = ''
+            // If we're looking at an IDENTIFIER, and we're in a class, and we've not
+            // set a className (or the previous non-identifier was 'EXTENDS', set the
+            // current identifier as the class name)
+            if (['IDENTIFIER', 'PROPERTY'].includes(type) && this.isClass && (this.className === '')) {
+                // Backtrack to get the full classname
+                let needle;
+                c = 0;
+                while ((needle = tokenApi.peek(c)[0], ['IDENTIFIER', 'PROPERTY', '.'].includes(needle))) {
+                    this.className += tokenApi.peek(c)[1];
+                    c++;
+                }
+            }
 
-    lintToken: (token, tokenApi) ->
-        [type, val, lineNum] = token
-        if type in ['OUTDENT', 'INDENT', 'CLASS']
-            return @trackClass arguments...
+            if (token.generated && (type === '{')) {
+                // If strict mode is set to false it allows implicit braces when the
+                // object is declared over multiple lines.
+                let prevToken;
+                if (!tokenApi.config[this.rule.name].strict) {
+                    [prevToken] = Array.from(tokenApi.peek(-1));
+                    if (['INDENT', 'TERMINATOR'].includes(prevToken)) {
+                        return;
+                    }
+                }
 
-        # reset "className" if class uses EXTENDS keyword
-        if type is 'EXTENDS'
-            @className = ''
-            return
+                if (this.isClass) {
+                    // The way CoffeeScript generates tokens for classes
+                    // is a bit weird. It generates '{' tokens around instance
+                    // methods (also known as the prototypes of an Object).
 
-        # If we're looking at an IDENTIFIER, and we're in a class, and we've not
-        # set a className (or the previous non-identifier was 'EXTENDS', set the
-        # current identifier as the class name)
-        if type in ['IDENTIFIER', 'PROPERTY'] and @isClass and @className is ''
-            # Backtrack to get the full classname
-            c = 0
-            while tokenApi.peek(c)[0] in ['IDENTIFIER', 'PROPERTY', '.']
-                @className += tokenApi.peek(c)[1]
-                c++
+                    let _type, _val, ref;
+                    [prevToken] = Array.from(tokenApi.peek(-1));
+                    // If there is a TERMINATOR token right before the '{' token
+                    if (prevToken === 'TERMINATOR') {
+                        return;
+                    }
 
-        if token.generated and type is '{'
-            # If strict mode is set to false it allows implicit braces when the
-            # object is declared over multiple lines.
-            unless tokenApi.config[@rule.name].strict
-                [prevToken] = tokenApi.peek(-1)
-                if prevToken in ['INDENT', 'TERMINATOR']
-                    return
+                    let peekIdent = '';
+                    c = -2;
+                    // Go back until you grab all the tokens with IDENTIFIER,
+                    // PROPERTY or '.'
+                    while ([_type, _val] = Array.from(ref = tokenApi.peek(c)), ref) {
+                        if (!['IDENTIFIER', 'PROPERTY', '.'].includes(_type)) { break; }
+                        peekIdent = _val + peekIdent;
+                        c--;
+                    }
 
-            if @isClass
-                # The way CoffeeScript generates tokens for classes
-                # is a bit weird. It generates '{' tokens around instance
-                # methods (also known as the prototypes of an Object).
+                    if (peekIdent === this.className) {
+                        return;
+                    }
+                }
 
-                [prevToken] = tokenApi.peek(-1)
-                # If there is a TERMINATOR token right before the '{' token
-                if prevToken is 'TERMINATOR'
-                    return
+                return true;
+            }
+        }
 
-                peekIdent = ''
-                c = -2
-                # Go back until you grab all the tokens with IDENTIFIER,
-                # PROPERTY or '.'
-                while ([_type, _val] = tokenApi.peek(c))
-                    break if _type not in ['IDENTIFIER', 'PROPERTY', '.']
-                    peekIdent = _val + peekIdent
-                    c--
+        trackClass(token, tokenApi) {
 
-                if peekIdent is @className
-                    return
+            const array = [token, tokenApi.peek()], array1 = array[0], n0 = array1[0], ln = array1[array1.length - 1], [n1] = Array.from(array[1]);
 
-            return true
+            if (n0 === 'INDENT') { this.dent++; }
+            if (n0 === 'OUTDENT') { this.dent--; }
 
-    trackClass: (token, tokenApi) ->
-
-        [[n0, ..., ln], [n1, ...]] = [token, tokenApi.peek()]
-
-        @dent++ if n0 is 'INDENT'
-        @dent-- if n0 is 'OUTDENT'
-
-        if @dent is 0 and n0 is 'OUTDENT' and n1 is 'TERMINATOR'
-            @isClass = false
-        if n0 is 'CLASS'
-            @isClass = true
-            @className = ''
-        return null
+            if ((this.dent === 0) && (n0 === 'OUTDENT') && (n1 === 'TERMINATOR')) {
+                this.isClass = false;
+            }
+            if (n0 === 'CLASS') {
+                this.isClass = true;
+                this.className = '';
+            }
+            return null;
+        }
+    };
+    NoImplicitBraces.initClass();
+    return NoImplicitBraces;
+})());

@@ -1,43 +1,72 @@
-module.exports = class PreferEnglishOperator
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS103: Rewrite code to no longer use __guard__
+ * DS205: Consider reworking code to avoid use of IIFEs
+ * DS206: Consider reworking classes to avoid initClass
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let PreferEnglishOperator;
+module.exports = (PreferEnglishOperator = (function() {
+    PreferEnglishOperator = class PreferEnglishOperator {
+        static initClass() {
+    
+            this.prototype.rule = {
+                name: 'prefer_english_operator',
+                level: 'ignore',
+                message: 'Don\'t use &&, ||, ==, !=, or !',
+                doubleNotLevel: 'ignore',
+                description: `\
+This rule prohibits &&, ||, ==, != and !.
+Use and, or, is, isnt, and not instead.
+!! for converting to a boolean is ignored.\
+`
+            };
+    
+            this.prototype.tokens = ['COMPARE', 'UNARY_MATH', '&&', '||'];
+        }
 
-    rule:
-        name: 'prefer_english_operator'
-        level: 'ignore'
-        message: 'Don\'t use &&, ||, ==, !=, or !'
-        doubleNotLevel: 'ignore'
-        description: '''
-            This rule prohibits &&, ||, ==, != and !.
-            Use and, or, is, isnt, and not instead.
-            !! for converting to a boolean is ignored.
-            '''
+        lintToken(token, tokenApi) {
+            let level;
+            const config = tokenApi.config[this.rule.name];
+            ({
+                level
+            } = config);
+            // Compare the actual token with the lexed token.
+            const { first_column, last_column } = token[2];
+            const line = tokenApi.lines[tokenApi.lineNumber];
+            const actual_token = line.slice(first_column, +last_column + 1 || undefined);
+            const context =
+                (() => { switch (actual_token) {
+                    case '==': return 'Replace "==" with "is"';
+                    case '!=': return 'Replace "!=" with "isnt"';
+                    case '||': return 'Replace "||" with "or"';
+                    case '&&': return 'Replace "&&" with "and"';
+                    case '!':
+                        // `not not expression` seems awkward, so `!!expression`
+                        // gets special handling.
+                        if (__guard__(tokenApi.peek(1), x => x[0]) === 'UNARY_MATH') {
+                            level = config.doubleNotLevel;
+                            return '"?" is usually better than "!!"';
+                        } else if (__guard__(tokenApi.peek(-1), x1 => x1[0]) === 'UNARY_MATH') {
+                            // Ignore the 2nd half of the double not
+                            return undefined;
+                        } else {
+                            return 'Replace "!" with "not"';
+                        }
+                    default: return undefined;
+                } })();
 
-    tokens: ['COMPARE', 'UNARY_MATH', '&&', '||']
+            if (context != null) {
+                return { level, context };
+            }
+        }
+    };
+    PreferEnglishOperator.initClass();
+    return PreferEnglishOperator;
+})());
 
-    lintToken: (token, tokenApi) ->
-        config = tokenApi.config[@rule.name]
-        level = config.level
-        # Compare the actual token with the lexed token.
-        { first_column, last_column } = token[2]
-        line = tokenApi.lines[tokenApi.lineNumber]
-        actual_token = line[first_column..last_column]
-        context =
-            switch actual_token
-                when '==' then 'Replace "==" with "is"'
-                when '!=' then 'Replace "!=" with "isnt"'
-                when '||' then 'Replace "||" with "or"'
-                when '&&' then 'Replace "&&" with "and"'
-                when '!'
-                    # `not not expression` seems awkward, so `!!expression`
-                    # gets special handling.
-                    if tokenApi.peek(1)?[0] is 'UNARY_MATH'
-                        level = config.doubleNotLevel
-                        '"?" is usually better than "!!"'
-                    else if tokenApi.peek(-1)?[0] is 'UNARY_MATH'
-                        # Ignore the 2nd half of the double not
-                        undefined
-                    else
-                        'Replace "!" with "not"'
-                else undefined
-
-        if context?
-            { level, context }
+function __guard__(value, transform) {
+  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+}

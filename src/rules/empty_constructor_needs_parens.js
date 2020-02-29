@@ -1,42 +1,76 @@
-module.exports = class EmptyConstructorNeedsParens
+/*
+ * decaffeinate suggestions:
+ * DS103: Rewrite code to no longer use __guard__
+ * DS104: Avoid inline assignments
+ * DS204: Change includes calls to have a more natural evaluation order
+ * DS206: Consider reworking classes to avoid initClass
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let EmptyConstructorNeedsParens;
+module.exports = (EmptyConstructorNeedsParens = (function() {
+    EmptyConstructorNeedsParens = class EmptyConstructorNeedsParens {
+        static initClass() {
+    
+            this.prototype.rule = {
+                name: 'empty_constructor_needs_parens',
+                level: 'ignore',
+                message: 'Invoking a constructor without parens and without arguments',
+                description: `\
+Requires constructors with no parameters to include the parens\
+`
+            };
+    
+            this.prototype.tokens = ['UNARY'];
+        }
 
-    rule:
-        name: 'empty_constructor_needs_parens'
-        level: 'ignore'
-        message: 'Invoking a constructor without parens and without arguments'
-        description: '''
-            Requires constructors with no parameters to include the parens
-            '''
+        // Return an error if the given indentation token is not correct.
+        lintToken(token, tokenApi) {
+            if (token[1] === 'new') {
+                let isIdent, nextToken;
+                const peek = tokenApi.peek.bind(tokenApi);
+                // Find the last chained identifier, e.g. Bar in new foo.bar.Bar().
+                let identIndex = 1;
+                while (true) {
+                    var needle;
+                    isIdent = (needle = __guard__(peek(identIndex), x => x[0]), ['IDENTIFIER', 'PROPERTY'].includes(needle));
+                    nextToken = peek(identIndex + 1);
+                    if (isIdent) {
+                        if ((nextToken != null ? nextToken[0] : undefined) === '.') {
+                            // skip the dot and start with the next token
+                            identIndex += 2;
+                            continue;
+                        }
+                        if ((nextToken != null ? nextToken[0] : undefined) === 'INDEX_START') {
+                            while (__guard__(peek(identIndex), x1 => x1[0]) !== 'INDEX_END') {
+                                identIndex++;
+                            }
+                            continue;
+                        }
+                    }
 
-    tokens: ['UNARY']
+                    break;
+                }
 
-    # Return an error if the given indentation token is not correct.
-    lintToken: (token, tokenApi) ->
-        if token[1] is 'new'
-            peek = tokenApi.peek.bind(tokenApi)
-            # Find the last chained identifier, e.g. Bar in new foo.bar.Bar().
-            identIndex = 1
-            loop
-                isIdent = peek(identIndex)?[0] in ['IDENTIFIER', 'PROPERTY']
-                nextToken = peek(identIndex + 1)
-                if isIdent
-                    if nextToken?[0] is '.'
-                        # skip the dot and start with the next token
-                        identIndex += 2
-                        continue
-                    if nextToken?[0] is 'INDEX_START'
-                        while peek(identIndex)?[0] isnt 'INDEX_END'
-                            identIndex++
-                        continue
+                // The callStart is generated if your parameters are all on the same
+                // line with implicit parens, and if your parameters start on the
+                // next line, but is missing if there are no params and no parens.
+                if (isIdent && (nextToken != null)) {
+                    return this.handleExpectedCallStart(nextToken);
+                }
+            }
+        }
 
-                break
+        handleExpectedCallStart(isCallStart) {
+            if (isCallStart[0] !== 'CALL_START') {
+                return true;
+            }
+        }
+    };
+    EmptyConstructorNeedsParens.initClass();
+    return EmptyConstructorNeedsParens;
+})());
 
-            # The callStart is generated if your parameters are all on the same
-            # line with implicit parens, and if your parameters start on the
-            # next line, but is missing if there are no params and no parens.
-            if isIdent and nextToken?
-                return @handleExpectedCallStart(nextToken)
-
-    handleExpectedCallStart: (isCallStart) ->
-        if isCallStart[0] isnt 'CALL_START'
-            return true
+function __guard__(value, transform) {
+  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+}

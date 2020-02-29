@@ -1,60 +1,89 @@
-module.exports = class NoUnnecessaryDoubleQuotes
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS103: Rewrite code to no longer use __guard__
+ * DS206: Consider reworking classes to avoid initClass
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let NoUnnecessaryDoubleQuotes;
+module.exports = (NoUnnecessaryDoubleQuotes = (function() {
+    NoUnnecessaryDoubleQuotes = class NoUnnecessaryDoubleQuotes {
+        static initClass() {
+    
+            this.prototype.rule = {
+                name: 'no_unnecessary_double_quotes',
+                level: 'ignore',
+                message: 'Unnecessary double quotes are forbidden',
+                description: `\
+This rule prohibits double quotes unless string interpolation is
+used or the string contains single quotes.
+<pre>
+<code># Double quotes are discouraged:
+foo = "bar"
+    
+# Unless string interpolation is used:
+foo = "#{bar}baz"
+    
+# Or they prevent cumbersome escaping:
+foo = "I'm just following the 'rules'"
+</code>
+</pre>
+Double quotes are permitted by default.\
+`
+            };
+    
+            this.prototype.tokens = ['STRING', 'STRING_START', 'STRING_END'];
+        }
 
-    rule:
-        name: 'no_unnecessary_double_quotes'
-        level: 'ignore'
-        message: 'Unnecessary double quotes are forbidden'
-        description: '''
-            This rule prohibits double quotes unless string interpolation is
-            used or the string contains single quotes.
-            <pre>
-            <code># Double quotes are discouraged:
-            foo = "bar"
+        constructor() {
+            this.regexps = [];
+            this.interpolationLevel = 0;
+        }
 
-            # Unless string interpolation is used:
-            foo = "#{bar}baz"
+        lintToken(token, tokenApi) {
+            const [type, tokenValue] = Array.from(token);
 
-            # Or they prevent cumbersome escaping:
-            foo = "I'm just following the 'rules'"
-            </code>
-            </pre>
-            Double quotes are permitted by default.
-            '''
+            if (['STRING_START', 'STRING_END'].includes(type)) {
+                return this.trackParens(...arguments);
+            }
 
-    constructor: ->
-        @regexps = []
-        @interpolationLevel = 0
+            const stringValue = tokenValue.match(/^\"(.*)\"$/);
 
-    tokens: ['STRING', 'STRING_START', 'STRING_END']
+            if (!stringValue) { return false; } // no double quotes, all OK
 
-    lintToken: (token, tokenApi) ->
-        [type, tokenValue] = token
+            // When CoffeeScript generates calls to RegExp it double quotes the 2nd
+            // parameter. Using peek(2) becuase the peek(1) would be a CALL_END
+            if (__guard__(tokenApi.peek(2), x => x[0]) === 'REGEX_END') {
+                return false;
+            }
 
-        if type in ['STRING_START', 'STRING_END']
-            return @trackParens arguments...
+            const hasLegalConstructs = this.isInInterpolation() || this.hasSingleQuote(tokenValue);
+            return !hasLegalConstructs;
+        }
 
-        stringValue = tokenValue.match(/^\"(.*)\"$/)
+        isInInterpolation() {
+            return this.interpolationLevel > 0;
+        }
 
-        return false unless stringValue # no double quotes, all OK
+        trackParens(token, tokenApi) {
+            if (token[0] === 'STRING_START') {
+                this.interpolationLevel += 1;
+            } else if (token[0] === 'STRING_END') {
+                this.interpolationLevel -= 1;
+            }
+            // We're not linting, just tracking interpolations.
+            return null;
+        }
 
-        # When CoffeeScript generates calls to RegExp it double quotes the 2nd
-        # parameter. Using peek(2) becuase the peek(1) would be a CALL_END
-        if tokenApi.peek(2)?[0] is 'REGEX_END'
-            return false
+        hasSingleQuote(tokenValue) {
+            return tokenValue.indexOf("'") !== -1;
+        }
+    };
+    NoUnnecessaryDoubleQuotes.initClass();
+    return NoUnnecessaryDoubleQuotes;
+})());
 
-        hasLegalConstructs = @isInInterpolation() or @hasSingleQuote(tokenValue)
-        return not hasLegalConstructs
-
-    isInInterpolation: () ->
-        @interpolationLevel > 0
-
-    trackParens: (token, tokenApi) ->
-        if token[0] is 'STRING_START'
-            @interpolationLevel += 1
-        else if token[0] is 'STRING_END'
-            @interpolationLevel -= 1
-        # We're not linting, just tracking interpolations.
-        null
-
-    hasSingleQuote: (tokenValue) ->
-        return tokenValue.indexOf("'") isnt -1
+function __guard__(value, transform) {
+  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+}

@@ -1,91 +1,125 @@
-module.exports = class SpaceOperators
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS206: Consider reworking classes to avoid initClass
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let SpaceOperators;
+module.exports = (SpaceOperators = (function() {
+    SpaceOperators = class SpaceOperators {
+        static initClass() {
+    
+            this.prototype.rule = {
+                name: 'space_operators',
+                level: 'ignore',
+                message: 'Operators must be spaced properly',
+                description: `\
+This rule enforces that operators have spaces around them.\
+`
+            };
+    
+            this.prototype.tokens = ['+', '-', '=', '**', 'MATH', 'COMPARE',
+                '&', '^', '|', '&&', '||', 'COMPOUND_ASSIGN',
+                'STRING_START', 'STRING_END', 'CALL_START', 'CALL_END'
+            ];
+        }
 
-    rule:
-        name: 'space_operators'
-        level: 'ignore'
-        message: 'Operators must be spaced properly'
-        description: '''
-            This rule enforces that operators have spaces around them.
-            '''
+        constructor() {
+            this.callTokens = [];    // A stack tracking the call token pairs.
+            this.parenTokens = [];   // A stack tracking the parens token pairs.
+            this.interpolationLevel = 0;
+        }
 
-    tokens: ['+', '-', '=', '**', 'MATH', 'COMPARE',
-        '&', '^', '|', '&&', '||', 'COMPOUND_ASSIGN',
-        'STRING_START', 'STRING_END', 'CALL_START', 'CALL_END'
-    ]
+        lintToken(token, tokenApi) {
+            const [type, ...rest] = Array.from(token);
+            // These just keep track of state
+            if (['CALL_START', 'CALL_END'].includes(type)) {
+                this.trackCall(token, tokenApi);
+                return;
+            }
 
-    constructor: ->
-        @callTokens = []    # A stack tracking the call token pairs.
-        @parenTokens = []   # A stack tracking the parens token pairs.
-        @interpolationLevel = 0
+            if (['STRING_START', 'STRING_END'].includes(type)) {
+                return this.trackParens(token, tokenApi);
+            }
 
-    lintToken: (token, tokenApi) ->
-        [type, rest...] = token
-        # These just keep track of state
-        if type in ['CALL_START', 'CALL_END']
-            @trackCall token, tokenApi
-            return
+            // These may return errors
+            if (['+', '-'].includes(type)) {
+                return this.lintPlus(token, tokenApi);
+            } else {
+                return this.lintMath(token, tokenApi);
+            }
+        }
 
-        if type in ['STRING_START', 'STRING_END']
-            return @trackParens token, tokenApi
+        lintPlus(token, tokenApi) {
+            // We can't check this inside of interpolations right now, because the
+            // plusses used for the string type co-ercion are marked not spaced.
+            if (this.isInInterpolation() || this.isInExtendedRegex()) {
+                return null;
+            }
 
-        # These may return errors
-        if type in ['+', '-']
-            @lintPlus token, tokenApi
-        else
-            @lintMath token, tokenApi
+            const p = tokenApi.peek(-1);
 
-    lintPlus: (token, tokenApi) ->
-        # We can't check this inside of interpolations right now, because the
-        # plusses used for the string type co-ercion are marked not spaced.
-        if @isInInterpolation() or @isInExtendedRegex()
-            return null
+            const unaries = ['TERMINATOR', '(', '=', '-', '+', ',', 'CALL_START',
+                        'INDEX_START', '..', '...', 'COMPARE', 'IF', 'THROW',
+                        '&', '^', '|', '&&', '||', 'POST_IF', ':', '[', 'INDENT',
+                        'COMPOUND_ASSIGN', 'RETURN', 'MATH', 'BY', 'LEADING_WHEN'];
 
-        p = tokenApi.peek(-1)
+            const isUnary = !p ? false : Array.from(unaries).includes(p[0]);
+            const notFirstToken = (p || (token.spaced != null) || token.newLine);
+            if (notFirstToken && ((isUnary && (token.spaced != null)) ||
+                    (!isUnary && !token.newLine &&
+                    (!token.spaced || (p && !p.spaced))))) {
+                return { context: token[1] };
+            } else {
+                return null;
+            }
+        }
 
-        unaries = ['TERMINATOR', '(', '=', '-', '+', ',', 'CALL_START',
-                    'INDEX_START', '..', '...', 'COMPARE', 'IF', 'THROW',
-                    '&', '^', '|', '&&', '||', 'POST_IF', ':', '[', 'INDENT',
-                    'COMPOUND_ASSIGN', 'RETURN', 'MATH', 'BY', 'LEADING_WHEN']
+        lintMath(token, tokenApi) {
+            const p = tokenApi.peek(-1);
+            if (!token.newLine && (!token.spaced || (p && !p.spaced))) {
+                return { context: token[1] };
+            } else {
+                return null;
+            }
+        }
 
-        isUnary = if not p then false else p[0] in unaries
-        notFirstToken = (p or token.spaced? or token.newLine)
-        if notFirstToken and ((isUnary and token.spaced?) or
-                (not isUnary and not token.newLine and
-                (not token.spaced or (p and not p.spaced))))
-            return { context: token[1] }
-        else
-            null
+        isInExtendedRegex() {
+            for (let t of Array.from(this.callTokens)) {
+                if (t.isRegex) { return true; }
+            }
+            return false;
+        }
 
-    lintMath: (token, tokenApi) ->
-        p = tokenApi.peek(-1)
-        if not token.newLine and (not token.spaced or (p and not p.spaced))
-            return { context: token[1] }
-        else
-            null
+        isInInterpolation() {
+            return this.interpolationLevel > 0;
+        }
 
-    isInExtendedRegex: () ->
-        for t in @callTokens
-            return true if t.isRegex
-        return false
+        trackCall(token, tokenApi) {
+            if (token[0] === 'CALL_START') {
+                const p = tokenApi.peek(-1);
+                // Track regex calls, to know (approximately) if we're in an
+                // extended regex.
+                token.isRegex = p && (p[0] === 'IDENTIFIER') && (p[1] === 'RegExp');
+                this.callTokens.push(token);
+            } else {
+                this.callTokens.pop();
+            }
+            return null;
+        }
 
-    isInInterpolation: () ->
-        @interpolationLevel > 0
-
-    trackCall: (token, tokenApi) ->
-        if token[0] is 'CALL_START'
-            p = tokenApi.peek(-1)
-            # Track regex calls, to know (approximately) if we're in an
-            # extended regex.
-            token.isRegex = p and p[0] is 'IDENTIFIER' and p[1] is 'RegExp'
-            @callTokens.push(token)
-        else
-            @callTokens.pop()
-        return null
-
-    trackParens: (token, tokenApi) ->
-        if token[0] is 'STRING_START'
-            @interpolationLevel += 1
-        else if token[0] is 'STRING_END'
-            @interpolationLevel -= 1
-        # We're not linting, just tracking interpolations.
-        null
+        trackParens(token, tokenApi) {
+            if (token[0] === 'STRING_START') {
+                this.interpolationLevel += 1;
+            } else if (token[0] === 'STRING_END') {
+                this.interpolationLevel -= 1;
+            }
+            // We're not linting, just tracking interpolations.
+            return null;
+        }
+    };
+    SpaceOperators.initClass();
+    return SpaceOperators;
+})());

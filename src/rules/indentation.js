@@ -1,230 +1,290 @@
-module.exports = class Indentation
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS103: Rewrite code to no longer use __guard__
+ * DS205: Consider reworking code to avoid use of IIFEs
+ * DS206: Consider reworking classes to avoid initClass
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let Indentation;
+module.exports = (Indentation = (function() {
+    Indentation = class Indentation {
+        static initClass() {
+    
+            this.prototype.rule = {
+                name: 'indentation',
+                value: 2,
+                level: 'error',
+                message: 'Line contains inconsistent indentation',
+                description: `\
+This rule imposes a standard number of spaces to be used for
+indentation. Since whitespace is significant in CoffeeScript, it's
+critical that a project chooses a standard indentation format and
+stays consistent. Other roads lead to darkness. <pre> <code>#
+Enabling this option will prevent this ugly
+# but otherwise valid CoffeeScript.
+twoSpaces = () ->
+  fourSpaces = () ->
+      eightSpaces = () ->
+            'this is valid CoffeeScript'
+    
+</code>
+</pre>
+Two space indentation is enabled by default.\
+`
+            };
+    
+            this.prototype.tokens = ['INDENT', '[', ']', '.'];
+    
+            this.prototype.keywords = [
+              '->', '=>', '@', 'CATCH', 'CLASS', 'DEFAULT', 'ELSE', 'EXPORT',
+              'FINALLY', 'FOR', 'FORIN', 'FOROF', 'IDENTIFIER', 'IF', 'IMPORT',
+              'LEADING_WHEN', 'LOOP', 'PROPERTY', 'RETURN', 'SWITCH', 'THROW',
+              'TRY', 'UNTIL', 'WHEN', 'WHILE', 'YIELD'
+            ];
+        }
 
-    rule:
-        name: 'indentation'
-        value: 2
-        level: 'error'
-        message: 'Line contains inconsistent indentation'
-        description: '''
-            This rule imposes a standard number of spaces to be used for
-            indentation. Since whitespace is significant in CoffeeScript, it's
-            critical that a project chooses a standard indentation format and
-            stays consistent. Other roads lead to darkness. <pre> <code>#
-            Enabling this option will prevent this ugly
-            # but otherwise valid CoffeeScript.
-            twoSpaces = () ->
-              fourSpaces = () ->
-                  eightSpaces = () ->
-                        'this is valid CoffeeScript'
+        constructor() {
+            this.arrayTokens = [];   // A stack tracking the array token pairs.
+        }
 
-            </code>
-            </pre>
-            Two space indentation is enabled by default.
-            '''
+        // Return an error if the given indentation token is not correct.
+        lintToken(token, tokenApi) {
+            let [type, numIndents] = Array.from(token);
+            const { first_column: dotIndent } = token[2];
+            const { lines, lineNumber } = tokenApi;
 
-    tokens: ['INDENT', '[', ']', '.']
-
-    keywords: [
-      '->', '=>', '@', 'CATCH', 'CLASS', 'DEFAULT', 'ELSE', 'EXPORT',
-      'FINALLY', 'FOR', 'FORIN', 'FOROF', 'IDENTIFIER', 'IF', 'IMPORT',
-      'LEADING_WHEN', 'LOOP', 'PROPERTY', 'RETURN', 'SWITCH', 'THROW',
-      'TRY', 'UNTIL', 'WHEN', 'WHILE', 'YIELD'
-    ]
-
-    constructor: ->
-        @arrayTokens = []   # A stack tracking the array token pairs.
-
-    # Return an error if the given indentation token is not correct.
-    lintToken: (token, tokenApi) ->
-        [type, numIndents] = token
-        { first_column: dotIndent } = token[2]
-        { lines, lineNumber } = tokenApi
-
-        expected = tokenApi.config[@rule.name].value
-        # See: 'Indented chained invocations with bad indents'
-        # This actually checks the chained call to see if its properly indented
-        if type is '.'
-            # Keep this if statement separately, since we still need to let
-            # the linting pass if the '.' token is not at the beginning of
-            # the line
-            currentLine = lines[lineNumber]
-            if currentLine.match(/\S/)?[0] is '.'
-                next = tokenApi.peek(1)
-                if next[0] is 'PROPERTY'
-                    chain = '.' + next[1]
-                    startsWith = new RegExp('^(\\s*)(\\' + chain + ')')
-                    regExRes = currentLine.match(startsWith)
-                    spaces = regExRes?[1].length or -1
-                    if regExRes?.index is 0 and spaces is dotIndent
-                        got = dotIndent
-                        if dotIndent - expected > expected
-                            got %= expected
-
-                        if dotIndent % expected isnt 0
-                            return {
-                                context: "Expected #{expected} got #{got}"
+            const expected = tokenApi.config[this.rule.name].value;
+            // See: 'Indented chained invocations with bad indents'
+            // This actually checks the chained call to see if its properly indented
+            if (type === '.') {
+                // Keep this if statement separately, since we still need to let
+                // the linting pass if the '.' token is not at the beginning of
+                // the line
+                const currentLine = lines[lineNumber];
+                if (__guard__(currentLine.match(/\S/), x => x[0]) === '.') {
+                    const next = tokenApi.peek(1);
+                    if (next[0] === 'PROPERTY') {
+                        const chain = '.' + next[1];
+                        const startsWith = new RegExp('^(\\s*)(\\' + chain + ')');
+                        const regExRes = currentLine.match(startsWith);
+                        const spaces = (regExRes != null ? regExRes[1].length : undefined) || -1;
+                        if (((regExRes != null ? regExRes.index : undefined) === 0) && (spaces === dotIndent)) {
+                            let got = dotIndent;
+                            if ((dotIndent - expected) > expected) {
+                                got %= expected;
                             }
 
-            return undefined
+                            if ((dotIndent % expected) !== 0) {
+                                return {
+                                    context: `Expected ${expected} got ${got}`
+                                };
+                            }
+                        }
+                    }
+                }
 
-        if type in ['[', ']']
-            @lintArray(token)
-            return undefined
+                return undefined;
+            }
 
-        return null if token.generated? or token.explicit?
+            if (['[', ']'].includes(type)) {
+                this.lintArray(token);
+                return undefined;
+            }
 
-        # Ignore the indentation inside of an array, so that
-        # we can allow things like:
-        #   x = ["foo",
-        #             "bar"]
-        previous = tokenApi.peek(-1)
-        isArrayIndent = @inArray() and previous?.newLine
+            if ((token.generated != null) || (token.explicit != null)) { return null; }
 
-        # Ignore indents used to for formatting on multi-line expressions, so
-        # we can allow things like:
-        #   a = b =
-        #     c = d
-        previousSymbol = tokenApi.peek(-1)?[0]
-        isMultiline = previousSymbol in ['=', ',']
+            // Ignore the indentation inside of an array, so that
+            // we can allow things like:
+            //   x = ["foo",
+            //             "bar"]
+            const previous = tokenApi.peek(-1);
+            const isArrayIndent = this.inArray() && (previous != null ? previous.newLine : undefined);
 
-        # Summarize the indentation conditions we'd like to ignore
-        ignoreIndent = isArrayIndent or isMultiline
+            // Ignore indents used to for formatting on multi-line expressions, so
+            // we can allow things like:
+            //   a = b =
+            //     c = d
+            const previousSymbol = __guard__(tokenApi.peek(-1), x1 => x1[0]);
+            const isMultiline = ['=', ','].includes(previousSymbol);
 
-        # Correct CoffeeScript's incorrect INDENT token value when functions
-        # get chained. See https://github.com/jashkenas/coffeescript/issues/3137
-        # Also see CoffeeLint Issues: #4, #88, #128, and many more.
-        numIndents = @getCorrectIndent(tokenApi)
+            // Summarize the indentation conditions we'd like to ignore
+            const ignoreIndent = isArrayIndent || isMultiline;
 
-        # Now check the indentation.
-        if not ignoreIndent and not (expected in numIndents)
-            return { context: "Expected #{expected} got #{numIndents[0]}" }
+            // Correct CoffeeScript's incorrect INDENT token value when functions
+            // get chained. See https://github.com/jashkenas/coffeescript/issues/3137
+            // Also see CoffeeLint Issues: #4, #88, #128, and many more.
+            numIndents = this.getCorrectIndent(tokenApi);
 
-    # Return true if the current token is inside of an array.
-    inArray: () ->
-        return @arrayTokens.length > 0
+            // Now check the indentation.
+            if (!ignoreIndent && !(Array.from(numIndents).includes(expected))) {
+                return { context: `Expected ${expected} got ${numIndents[0]}` };
+            }
+        }
 
-    # Lint the given array token.
-    lintArray: (token) ->
-        # Track the array token pairs
-        if token[0] is '['
-            @arrayTokens.push(token)
-        else if token[0] is ']'
-            @arrayTokens.pop()
-        # Return null, since we're not really linting
-        # anything here.
-        null
+        // Return true if the current token is inside of an array.
+        inArray() {
+            return this.arrayTokens.length > 0;
+        }
 
-    grabLineTokens: (tokenApi, lineNumber, all = false) ->
-        { tokensByLine } = tokenApi
-        lineNumber-- until tokensByLine[lineNumber]? or lineNumber is 0
+        // Lint the given array token.
+        lintArray(token) {
+            // Track the array token pairs
+            if (token[0] === '[') {
+                this.arrayTokens.push(token);
+            } else if (token[0] === ']') {
+                this.arrayTokens.pop();
+            }
+            // Return null, since we're not really linting
+            // anything here.
+            return null;
+        }
 
-        if all
-            (tok for tok in tokensByLine[lineNumber])
-        else
-            (tok for tok in tokensByLine[lineNumber] when not
-                tok.generated? and tok[0] isnt 'OUTDENT')
+        grabLineTokens(tokenApi, lineNumber, all) {
+            if (all == null) { all = false; }
+            const { tokensByLine } = tokenApi;
+            while ((tokensByLine[lineNumber] == null) && (lineNumber !== 0)) { lineNumber--; }
 
-    # Returns a corrected INDENT value if the current line is part of
-    # a chained call. Otherwise returns original INDENT value.
-    getCorrectIndent: (tokenApi) ->
-        { lineNumber, lines, tokens } = tokenApi
+            if (all) {
+                return (() => {
+                    const result = [];
+                    for (let tok of Array.from(tokensByLine[lineNumber])) {                         result.push(tok);
+                    }
+                    return result;
+                })();
+            } else {
+                return (() => {
+                    const result1 = [];
+                    for (let tok of Array.from(tokensByLine[lineNumber])) {                         if ((tok.generated == null) && (tok[0] !== 'OUTDENT')) {
+                            result1.push(tok);
+                        }
+                    }
+                    return result1;
+                })();
+            }
+        }
 
-        curIndent = lines[lineNumber].match(/\S/)?.index
+        // Returns a corrected INDENT value if the current line is part of
+        // a chained call. Otherwise returns original INDENT value.
+        getCorrectIndent(tokenApi) {
+            let prevIndent;
+            const { lineNumber, lines, tokens } = tokenApi;
 
-        prevNum = 1
-        prevNum += 1 while (/^\s*(#|$)/.test(lines[lineNumber - prevNum]))
+            const curIndent = __guard__(lines[lineNumber].match(/\S/), x => x.index);
 
-        prevTokens = @grabLineTokens tokenApi, lineNumber - prevNum
+            let prevNum = 1;
+            while (/^\s*(#|$)/.test(lines[lineNumber - prevNum])) { prevNum += 1; }
 
-        if prevTokens[0]?[0] is 'INDENT'
-            # Pass both the INDENT value and the location of the first token
-            # after the INDENT because sometimes CoffeeScript doesn't return
-            # the correct INDENT if there is something like an if/else
-            # inside an if/else inside of a -> function definition: e.g.
-            #
-            # ->
-            #   r = if a
-            #     if b
-            #       2
-            #     else
-            #       3
-            #   else
-            #     4
-            #
-            # will error without: curIndent - prevTokens[1]?[2].first_column
+            let prevTokens = this.grabLineTokens(tokenApi, lineNumber - prevNum);
 
-            return [curIndent - prevTokens[1]?[2].first_column,
-                curIndent - prevTokens[0][1]]
-        else
-            prevIndent = prevTokens[0]?[2].first_column
-            # This is a scan to handle extra indentation from if/else
-            # statements to make them look nicer: e.g.
-            #
-            # r = if a
-            #   true
-            # else
-            #   false
-            #
-            # is valid.
-            #
-            # r = if a
-            #       true
-            #     else
-            #       false
-            #
-            # is also valid.
-            for _, j in prevTokens when prevTokens[j][0] is '=' and
-                    prevTokens[j + 1]?[0] is 'IF'
-                skipAssign = curIndent - prevTokens[j + 1][2].first_column
-                ret = curIndent - prevIndent
-                return [ret] if skipAssign < 0
-                return [skipAssign, ret]
+            if ((prevTokens[0] != null ? prevTokens[0][0] : undefined) === 'INDENT') {
+                // Pass both the INDENT value and the location of the first token
+                // after the INDENT because sometimes CoffeeScript doesn't return
+                // the correct INDENT if there is something like an if/else
+                // inside an if/else inside of a -> function definition: e.g.
+                //
+                // ->
+                //   r = if a
+                //     if b
+                //       2
+                //     else
+                //       3
+                //   else
+                //     4
+                //
+                // will error without: curIndent - prevTokens[1]?[2].first_column
 
-            # This happens when there is an extra indent to maintain long
-            # conditional statements (IF/UNLESS): e.g.
-            #
-            # ->
-            #   if a is c and
-            #     (false or
-            #       long.expression.that.necessitates(linebreak))
-            #     @foo()
-            #
-            # is valid (note that there an only an extra indent in the last
-            # statement is required and not the line above it
-            #
-            # ->
-            #   if a is c and
-            #       (false or
-            #       long.expression.that.necessitates(linebreak))
-            #     @foo()
-            # is also OK.
-            while prevIndent > curIndent
-                tryLine = lineNumber - prevNum
-                prevTokens = @grabLineTokens tokenApi, tryLine, true
+                return [curIndent - (prevTokens[1] != null ? prevTokens[1][2].first_column : undefined),
+                    curIndent - prevTokens[0][1]];
+            } else {
+                prevIndent = prevTokens[0] != null ? prevTokens[0][2].first_column : undefined;
+                // This is a scan to handle extra indentation from if/else
+                // statements to make them look nicer: e.g.
+                //
+                // r = if a
+                //   true
+                // else
+                //   false
+                //
+                // is valid.
+                //
+                // r = if a
+                //       true
+                //     else
+                //       false
+                //
+                // is also valid.
+                for (let j = 0; j < prevTokens.length; j++) {
+                    const _ = prevTokens[j];
+                    if ((prevTokens[j][0] === '=') &&
+                        (__guard__(prevTokens[j + 1], x1 => x1[0]) === 'IF')) {
+                        const skipAssign = curIndent - prevTokens[j + 1][2].first_column;
+                        const ret = curIndent - prevIndent;
+                        if (skipAssign < 0) { return [ret]; }
+                        return [skipAssign, ret];
+                    }
+                }
 
-                # This is to handle weird object/string indentation.
-                # See: 'Handle edge-case weirdness with strings in objects'
-                #   test case in test_indentation.coffee or in the file,
-                #   test_no_empty_functions.coffee, which is why/how I
-                #   caught this.
-                if prevTokens[0]?[0] is 'INDENT'
-                    prevIndent = prevTokens[0][1]
-                    prevTokens = prevTokens[1..]
+                // This happens when there is an extra indent to maintain long
+                // conditional statements (IF/UNLESS): e.g.
+                //
+                // ->
+                //   if a is c and
+                //     (false or
+                //       long.expression.that.necessitates(linebreak))
+                //     @foo()
+                //
+                // is valid (note that there an only an extra indent in the last
+                // statement is required and not the line above it
+                //
+                // ->
+                //   if a is c and
+                //       (false or
+                //       long.expression.that.necessitates(linebreak))
+                //     @foo()
+                // is also OK.
+                while (prevIndent > curIndent) {
+                    const tryLine = lineNumber - prevNum;
+                    prevTokens = this.grabLineTokens(tokenApi, tryLine, true);
 
-                t = 0
-                # keep looping prevTokens until we find a token in @keywords
-                # or we just run out of tokens in prevTokens
-                until not prevTokens[t]? or prevTokens[t][0] in @keywords
-                    t++
+                    // This is to handle weird object/string indentation.
+                    // See: 'Handle edge-case weirdness with strings in objects'
+                    //   test case in test_indentation.coffee or in the file,
+                    //   test_no_empty_functions.coffee, which is why/how I
+                    //   caught this.
+                    if ((prevTokens[0] != null ? prevTokens[0][0] : undefined) === 'INDENT') {
+                        prevIndent = prevTokens[0][1];
+                        prevTokens = prevTokens.slice(1);
+                    }
 
-                # slice off everything before 't'
-                prevTokens = prevTokens[t..]
-                prevNum++
+                    let t = 0;
+                    // keep looping prevTokens until we find a token in @keywords
+                    // or we just run out of tokens in prevTokens
+                    while (!(prevTokens[t] == null) && !Array.from(this.keywords).includes(prevTokens[t][0])) {
+                        t++;
+                    }
 
-                # if there isn't a valid token, restart the while loop
-                continue unless prevTokens[0]?
+                    // slice off everything before 't'
+                    prevTokens = prevTokens.slice(t);
+                    prevNum++;
 
-                # set new "prevIndent"
-                prevIndent = prevTokens[0]?[2].first_column
+                    // if there isn't a valid token, restart the while loop
+                    if (prevTokens[0] == null) { continue; }
 
-        return [curIndent - prevIndent]
+                    // set new "prevIndent"
+                    prevIndent = prevTokens[0] != null ? prevTokens[0][2].first_column : undefined;
+                }
+            }
+
+            return [curIndent - prevIndent];
+        }
+    };
+    Indentation.initClass();
+    return Indentation;
+})());
+
+function __guard__(value, transform) {
+  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+}

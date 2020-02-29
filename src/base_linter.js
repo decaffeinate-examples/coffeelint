@@ -1,54 +1,95 @@
-# Patch the source properties onto the destination.
-extend = (destination, sources...) ->
-    for source in sources
-        (destination[k] = v for k, v of source)
-    return destination
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS205: Consider reworking code to avoid use of IIFEs
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// Patch the source properties onto the destination.
+let BaseLinter;
+const extend = function(destination, ...sources) {
+    for (let source of Array.from(sources)) {
+        for (let k in source) { const v = source[k]; destination[k] = v; }
+    }
+    return destination;
+};
 
-# Patch any missing attributes from defaults to source.
-defaults = (source, defaults) ->
-    extend({}, defaults, source)
+// Patch any missing attributes from defaults to source.
+const defaults = (source, defaults) => extend({}, defaults, source);
 
-module.exports = class BaseLinter
+module.exports = (BaseLinter = class BaseLinter {
 
-    constructor: (@source, @config, rules) ->
-        @setupRules rules
+    constructor(source, config, rules) {
+        this.source = source;
+        this.config = config;
+        this.setupRules(rules);
+    }
 
-    isObject: (obj) ->
-        obj is Object(obj)
+    isObject(obj) {
+        return obj === Object(obj);
+    }
 
-    # Create an error object for the given rule with the given
-    # attributes.
-    createError: (ruleName, attrs = {}) ->
-        # Level should default to what's in the config, but can be overridden.
-        attrs.level ?= @config[ruleName].level
+    // Create an error object for the given rule with the given
+    // attributes.
+    createError(ruleName, attrs) {
+        // Level should default to what's in the config, but can be overridden.
+        if (attrs == null) { attrs = {}; }
+        if (attrs.level == null) { attrs.level = this.config[ruleName].level; }
 
-        level = attrs.level
-        if level not in ['ignore', 'warn', 'error']
-            throw new Error("unknown level #{level} for rule: #{ruleName}")
+        const {
+            level
+        } = attrs;
+        if (!['ignore', 'warn', 'error'].includes(level)) {
+            throw new Error(`unknown level ${level} for rule: ${ruleName}`);
+        }
 
-        if level in ['error', 'warn']
-            attrs.rule = ruleName
-            return defaults(attrs, @config[ruleName])
-        else
-            null
+        if (['error', 'warn'].includes(level)) {
+            attrs.rule = ruleName;
+            return defaults(attrs, this.config[ruleName]);
+        } else {
+            return null;
+        }
+    }
 
-    acceptRule: (rule) ->
-        throw new Error 'acceptRule needs to be overridden in the subclass'
+    acceptRule(rule) {
+        throw new Error('acceptRule needs to be overridden in the subclass');
+    }
 
-    # Only rules that have a level of error or warn will even get constructed.
-    setupRules: (rules) ->
-        @rules = []
-        for name, RuleConstructor of rules
-            level = @config[name].level
-            if level in ['error', 'warn']
-                rule = new RuleConstructor this, @config
-                if @acceptRule(rule)
-                    @rules.push rule
-            else if level isnt 'ignore'
-                throw new Error("unknown level #{level} for rule: #{rule}")
+    // Only rules that have a level of error or warn will even get constructed.
+    setupRules(rules) {
+        this.rules = [];
+        return (() => {
+            const result = [];
+            for (let name in rules) {
+                var rule;
+                const RuleConstructor = rules[name];
+                const {
+                    level
+                } = this.config[name];
+                if (['error', 'warn'].includes(level)) {
+                    rule = new RuleConstructor(this, this.config);
+                    if (this.acceptRule(rule)) {
+                        result.push(this.rules.push(rule));
+                    } else {
+                        result.push(undefined);
+                    }
+                } else if (level !== 'ignore') {
+                    throw new Error(`unknown level ${level} for rule: ${rule}`);
+                } else {
+                    result.push(undefined);
+                }
+            }
+            return result;
+        })();
+    }
 
-    normalizeResult: (p, result) ->
-        if result is true
-            return @createError p.rule.name
-        if @isObject result
-            return @createError p.rule.name, result
+    normalizeResult(p, result) {
+        if (result === true) {
+            return this.createError(p.rule.name);
+        }
+        if (this.isObject(result)) {
+            return this.createError(p.rule.name, result);
+        }
+    }
+});

@@ -1,116 +1,154 @@
-###
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS103: Rewrite code to no longer use __guard__
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+/*
 Helpers for finding CoffeeLint config in standard locations, similar to how
 JSHint does.
-###
+*/
 
-fs = require 'fs'
-path = require 'path'
-stripComments = require 'strip-json-comments'
-resolve = require('resolve').sync
+const fs = require('fs');
+const path = require('path');
+const stripComments = require('strip-json-comments');
+const resolve = require('resolve').sync;
 
-# Cache for findFile
-findFileResults = {}
+// Cache for findFile
+const findFileResults = {};
 
-# Searches for a file with a specified name starting with 'dir' and going all
-# the way up either until it finds the file or hits the root.
-findFile = (name, dir) ->
-    dir = dir or process.cwd()
-    filename = path.normalize(path.join(dir, name))
-    return findFileResults[filename]  if findFileResults[filename]
-    parent = path.resolve(dir, '../')
-    if fs.existsSync(filename)
-        findFileResults[filename] = filename
-    else if dir is parent
-        findFileResults[filename] = null
-    else
-        findFile name, parent
+// Searches for a file with a specified name starting with 'dir' and going all
+// the way up either until it finds the file or hits the root.
+var findFile = function(name, dir) {
+    dir = dir || process.cwd();
+    const filename = path.normalize(path.join(dir, name));
+    if (findFileResults[filename]) { return findFileResults[filename]; }
+    const parent = path.resolve(dir, '../');
+    if (fs.existsSync(filename)) {
+        return findFileResults[filename] = filename;
+    } else if (dir === parent) {
+        return findFileResults[filename] = null;
+    } else {
+        return findFile(name, parent);
+    }
+};
 
-# Possibly find CoffeeLint configuration within a package.json file.
-loadNpmConfig = (dir) ->
-    fp = findFile('package.json', dir)
-    loadJSON(fp)?.coffeelintConfig  if fp
+// Possibly find CoffeeLint configuration within a package.json file.
+const loadNpmConfig = function(dir) {
+    const fp = findFile('package.json', dir);
+    if (fp) { return __guard__(loadJSON(fp), x => x.coffeelintConfig); }
+};
 
-# Parse a JSON file gracefully.
-loadJSON = (filename) ->
-    try
-        JSON.parse(stripComments(fs.readFileSync(filename).toString()))
-    catch e
-        process.stderr.write "Could not load JSON file '#{filename}': #{e}"
-        null
+// Parse a JSON file gracefully.
+var loadJSON = function(filename) {
+    try {
+        return JSON.parse(stripComments(fs.readFileSync(filename).toString()));
+    } catch (e) {
+        process.stderr.write(`Could not load JSON file '${filename}': ${e}`);
+        return null;
+    }
+};
 
-# Tries to find a configuration file in either project directory (if file is
-# given), as either the package.json's 'coffeelintConfig' property, or a project
-# specific 'coffeelint.json' or a global 'coffeelint.json' in the home
-# directory.
-getConfig = (dir) ->
-    if (process.env.COFFEELINT_CONFIG and
-            fs.existsSync(process.env.COFFEELINT_CONFIG))
-        return loadJSON(process.env.COFFEELINT_CONFIG)
+// Tries to find a configuration file in either project directory (if file is
+// given), as either the package.json's 'coffeelintConfig' property, or a project
+// specific 'coffeelint.json' or a global 'coffeelint.json' in the home
+// directory.
+const getConfig = function(dir) {
+    if (process.env.COFFEELINT_CONFIG &&
+            fs.existsSync(process.env.COFFEELINT_CONFIG)) {
+        return loadJSON(process.env.COFFEELINT_CONFIG);
+    }
 
-    npmConfig = loadNpmConfig(dir)
-    return npmConfig  if npmConfig
-    projConfig = findFile('coffeelint.json', dir)
-    return loadJSON(projConfig)  if projConfig
+    const npmConfig = loadNpmConfig(dir);
+    if (npmConfig) { return npmConfig; }
+    const projConfig = findFile('coffeelint.json', dir);
+    if (projConfig) { return loadJSON(projConfig); }
 
-    envs = process.env.USERPROFILE or process.env.HOME or process.env.HOMEPATH
-    home = path.normalize(path.join(envs, 'coffeelint.json'))
-    if fs.existsSync(home)
-        return loadJSON(home)
+    const envs = process.env.USERPROFILE || process.env.HOME || process.env.HOMEPATH;
+    const home = path.normalize(path.join(envs, 'coffeelint.json'));
+    if (fs.existsSync(home)) {
+        return loadJSON(home);
+    }
+};
 
-# configfinder is the only part of coffeelint that actually has the full
-# filename and can accurately resolve module names. This will find all of the
-# modules and expand them into full paths so that they can be found when the
-# source and config are passed to `coffeelint.lint`
-expandModuleNames = (dir, config) ->
-    for ruleName, data of config when data?.module?
-        config[ruleName]._module = config[ruleName].module
-        config[ruleName].module = resolve data.module, {
-            basedir: dir,
-            extensions: ['.js', '.coffee', '.litcoffee', '.coffee.md']
-        }
-
-    coffeelint = config.coffeelint
-    if coffeelint?.transforms?
-        coffeelint._transforms = coffeelint.transforms
-        coffeelint.transforms = coffeelint.transforms.map (moduleName) ->
-            return resolve moduleName, {
+// configfinder is the only part of coffeelint that actually has the full
+// filename and can accurately resolve module names. This will find all of the
+// modules and expand them into full paths so that they can be found when the
+// source and config are passed to `coffeelint.lint`
+const expandModuleNames = function(dir, config) {
+    for (let ruleName in config) {
+        const data = config[ruleName];
+        if ((data != null ? data.module : undefined) != null) {
+            config[ruleName]._module = config[ruleName].module;
+            config[ruleName].module = resolve(data.module, {
                 basedir: dir,
                 extensions: ['.js', '.coffee', '.litcoffee', '.coffee.md']
-            }
-    if coffeelint?.coffeescript?
-        coffeelint._coffeescript = coffeelint.coffeescript
-        coffeelint.coffeescript = resolve coffeelint.coffeescript, {
+            });
+        }
+    }
+
+    const {
+        coffeelint
+    } = config;
+    if ((coffeelint != null ? coffeelint.transforms : undefined) != null) {
+        coffeelint._transforms = coffeelint.transforms;
+        coffeelint.transforms = coffeelint.transforms.map(moduleName => resolve(moduleName, {
             basedir: dir,
             extensions: ['.js', '.coffee', '.litcoffee', '.coffee.md']
-        }
+        }));
+    }
+    if ((coffeelint != null ? coffeelint.coffeescript : undefined) != null) {
+        coffeelint._coffeescript = coffeelint.coffeescript;
+        coffeelint.coffeescript = resolve(coffeelint.coffeescript, {
+            basedir: dir,
+            extensions: ['.js', '.coffee', '.litcoffee', '.coffee.md']
+        });
+    }
 
-    config
+    return config;
+};
 
-extendConfig = (config) ->
-    unless config.extends
-        return config
+const extendConfig = function(config) {
+    let rule, ruleName;
+    if (!config.extends) {
+        return config;
+    }
 
-    parentConfig = require config.extends
-    extendedConfig = {}
+    const parentConfig = require(config.extends);
+    const extendedConfig = {};
 
-    for ruleName, rule of config
-        extendedConfig[ruleName] = rule
-    for ruleName, rule of parentConfig
-        extendedConfig[ruleName] = config[ruleName] or rule
+    for (ruleName in config) {
+        rule = config[ruleName];
+        extendedConfig[ruleName] = rule;
+    }
+    for (ruleName in parentConfig) {
+        rule = parentConfig[ruleName];
+        extendedConfig[ruleName] = config[ruleName] || rule;
+    }
 
-    return extendedConfig
+    return extendedConfig;
+};
 
 
-exports.getConfig = (filename = null) ->
-    if filename
-        dir = path.dirname(path.resolve(filename))
-    else
-        dir = process.cwd()
+exports.getConfig = function(filename = null) {
+    let dir;
+    if (filename) {
+        dir = path.dirname(path.resolve(filename));
+    } else {
+        dir = process.cwd();
+    }
 
-    config = getConfig(dir)
+    let config = getConfig(dir);
 
-    if config
-        config = extendConfig(config)
-        config = expandModuleNames(dir, config)
+    if (config) {
+        config = extendConfig(config);
+        config = expandModuleNames(dir, config);
+    }
 
-    config
+    return config;
+};
+
+function __guard__(value, transform) {
+  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+}

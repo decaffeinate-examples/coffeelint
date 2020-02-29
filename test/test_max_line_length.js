@@ -1,83 +1,112 @@
-path = require 'path'
-vows = require 'vows'
-assert = require 'assert'
-coffeelint = require path.join('..', 'lib', 'coffeelint')
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS205: Consider reworking code to avoid use of IIFEs
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const path = require('path');
+const vows = require('vows');
+const assert = require('assert');
+const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
-RULE = 'max_line_length'
+const RULE = 'max_line_length';
 vows.describe(RULE).addBatch({
 
-    'Maximum line length':
-        topic: () ->
-            # Every line generated here is a comment.
-            line = (length) ->
-                return '# ' + new Array(length - 1).join('-')
-            lengths = [50, 79, 80, 81, 100, 200]
-            (line(l) for l in lengths).join('\n')
+    'Maximum line length': {
+        topic() {
+            // Every line generated here is a comment.
+            const line = length => '# ' + new Array(length - 1).join('-');
+            const lengths = [50, 79, 80, 81, 100, 200];
+            return (Array.from(lengths).map((l) => line(l))).join('\n');
+        },
 
-        'defaults to 80': (source) ->
-            errors = coffeelint.lint(source)
-            assert.equal(errors.length, 3)
-            error = errors[0]
-            assert.equal(error.lineNumber, 4)
-            assert.equal(error.message, 'Line exceeds maximum allowed length')
-            assert.equal(error.rule, RULE)
+        'defaults to 80'(source) {
+            const errors = coffeelint.lint(source);
+            assert.equal(errors.length, 3);
+            const error = errors[0];
+            assert.equal(error.lineNumber, 4);
+            assert.equal(error.message, 'Line exceeds maximum allowed length');
+            return assert.equal(error.rule, RULE);
+        },
 
-        'is configurable': (source) ->
-            config =
-                max_line_length:
-                    value: 99
+        'is configurable'(source) {
+            const config = {
+                max_line_length: {
+                    value: 99,
                     level: 'error'
-            errors = coffeelint.lint(source, config)
-            assert.equal(errors.length, 2)
+                }
+            };
+            const errors = coffeelint.lint(source, config);
+            return assert.equal(errors.length, 2);
+        },
 
-        'is optional': (source) ->
-            for length in [null, 0, false]
-                config =
-                    max_line_length:
-                        value: length
-                        level: 'ignore'
-                errors = coffeelint.lint(source, config)
-                assert.isEmpty(errors)
+        'is optional'(source) {
+            return (() => {
+                const result = [];
+                for (let length of [null, 0, false]) {
+                    const config = {
+                        max_line_length: {
+                            value: length,
+                            level: 'ignore'
+                        }
+                    };
+                    const errors = coffeelint.lint(source, config);
+                    result.push(assert.isEmpty(errors));
+                }
+                return result;
+            })();
+        },
 
-        'can ignore comments': (source) ->
-            config =
-                max_line_length:
+        'can ignore comments'(source) {
+            const config = {
+                max_line_length: {
                     limitComments: false
+                }
+            };
 
-            errors = coffeelint.lint(source, config)
-            assert.isEmpty(errors)
+            const errors = coffeelint.lint(source, config);
+            return assert.isEmpty(errors);
+        },
 
-        'respects Windows line breaks': ->
-            source = new Array(81).join('X') + '\r\n'
+        'respects Windows line breaks'() {
+            const source = new Array(81).join('X') + '\r\n';
 
-            errors = coffeelint.lint(source, {})
-            assert.isEmpty(errors)
+            const errors = coffeelint.lint(source, {});
+            return assert.isEmpty(errors);
+        }
+    },
 
-    'Literate Line Length':
-        topic: ->
-            # This creates a line with 80 Xs.
-            source = new Array(81).join('X') + '\n'
+    'Literate Line Length': {
+        topic() {
+            // This creates a line with 80 Xs.
+            let source = new Array(81).join('X') + '\n';
 
-            # Long URLs are ignored by default even in Literate code.
-            source += 'http://testing.example.com/really-really-long-url-' +
-                'that-shouldnt-have-to-be-split-to-avoid-the-lint-error'
+            // Long URLs are ignored by default even in Literate code.
+            return source += 'http://testing.example.com/really-really-long-url-' +
+                'that-shouldnt-have-to-be-split-to-avoid-the-lint-error';
+        },
 
-        'long urls are ignored': (source) ->
-            errors = coffeelint.lint(source, {}, true)
-            assert.isEmpty(errors)
+        'long urls are ignored'(source) {
+            const errors = coffeelint.lint(source, {}, true);
+            return assert.isEmpty(errors);
+        }
+    },
 
-    'Maximum length exceptions':
+    'Maximum length exceptions': {
         topic:
-            '''
-            # Since the line length check only reads lines in isolation it will
-            # see the following line as a comment even though it's in a string.
-            # I don't think that's a problem.
-            #
-            # http://testing.example.com/really-really-long-url-that-shouldnt-have-to-be-split-to-avoid-the-lint-error
-            '''
+            `\
+# Since the line length check only reads lines in isolation it will
+# see the following line as a comment even though it's in a string.
+# I don't think that's a problem.
+#
+# http://testing.example.com/really-really-long-url-that-shouldnt-have-to-be-split-to-avoid-the-lint-error\
+`,
 
-        'excludes long urls': (source) ->
-            errors = coffeelint.lint(source)
-            assert.isEmpty(errors)
+        'excludes long urls'(source) {
+            const errors = coffeelint.lint(source);
+            return assert.isEmpty(errors);
+        }
+    }
 
-}).export(module)
+}).export(module);

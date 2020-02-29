@@ -1,51 +1,61 @@
-path = require 'path'
-vows = require 'vows'
-assert = require 'assert'
-coffeelint = require path.join('..', 'lib', 'coffeelint')
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const path = require('path');
+const vows = require('vows');
+const assert = require('assert');
+const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
-config =
-    no_unnecessary_fat_arrows: { level: 'ignore' }
+const config = {
+    no_unnecessary_fat_arrows: { level: 'ignore' },
     no_private_function_fat_arrows: { level: 'error' }
+  };
 
-RULE = 'no_private_function_fat_arrows'
+const RULE = 'no_private_function_fat_arrows';
 
 vows.describe(RULE).addBatch({
-    'eol':
-        'should warn with fat arrow': ->
-            result = coffeelint.lint('''
-            class Foo
-              foo = =>
-            ''', config)
-            assert.equal(result.length, 1)
-            assert.equal(result[0].rule, RULE)
-            assert.equal(result[0].level, 'error')
+    'eol': {
+        'should warn with fat arrow'() {
+            const result = coffeelint.lint(`\
+class Foo
+  foo = =>\
+`, config);
+            assert.equal(result.length, 1);
+            assert.equal(result[0].rule, RULE);
+            return assert.equal(result[0].level, 'error');
+          },
 
-        'should work with nested classes': ->
-            result = coffeelint.lint('''
-            class Bar
-              foo = ->
-                class
-                  bar2 = =>
-            ''', config)
-            assert.equal(result.length, 1)
-            assert.equal(result[0].rule, RULE)
-            assert.equal(result[0].level, 'error')
+        'should work with nested classes'() {
+            let result = coffeelint.lint(`\
+class Bar
+  foo = ->
+    class
+      bar2 = =>\
+`, config);
+            assert.equal(result.length, 1);
+            assert.equal(result[0].rule, RULE);
+            assert.equal(result[0].level, 'error');
 
-            # Same method name as external function.
-            result = coffeelint.lint('''
-            class Bar
-              foo = ->
-                class
-                  foo = =>
-            ''', config)
-            assert.equal(result.length, 1)
-            assert.equal(result[0].rule, RULE)
-            assert.equal(result[0].level, 'error')
+            // Same method name as external function.
+            result = coffeelint.lint(`\
+class Bar
+  foo = ->
+    class
+      foo = =>\
+`, config);
+            assert.equal(result.length, 1);
+            assert.equal(result[0].rule, RULE);
+            return assert.equal(result[0].level, 'error');
+          },
 
-        'should not warn without fat arrow': ->
-            assert.isEmpty(coffeelint.lint('''
-            class Foo
-              foo = ->
-            ''', config))
+        'should not warn without fat arrow'() {
+            return assert.isEmpty(coffeelint.lint(`\
+class Foo
+  foo = ->\
+`, config));
+          }
+      }
 
-}).export(module)
+}).export(module);

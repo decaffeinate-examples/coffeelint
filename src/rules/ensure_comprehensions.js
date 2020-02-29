@@ -1,87 +1,120 @@
-module.exports = class EnsureComprehensions
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS206: Consider reworking classes to avoid initClass
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let EnsureComprehensions;
+module.exports = (EnsureComprehensions = (function() {
+    EnsureComprehensions = class EnsureComprehensions {
+        static initClass() {
+    
+            this.prototype.rule = {
+                name: 'ensure_comprehensions',
+                level: 'warn',
+                message: 'Comprehensions must have parentheses around them',
+                description: `\
+This rule makes sure that parentheses are around comprehensions.\
+`
+            };
+    
+            this.prototype.tokens = ['FOR'];
+    
+            this.prototype.forBlock = false;
+        }
 
-    rule:
-        name: 'ensure_comprehensions'
-        level: 'warn'
-        message: 'Comprehensions must have parentheses around them'
-        description: '''
-            This rule makes sure that parentheses are around comprehensions.
-            '''
+        lintToken(token, tokenApi) {
+            // Rules
+            // Ignore if normal for-loop with a block
+            // If LHS of operation contains either the key or value variable of
+            //     the loop, assume that it is not a comprehension.
 
-    tokens: ['FOR']
+            // Find all identifiers (including lhs values and parts of for loop)
+            let prevToken;
+            const idents = this.findIdents(tokenApi);
 
-    forBlock: false
+            // if it looks like a for block, don't bother checking
+            if (this.forBlock) {
+                this.forBlock = false;
+                return;
+            }
 
-    lintToken: (token, tokenApi) ->
-        # Rules
-        # Ignore if normal for-loop with a block
-        # If LHS of operation contains either the key or value variable of
-        #     the loop, assume that it is not a comprehension.
+            let peeker = -1;
+            let atEqual = false;
+            let numCallEnds = 0;
+            let numCallStarts = 0;
+            let numParenStarts = 0;
+            let numParenEnds = 0;
+            const prevIdents = [];
 
-        # Find all identifiers (including lhs values and parts of for loop)
-        idents = @findIdents(tokenApi)
+            while (prevToken = tokenApi.peek(peeker)) {
 
-        # if it looks like a for block, don't bother checking
-        if @forBlock
-            @forBlock = false
-            return
+                if (prevToken[0] === 'CALL_END') { numCallEnds++; }
+                if (prevToken[0] === 'CALL_START') { numCallStarts++; }
 
-        peeker = -1
-        atEqual = false
-        numCallEnds = 0
-        numCallStarts = 0
-        numParenStarts = 0
-        numParenEnds = 0
-        prevIdents = []
+                if (prevToken[0] === '(') { numParenStarts++; }
+                if (prevToken[0] === ')') { numParenEnds++; }
 
-        while (prevToken = tokenApi.peek(peeker))
+                if (prevToken[0] === 'IDENTIFIER') {
+                    if (!atEqual) {
+                        prevIdents.push(prevToken[1]);
+                    } else if (Array.from(idents).includes(prevToken[1])) {
+                        return;
+                    }
+                }
 
-            numCallEnds++ if prevToken[0] is 'CALL_END'
-            numCallStarts++ if prevToken[0] is 'CALL_START'
+                if (['(', '->', 'TERMINATOR'].includes(prevToken[0]) || (prevToken.newLine != null)) {
+                    break;
+                }
 
-            numParenStarts++ if prevToken[0] is '('
-            numParenEnds++ if prevToken[0] is ')'
+                if ((prevToken[0] === '=') && (numParenEnds === numParenStarts)) {
+                    atEqual = true;
+                }
 
-            if prevToken[0] is 'IDENTIFIER'
-                if not atEqual
-                    prevIdents.push prevToken[1]
-                else if prevToken[1] in idents
-                    return
+                peeker--;
+            }
 
-            if prevToken[0] in ['(', '->', 'TERMINATOR'] or prevToken.newLine?
-                break
+            // If we hit a terminal node (TERMINATOR token or w/ property newLine)
+            // or if we hit the top of the file and we've seen an '=' sign without
+            // any identifiers that are part of the for-loop, and there is an equal
+            // amount of CALL_START/CALL_END tokens. An unequal number means the list
+            // comprehension is inside of a function call
+            if (atEqual && (numCallStarts === numCallEnds)) {
+                return { context: '' };
+            }
+        }
 
-            if prevToken[0] is '=' and numParenEnds is numParenStarts
-                atEqual = true
+        findIdents(tokenApi) {
+            let nextToken;
+            let peeker = 1;
+            const idents = [];
 
-            peeker--
+            while (nextToken = tokenApi.peek(peeker)) {
+                if (nextToken[0] === 'IDENTIFIER') {
+                    idents.push(nextToken[1]);
+                }
+                if (['FORIN', 'FOROF'].includes(nextToken[0])) {
+                    break;
+                }
+                peeker++;
+            }
 
-        # If we hit a terminal node (TERMINATOR token or w/ property newLine)
-        # or if we hit the top of the file and we've seen an '=' sign without
-        # any identifiers that are part of the for-loop, and there is an equal
-        # amount of CALL_START/CALL_END tokens. An unequal number means the list
-        # comprehension is inside of a function call
-        if atEqual and numCallStarts is numCallEnds
-            return { context: '' }
+            // now search ahead to see if this becomes a FOR block
+            while (nextToken = tokenApi.peek(peeker)) {
+                if (nextToken[0] === 'TERMINATOR') {
+                    break;
+                }
+                if (nextToken[0] === 'INDENT') {
+                    this.forBlock = true;
+                    break;
+                }
+                peeker++;
+            }
 
-    findIdents: (tokenApi) ->
-        peeker = 1
-        idents = []
-
-        while (nextToken = tokenApi.peek(peeker))
-            if nextToken[0] is 'IDENTIFIER'
-                idents.push(nextToken[1])
-            if nextToken[0] in ['FORIN', 'FOROF']
-                break
-            peeker++
-
-        # now search ahead to see if this becomes a FOR block
-        while (nextToken = tokenApi.peek(peeker))
-            if nextToken[0] is 'TERMINATOR'
-                break
-            if nextToken[0] is 'INDENT'
-                @forBlock = true
-                break
-            peeker++
-
-        return idents
+            return idents;
+        }
+    };
+    EnsureComprehensions.initClass();
+    return EnsureComprehensions;
+})());

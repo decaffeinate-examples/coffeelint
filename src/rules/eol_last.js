@@ -1,21 +1,36 @@
-module.exports = class EOLLast
+/*
+ * decaffeinate suggestions:
+ * DS206: Consider reworking classes to avoid initClass
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let EOLLast;
+module.exports = (EOLLast = (function() {
+    EOLLast = class EOLLast {
+        static initClass() {
+    
+            this.prototype.rule = {
+                name: 'eol_last',
+                level: 'ignore',
+                message: 'File does not end with a single newline',
+                description: `\
+Checks that the file ends with a single newline\
+`
+            };
+        }
 
-    rule:
-        name: 'eol_last'
-        level: 'ignore'
-        message: 'File does not end with a single newline'
-        description: '''
-            Checks that the file ends with a single newline
-            '''
+        lintLine(line, lineApi) {
+            if (!lineApi.isLastLine()) { return null; }
 
-    lintLine: (line, lineApi) ->
-        return null unless lineApi.isLastLine()
+            const isNewline = line.length === 0;
 
-        isNewline = line.length is 0
+            const previousIsNewline = lineApi.lineCount > 1 ?
+                lineApi.lines[lineApi.lineNumber - 1].length === 0
+            :
+                false;
 
-        previousIsNewline = if lineApi.lineCount > 1
-            lineApi.lines[lineApi.lineNumber - 1].length is 0
-        else
-            false
-
-        return true unless isNewline and not previousIsNewline
+            if (!isNewline || !!previousIsNewline) { return true; }
+        }
+    };
+    EOLLast.initClass();
+    return EOLLast;
+})());

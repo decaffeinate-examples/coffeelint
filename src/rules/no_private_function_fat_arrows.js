@@ -1,43 +1,83 @@
-module.exports = class NoPrivateFunctionFatArrows
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS205: Consider reworking code to avoid use of IIFEs
+ * DS206: Consider reworking classes to avoid initClass
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let NoPrivateFunctionFatArrows;
+module.exports = (NoPrivateFunctionFatArrows = (function() {
+    NoPrivateFunctionFatArrows = class NoPrivateFunctionFatArrows {
+        constructor() {
+            this.isCode = this.isCode.bind(this);
+            this.isClass = this.isClass.bind(this);
+            this.isValue = this.isValue.bind(this);
+            this.isObject = this.isObject.bind(this);
+            this.isFatArrowCode = this.isFatArrowCode.bind(this);
+        }
 
-    rule:
-        name: 'no_private_function_fat_arrows'
-        level: 'warn'
-        message: 'Used the fat arrow for a private function'
-        description: '''
-            Warns when you use the fat arrow for a private function
-            inside a class definition scope. It is not necessary and
-            it does not do anything.
-            '''
+        static initClass() {
+    
+            this.prototype.rule = {
+                name: 'no_private_function_fat_arrows',
+                level: 'warn',
+                message: 'Used the fat arrow for a private function',
+                description: `\
+Warns when you use the fat arrow for a private function
+inside a class definition scope. It is not necessary and
+it does not do anything.\
+`
+            };
+        }
 
-    lintAST: (node, @astApi) ->
-        @lintNode node
-        undefined
+        lintAST(node, astApi) {
+            this.astApi = astApi;
+            this.lintNode(node);
+            return undefined;
+        }
 
-    lintNode: (node, functions = []) ->
-        if @isFatArrowCode(node) and node in functions
-            error = @astApi.createError
-                lineNumber: node.locationData.first_line + 1
-            @errors.push error
+        lintNode(node, functions) {
+            if (functions == null) { functions = []; }
+            if (this.isFatArrowCode(node) && Array.from(functions).includes(node)) {
+                const error = this.astApi.createError({
+                    lineNumber: node.locationData.first_line + 1});
+                this.errors.push(error);
+            }
 
-        node.eachChild (child) => @lintNode child,
-            switch
-                when @isClass node then @functionsOfClass node
-                # Once we've hit a function, we know we can't be in the top
-                # level of a function anymore, so we can safely reset the
-                # functions to empty to save work.
-                when @isCode node then []
-                else functions
+            return node.eachChild(child => this.lintNode(child,
+                (() => { switch (false) {
+                    case !this.isClass(node): return this.functionsOfClass(node);
+                    // Once we've hit a function, we know we can't be in the top
+                    // level of a function anymore, so we can safely reset the
+                    // functions to empty to save work.
+                    case !this.isCode(node): return [];
+                    default: return functions;
+                } })()
+            )
+            );
+        }
 
-    isCode: (node) => @astApi.getNodeName(node) is 'Code'
-    isClass: (node) => @astApi.getNodeName(node) is 'Class'
-    isValue: (node) => @astApi.getNodeName(node) is 'Value'
-    isObject: (node) => @astApi.getNodeName(node) is 'Obj'
-    isFatArrowCode: (node) => @isCode(node) and node.bound
+        isCode(node) { return this.astApi.getNodeName(node) === 'Code'; }
+        isClass(node) { return this.astApi.getNodeName(node) === 'Class'; }
+        isValue(node) { return this.astApi.getNodeName(node) === 'Value'; }
+        isObject(node) { return this.astApi.getNodeName(node) === 'Obj'; }
+        isFatArrowCode(node) { return this.isCode(node) && node.bound; }
 
-    functionsOfClass: (classNode) ->
-        bodyValues = for bodyNode in classNode.body.expressions
-            continue if @isValue(bodyNode) and @isObject(bodyNode.base)
+        functionsOfClass(classNode) {
+            const bodyValues = (() => {
+                const result = [];
+                for (let bodyNode of Array.from(classNode.body.expressions)) {
+                    if (this.isValue(bodyNode) && this.isObject(bodyNode.base)) { continue; }
 
-            bodyNode.value
-        bodyValues.filter(@isCode)
+                    result.push(bodyNode.value);
+                }
+                return result;
+            })();
+            return bodyValues.filter(this.isCode);
+        }
+    };
+    NoPrivateFunctionFatArrows.initClass();
+    return NoPrivateFunctionFatArrows;
+})());

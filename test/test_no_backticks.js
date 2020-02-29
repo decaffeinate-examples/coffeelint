@@ -1,41 +1,51 @@
-path = require 'path'
-vows = require 'vows'
-assert = require 'assert'
-coffeelint = require path.join('..', 'lib', 'coffeelint')
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const path = require('path');
+const vows = require('vows');
+const assert = require('assert');
+const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
-RULE = 'no_backticks'
+const RULE = 'no_backticks';
 
 vows.describe(RULE).addBatch({
 
-    'Backticks':
+    'Backticks': {
         topic:
-            '''
-            `with(document) alert(height);`
-            '''
+            `\
+\`with(document) alert(height);\`\
+`,
 
-        'are forbidden by default': (source) ->
-            errors = coffeelint.lint(source)
-            assert.isArray(errors)
-            assert.lengthOf(errors, 1)
-            error = errors[0]
-            assert.equal(error.rule, RULE)
-            assert.equal(error.lineNumber, 1)
-            assert.equal(error.message, 'Backticks are forbidden')
+        'are forbidden by default'(source) {
+            const errors = coffeelint.lint(source);
+            assert.isArray(errors);
+            assert.lengthOf(errors, 1);
+            const error = errors[0];
+            assert.equal(error.rule, RULE);
+            assert.equal(error.lineNumber, 1);
+            return assert.equal(error.message, 'Backticks are forbidden');
+        },
 
-        'can be permitted': (source) ->
-            config = no_backticks: { level: 'ignore' }
-            errors = coffeelint.lint(source, config)
-            assert.isArray(errors)
-            assert.isEmpty(errors)
+        'can be permitted'(source) {
+            const config = {no_backticks: { level: 'ignore' }};
+            const errors = coffeelint.lint(source, config);
+            assert.isArray(errors);
+            return assert.isEmpty(errors);
+        }
+    },
 
-    'Ignore string interpolation from comments':
+    'Ignore string interpolation from comments': {
         topic:
-            '''
-            <div>{### comment ###}</div>
-            '''
-        'are ignored when no_backtick rule is enabled': (source) ->
-            config = no_backticks: { level: 'error' }
-            errors = coffeelint.lint(source)
-            assert.isEmpty(errors)
+            `\
+<div>{### comment ###}</div>\
+`,
+        'are ignored when no_backtick rule is enabled'(source) {
+            const config = {no_backticks: { level: 'error' }};
+            const errors = coffeelint.lint(source);
+            return assert.isEmpty(errors);
+        }
+    }
 
-}).export(module)
+}).export(module);

@@ -1,48 +1,67 @@
-path        = require 'path'
-vows        = require 'vows'
-assert      = require 'assert'
-coffeelint  = require path.join('..', 'lib', 'coffeelint')
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const path        = require('path');
+const vows        = require('vows');
+const assert      = require('assert');
+const coffeelint  = require(path.join('..', 'lib', 'coffeelint'));
 
-RULE = 'no_empty_functions'
+const RULE = 'no_empty_functions';
 
-runLint = (source) ->
-    config = no_empty_functions: level: 'error'
-    coffeelint.lint source, config
+const runLint = function(source) {
+    const config = {no_empty_functions: {level: 'error'}};
+    return coffeelint.lint(source, config);
+};
 
-shouldError = (source, numErrors = 1, errorNames = ['no_empty_functions']) ->
-    topic: source
-    'errors for empty function': (source) ->
-        errors = runLint source
-        assert.lengthOf errors, numErrors, "Expected #{numErrors} errors, got
-            [#{errors.map( (error) -> error.name).join ', '}] instead"
-        for errorName in errorNames
-            assert.notEqual errors.indexOf errorName, -1
+const shouldError = function(source, numErrors, errorNames) {
+    if (numErrors == null) { numErrors = 1; }
+    if (errorNames == null) { errorNames = ['no_empty_functions']; }
+    return {
+        topic: source,
+        'errors for empty function'(source) {
+            const errors = runLint(source);
+            assert.lengthOf(errors, numErrors, `Expected ${numErrors} errors, got \
+[${errors.map( error => error.name).join(', ')}] instead`
+            );
+            return Array.from(errorNames).map((errorName) =>
+                assert.notEqual(errors.indexOf(errorName, -1)));
+        }
+    };
+};
 
-shouldPass = (source) ->
-    topic: source
-    'does not error for empty function': (source) ->
-        errors = runLint source
-        assert.isEmpty errors, "Expected no errors, got
-            [#{errors.map( (error) -> error.name).join ', '}] instead"
+const shouldPass = source => ({
+    topic: source,
+
+    'does not error for empty function'(source) {
+        const errors = runLint(source);
+        return assert.isEmpty(errors, `Expected no errors, got \
+[${errors.map( error => error.name).join(', ')}] instead`
+        );
+    }
+});
 
 vows.describe(RULE).addBatch({
     'empty fat-arrow function': shouldError(
-        '=>', 2)
+        '=>', 2),
     'empty function': shouldError(
-        '->')
+        '->'),
     'function with undefined statement': shouldPass(
-        '-> undefined')
+        '-> undefined'),
     'function within function with undefined statement': shouldPass(
-        '-> -> undefined')
+        '-> -> undefined'),
     'empty fat arrow function within a function ': shouldError(
-        '-> =>', 2)
+        '-> =>', 2),
     'empty function within a function ': shouldError(
-        '-> ->')
+        '-> ->'),
     "empty function as param's default value": shouldError(
-        'foo = (empty=(->)) -> undefined')
+        'foo = (empty=(->)) -> undefined'),
     "non-empty function as param's default value": shouldPass(
-        'foo = (empty=(-> undefined)) -> undefined')
+        'foo = (empty=(-> undefined)) -> undefined'),
     'empty function with implicit instance member assignment as param':
         shouldError('foo = (@_fooMember) ->')
 
-}).export(module)
+}).export(module);

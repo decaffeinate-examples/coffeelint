@@ -1,36 +1,50 @@
-fs = require 'fs'
-path = require 'path'
-crypto = require 'crypto'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let Cache;
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
 
-ltVer = require('./../package.json').version
-csVer = (window?.CoffeeScript or require 'coffeescript').VERSION
-
-
-module.exports = class Cache
-
-    constructor: (@basepath) ->
-        unless fs.existsSync @basepath
-            fs.mkdirSync @basepath, 0o755
-
-
-    path: (source) ->
-        path.join @basepath, "#{csVer}-#{ltVer}-#{@prefix}-#{@hash(source)}"
+const ltVer = require('./../package.json').version;
+const csVer = ((typeof window !== 'undefined' && window !== null ? window.CoffeeScript : undefined) || require('coffeescript')).VERSION;
 
 
-    get: (source) -> JSON.parse fs.readFileSync @path(source), 'utf8'
+module.exports = (Cache = class Cache {
+
+    constructor(basepath) {
+        this.basepath = basepath;
+        if (!fs.existsSync(this.basepath)) {
+            fs.mkdirSync(this.basepath, 0o755);
+        }
+    }
 
 
-    set: (source, result) ->
-        fs.writeFileSync @path(source), JSON.stringify result
+    path(source) {
+        return path.join(this.basepath, `${csVer}-${ltVer}-${this.prefix}-${this.hash(source)}`);
+    }
 
 
-    has: (source) -> fs.existsSync @path source
+    get(source) { return JSON.parse(fs.readFileSync(this.path(source), 'utf8')); }
 
 
-    hash: (data) ->
-        crypto.createHash('md5').update('' + data).digest('hex').substring(0, 8)
+    set(source, result) {
+        return fs.writeFileSync(this.path(source), JSON.stringify(result));
+    }
 
 
-    # Use user config as a "namespace" so that
-    # when he/she changes it the cache becomes invalid
-    setConfig: (config) -> @prefix = @hash JSON.stringify config
+    has(source) { return fs.existsSync(this.path(source)); }
+
+
+    hash(data) {
+        return crypto.createHash('md5').update('' + data).digest('hex').substring(0, 8);
+    }
+
+
+    // Use user config as a "namespace" so that
+    // when he/she changes it the cache becomes invalid
+    setConfig(config) { return this.prefix = this.hash(JSON.stringify(config)); }
+});

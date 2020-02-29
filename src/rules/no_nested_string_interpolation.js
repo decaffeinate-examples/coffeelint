@@ -1,43 +1,66 @@
-module.exports = class NoNestedStringInterpolation
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS201: Simplify complex destructure assignments
+ * DS206: Consider reworking classes to avoid initClass
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let NoNestedStringInterpolation;
+module.exports = (NoNestedStringInterpolation = (function() {
+    NoNestedStringInterpolation = class NoNestedStringInterpolation {
+        static initClass() {
+    
+            this.prototype.rule = {
+                name: 'no_nested_string_interpolation',
+                level: 'warn',
+                message: 'Nested string interpolation is forbidden',
+                description: `\
+This rule warns about nested string interpolation,
+as it tends to make code harder to read and understand.
+<pre>
+<code># Good!
+str = "Book by #{firstName.toUpperCase()} #{lastName.toUpperCase()}"
+    
+# Bad!
+str = "Book by #{"#{firstName} #{lastName}".toUpperCase()}"
+</code>
+</pre>\
+`
+            };
+    
+            this.prototype.tokens = ['STRING_START', 'STRING_END'];
+        }
 
-    rule:
-        name: 'no_nested_string_interpolation'
-        level: 'warn'
-        message: 'Nested string interpolation is forbidden'
-        description: '''
-            This rule warns about nested string interpolation,
-            as it tends to make code harder to read and understand.
-            <pre>
-            <code># Good!
-            str = "Book by #{firstName.toUpperCase()} #{lastName.toUpperCase()}"
+        constructor() {
+            this.startedStrings = 0;
+            this.generatedError = false;
+        }
 
-            # Bad!
-            str = "Book by #{"#{firstName} #{lastName}".toUpperCase()}"
-            </code>
-            </pre>
-            '''
+        lintToken(...args) {
+            const [type] = Array.from(args[0]), tokenApi = args[1];
+            if (type === 'STRING_START') {
+                return this.trackStringStart();
+            } else {
+                return this.trackStringEnd();
+            }
+        }
 
-    tokens: ['STRING_START', 'STRING_END']
+        trackStringStart() {
+            this.startedStrings += 1;
 
-    constructor: ->
-        @startedStrings = 0
-        @generatedError = false
+            // Don't generate multiple errors for deeply nested string interpolation
+            if ((this.startedStrings <= 1) || this.generatedError) { return; }
 
-    lintToken: ([type], tokenApi) ->
-        if type is 'STRING_START'
-            @trackStringStart()
-        else
-            @trackStringEnd()
+            this.generatedError = true;
+            return true;
+        }
 
-    trackStringStart: ->
-        @startedStrings += 1
-
-        # Don't generate multiple errors for deeply nested string interpolation
-        return if @startedStrings <= 1 or @generatedError
-
-        @generatedError = true
-        return true
-
-    trackStringEnd: ->
-        @startedStrings -= 1
-        @generatedError = false if @startedStrings is 1
+        trackStringEnd() {
+            this.startedStrings -= 1;
+            if (this.startedStrings === 1) { return this.generatedError = false; }
+        }
+    };
+    NoNestedStringInterpolation.initClass();
+    return NoNestedStringInterpolation;
+})());

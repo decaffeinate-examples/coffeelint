@@ -1,49 +1,73 @@
-module.exports = class JSLintReporter
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let JSLintReporter;
+module.exports = (JSLintReporter = class JSLintReporter {
 
-    constructor: (@errorReport, options = {}) ->
-        { @quiet } = options
+    constructor(errorReport, options) {
+        this.errorReport = errorReport;
+        if (options == null) { options = {}; }
+        ({ quiet: this.quiet } = options);
+    }
 
-    print: (message) ->
-        # coffeelint: disable=no_debugger
-        console.log message
-        # coffeelint: enable=no_debugger
+    print(message) {
+        // coffeelint: disable=no_debugger
+        return console.log(message);
+    }
+        // coffeelint: enable=no_debugger
 
-    publish: () ->
-        @print '<?xml version="1.0" encoding="utf-8"?><jslint>'
+    publish() {
+        this.print('<?xml version="1.0" encoding="utf-8"?><jslint>');
 
-        for path, errors of @errorReport.paths
-            if errors.length
-                @print "<file name=\"#{path}\">"
+        for (let path in this.errorReport.paths) {
+            const errors = this.errorReport.paths[path];
+            if (errors.length) {
+                this.print(`<file name=\"${path}\">`);
 
-                for e in errors when not @quiet or e.level is 'error'
-                    # continue if @quiet and e.level isnt 'error'
+                for (let e of Array.from(errors)) {
+                    // continue if @quiet and e.level isnt 'error'
 
-                    @print """
-                    <issue line="#{e.lineNumber}"
-                            lineEnd="#{e.lineNumberEnd ? e.lineNumber}"
-                            reason="[#{@escape(e.level)}] #{@escape(e.message)}"
-                            evidence="#{@escape(e.context)}"/>
-                    """
-                @print '</file>'
+                    if (!this.quiet || (e.level === 'error')) {
+                        this.print(`\
+<issue line="${e.lineNumber}"
+            lineEnd="${e.lineNumberEnd != null ? e.lineNumberEnd : e.lineNumber}"
+            reason="[${this.escape(e.level)}] ${this.escape(e.message)}"
+            evidence="${this.escape(e.context)}"/>\
+`
+                        );
+                    }
+                }
+                this.print('</file>');
+            }
+        }
 
-        @print '</jslint>'
+        return this.print('</jslint>');
+    }
 
-    escape: (msg) ->
-        # Force msg to be a String
-        msg = '' + msg
-        unless msg
-            return
-        # Perhaps some other HTML Special Chars should be added here
-        # But this are the XML Special Chars listed in Wikipedia
-        replacements = [
-            [/&/g, '&amp;']
-            [/"/g, '&quot;']
-            [/</g, '&lt;']
-            [/>/g, '&gt;']
+    escape(msg) {
+        // Force msg to be a String
+        msg = '' + msg;
+        if (!msg) {
+            return;
+        }
+        // Perhaps some other HTML Special Chars should be added here
+        // But this are the XML Special Chars listed in Wikipedia
+        const replacements = [
+            [/&/g, '&amp;'],
+            [/"/g, '&quot;'],
+            [/</g, '&lt;'],
+            [/>/g, '&gt;'],
             [/'/g, '&apos;']
-        ]
+        ];
 
-        for r in replacements
-            msg = msg.replace r[0], r[1]
+        for (let r of Array.from(replacements)) {
+            msg = msg.replace(r[0], r[1]);
+        }
 
-        msg
+        return msg;
+    }
+});

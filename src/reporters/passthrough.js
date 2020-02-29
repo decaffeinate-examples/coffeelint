@@ -1,7 +1,10 @@
-# this is used for testing... best not to actually use
+// this is used for testing... best not to actually use
 
-RawReporter = require './raw'
+let PassThroughReporter;
+const RawReporter = require('./raw');
 
-module.exports = class PassThroughReporter extends RawReporter
-    print: (input) ->
-        return JSON.parse(input)
+module.exports = (PassThroughReporter = class PassThroughReporter extends RawReporter {
+    print(input) {
+        return JSON.parse(input);
+    }
+});

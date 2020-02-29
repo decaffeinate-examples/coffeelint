@@ -1,41 +1,69 @@
-# A summary of errors in a CoffeeLint run.
-module.exports = class ErrorReport
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// A summary of errors in a CoffeeLint run.
+let ErrorReport;
+module.exports = (ErrorReport = class ErrorReport {
 
-    constructor: (@coffeelint) ->
-        @paths = {}
+    constructor(coffeelint) {
+        this.coffeelint = coffeelint;
+        this.paths = {};
+    }
 
-    lint: (filename, source, config = {}, literate = false) ->
-        @paths[filename] = @coffeelint.lint(source, config, literate)
+    lint(filename, source, config, literate) {
+        if (config == null) { config = {}; }
+        if (literate == null) { literate = false; }
+        return this.paths[filename] = this.coffeelint.lint(source, config, literate);
+    }
 
-    getExitCode: () ->
-        for path of @paths
-            return 1 if @pathHasError(path)
-        return 0
+    getExitCode() {
+        for (let path in this.paths) {
+            if (this.pathHasError(path)) { return 1; }
+        }
+        return 0;
+    }
 
-    getSummary: () ->
-        pathCount = errorCount = warningCount = 0
-        for path, errors of @paths
-            pathCount++
-            for error in errors
-                errorCount++ if error.level is 'error'
-                warningCount++ if error.level is 'warn'
-        return { errorCount, warningCount, pathCount }
+    getSummary() {
+        let errorCount, warningCount;
+        let pathCount = (errorCount = (warningCount = 0));
+        for (let path in this.paths) {
+            const errors = this.paths[path];
+            pathCount++;
+            for (let error of Array.from(errors)) {
+                if (error.level === 'error') { errorCount++; }
+                if (error.level === 'warn') { warningCount++; }
+            }
+        }
+        return { errorCount, warningCount, pathCount };
+    }
 
-    getErrors: (path) ->
-        return @paths[path]
+    getErrors(path) {
+        return this.paths[path];
+    }
 
-    pathHasWarning: (path) ->
-        return @_hasLevel(path, 'warn')
+    pathHasWarning(path) {
+        return this._hasLevel(path, 'warn');
+    }
 
-    pathHasError: (path) ->
-        return @_hasLevel(path, 'error')
+    pathHasError(path) {
+        return this._hasLevel(path, 'error');
+    }
 
-    hasError: () ->
-        for path of @paths
-            return true if @pathHasError(path)
-        return false
+    hasError() {
+        for (let path in this.paths) {
+            if (this.pathHasError(path)) { return true; }
+        }
+        return false;
+    }
 
-    _hasLevel: (path, level) ->
-        for error in @paths[path]
-            return true if error.level is level
-        return false
+    _hasLevel(path, level) {
+        for (let error of Array.from(this.paths[path])) {
+            if (error.level === level) { return true; }
+        }
+        return false;
+    }
+});

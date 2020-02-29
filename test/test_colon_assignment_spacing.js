@@ -1,119 +1,154 @@
-path = require 'path'
-vows = require 'vows'
-assert = require 'assert'
-coffeelint = require path.join('..', 'lib', 'coffeelint')
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const path = require('path');
+const vows = require('vows');
+const assert = require('assert');
+const coffeelint = require(path.join('..', 'lib', 'coffeelint'));
 
-RULE = 'colon_assignment_spacing'
+const RULE = 'colon_assignment_spacing';
 
 vows.describe(RULE).addBatch({
 
-    'Equal spacing around assignment':
+    'Equal spacing around assignment': {
         topic:
-            '''
-            object = {spacing : true}
-            class Dog
-              barks : true
-            stringyObject =
-              'stringkey' : 'ok'
-            '''
+            `\
+object = {spacing : true}
+class Dog
+  barks : true
+stringyObject =
+  'stringkey' : 'ok'\
+`,
 
-        'will not return an error': (source) ->
-            config =
-                colon_assignment_spacing:
-                    level: 'error'
-                    spacing:
-                        left: 1
+        'will not return an error'(source) {
+            const config = {
+                colon_assignment_spacing: {
+                    level: 'error',
+                    spacing: {
+                        left: 1,
                         right: 1
-            errors = coffeelint.lint(source, config)
-            assert.isEmpty(errors)
+                    }
+                }
+            };
+            const errors = coffeelint.lint(source, config);
+            return assert.isEmpty(errors);
+        }
+    },
 
-    'No space before assignment':
+    'No space before assignment': {
         topic:
-            '''
-            object = {spacing: true}
-            object =
-              spacing: true
-            class Dog
-              barks: true
-            stringyObject =
-              'stringkey': 'ok'
-            '''
+            `\
+object = {spacing: true}
+object =
+  spacing: true
+class Dog
+  barks: true
+stringyObject =
+  'stringkey': 'ok'\
+`,
 
-        'will not return an error': (source) ->
-            config =
-                colon_assignment_spacing:
-                    level: 'error'
-                    spacing:
-                        left: 0
+        'will not return an error'(source) {
+            const config = {
+                colon_assignment_spacing: {
+                    level: 'error',
+                    spacing: {
+                        left: 0,
                         right: 1
-            errors = coffeelint.lint(source, config)
-            assert.isEmpty(errors)
+                    }
+                }
+            };
+            const errors = coffeelint.lint(source, config);
+            return assert.isEmpty(errors);
+        }
+    },
 
-    'Newline to the right of assignment':
+    'Newline to the right of assignment': {
         topic:
-            '''
-            query:
-              method: 'GET'
-              isArray: false
-            '''
+            `\
+query:
+  method: 'GET'
+  isArray: false\
+`,
 
-        'will not return an error': (source) ->
-            config =
-                colon_assignment_spacing:
-                    level: 'error'
-                    spacing:
-                        left: 0
+        'will not return an error'(source) {
+            const config = {
+                colon_assignment_spacing: {
+                    level: 'error',
+                    spacing: {
+                        left: 0,
                         right: 1
-            errors = coffeelint.lint(source, config)
-            assert.isEmpty(errors)
+                    }
+                }
+            };
+            const errors = coffeelint.lint(source, config);
+            return assert.isEmpty(errors);
+        }
+    },
 
-    'Improper spacing around assignment':
+    'Improper spacing around assignment': {
         topic:
-            '''
-            object = {spacing: false}
-            class Cat
-              barks: false
-            stringyObject =
-              'stringkey': 'notcool'
-            '''
+            `\
+object = {spacing: false}
+class Cat
+  barks: false
+stringyObject =
+  'stringkey': 'notcool'\
+`,
 
-        'will return an error': (source) ->
-            config =
-                colon_assignment_spacing:
-                    level: 'error'
-                    spacing:
-                        left: 1
+        'will return an error'(source) {
+            const config = {
+                colon_assignment_spacing: {
+                    level: 'error',
+                    spacing: {
+                        left: 1,
                         right: 1
-            errors = coffeelint.lint(source, config)
-            assert.equal(rule, RULE) for { rule } in errors
-            assert.lengthOf(errors, 3)
+                    }
+                }
+            };
+            const errors = coffeelint.lint(source, config);
+            for (let { rule } of Array.from(errors)) { assert.equal(rule, RULE); }
+            return assert.lengthOf(errors, 3);
+        },
 
-        'will ignore an error': (source) ->
-            config =
-                colon_assignment_spacing:
-                    level: 'ignore'
-                    spacing:
-                        left: 1
+        'will ignore an error'(source) {
+            const config = {
+                colon_assignment_spacing: {
+                    level: 'ignore',
+                    spacing: {
+                        left: 1,
                         right: 1
-            errors = coffeelint.lint(source, config)
-            assert.isEmpty(errors)
+                    }
+                }
+            };
+            const errors = coffeelint.lint(source, config);
+            return assert.isEmpty(errors);
+        }
+    },
 
-    'Should not complain about strings':
+    'Should not complain about strings': {
         topic:
-            '''
-            foo = (stuff) ->
-              throw new Error("Error: stuff required") unless stuff?
-              # do real work
-            '''
+            `\
+foo = (stuff) ->
+  throw new Error("Error: stuff required") unless stuff?
+  # do real work\
+`,
 
-        'will return an error': (source) ->
-            config =
-                colon_assignment_spacing:
-                    level: 'error'
-                    spacing:
-                        left: 1
+        'will return an error'(source) {
+            const config = {
+                colon_assignment_spacing: {
+                    level: 'error',
+                    spacing: {
+                        left: 1,
                         right: 1
-            errors = coffeelint.lint(source, config)
-            assert.isEmpty(errors)
+                    }
+                }
+            };
+            const errors = coffeelint.lint(source, config);
+            return assert.isEmpty(errors);
+        }
+    }
 
-}).export(module)
+}).export(module);
